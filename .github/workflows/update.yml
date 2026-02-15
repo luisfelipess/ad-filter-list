@@ -1,0 +1,26 @@
+name: Update blocklists
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *' # daily at 03:00 UTC
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Run update-lists
+        working-directory: ad-filter-list
+        run: |
+          chmod +x ./update-lists || true
+          ./update-lists
+      - name: Upload processed blocklist
+        uses: actions/upload-artifact@v4
+        with:
+          name: processed-blocklist
+          path: ad-filter-list/processed/blocklist.txt
