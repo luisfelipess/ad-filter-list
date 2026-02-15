@@ -1,0 +1,17 @@
+# Rejected entries - generated: 2026-02-15T20:43:45.216469Z
+# Format: source_file line_number : original_line
+
+03_hosts 15: 127.0.0.1 localhost
+03_hosts 16: 127.0.0.1 localhost.localdomain
+03_hosts 17: 127.0.0.1 local
+03_hosts 18: 255.255.255.255 broadcasthost
+03_hosts 19: ::1 localhost
+03_hosts 20: ::1 ip6-localhost
+03_hosts 21: ::1 ip6-loopback
+03_hosts 22: fe80::1%lo0 localhost
+03_hosts 23: ff00::0 ip6-localnet
+03_hosts 24: ff00::0 ip6-mcastprefix
+03_hosts 25: ff02::1 ip6-allnodes
+03_hosts 26: ff02::2 ip6-allrouters
+03_hosts 27: ff02::3 ip6-allhosts
+03_hosts 28: 0.0.0.0 0.0.0.0

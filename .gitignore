@@ -1,3 +1,16 @@
+# Ignore raw downloads and common artifacts
+raw/
+.internal/
+processed/blocklist.txt.old
+processed/removed.txt
+processed/added.txt
+processed/*.old
+*.pyc
+__pycache__/
+.DS_Store
+.vscode/
+/.idea/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
