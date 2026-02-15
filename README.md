@@ -2,6 +2,8 @@
 
 Tool to fetch multiple host/blocklist sources, merge them, remove duplicates, and produce a single processed blocklist formatted for network devices (MikroTik-friendly).
 
+------
+
 Quick start
 
 From the `ad-filter-list/` directory run:
