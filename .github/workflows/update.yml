@@ -14,11 +14,11 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      - name: Run update-lists
+      - name: Run update.sh
         working-directory: ad-filter-list
         run: |
-          chmod +x ./update-lists || true
-          ./update-lists
+          chmod +x ./update.sh || true
+          ./update.sh
       - name: Upload processed blocklist
         uses: actions/upload-artifact@v4
         with:
