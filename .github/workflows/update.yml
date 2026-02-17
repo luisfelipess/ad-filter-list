@@ -5,14 +5,14 @@ on:
   schedule:
     - cron: '0 3 * * *'  # daily at 03:00 UTC
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}  # Required for push
-          fetch-depth: 0  # For commit history if needed
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -20,35 +20,36 @@ jobs:
           python-version: '3.x'
 
       - name: Run update.sh
-        # working-directory: ad-filter-list
         run: |
           chmod +x ./update.sh || true
           ./update.sh
-          # Debug: List files and check existence
           echo "Current dir:" && pwd
-          echo "Files:" && ls -la processed/ || echo "processed/ missing!"
-          ls -la processed/blocklist.txt || echo "processed/blocklist.txt missing!"
+          echo "Files:" && ls -la processed/
+          ls -la processed/blocklist.txt
 
-      - name: Upload processed blocklist  # Keep as optional backup
+      - name: Upload processed blocklist  # **First: Verify file generated**
         uses: actions/upload-artifact@v4
         with:
           name: processed-blocklist
-          path: processed/blocklist.txt
+          path: processed/blocklist.txt  # **Yes: ONLY this single file**
 
       - name: Commit processed-blocklist
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-        
-          # Check for changes
-          if ! git diff --exit-code -- processed/blocklist.txt; then
-            echo "Changes detected!"
-            git add processed/blocklist.txt
-            git status
-            git commit -m "Update processed-blocklist [skip ci]"
-            git push origin HEAD:${{ github.ref_name }}
-            echo "Commit & push successful"
+          
+          echo "=== Before ==="
+          git status
+          
+          git add processed/blocklist.txt
+          
+          echo "=== Staged ==="
+          git diff --staged --name-only
+          
+          if git diff --staged --quiet; then
+            echo "No changes"
           else
-            echo "No changes to commit"
+            git commit -m "Update processed/blocklist.txt [skip ci]"
+            git push origin HEAD:${{ github.ref_name }}
+            echo "✅ Pushed!"
           fi
-      
