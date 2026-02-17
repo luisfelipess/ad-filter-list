@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: '3.x'
       - name: Run update.sh
-        working-directory: ad-filter-list
+        # working-directory: ad-filter-list
         run: |
           chmod +x ./update.sh || true
           ./update.sh
@@ -23,4 +23,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: processed-blocklist
-          path: ad-filter-list/processed/blocklist.txt
+          path: processed/blocklist.txt
