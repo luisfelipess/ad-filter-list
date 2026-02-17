@@ -24,21 +24,31 @@ jobs:
         run: |
           chmod +x ./update.sh || true
           ./update.sh
-
-      - name: Commit processed-blocklist
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          if git diff --exit-code -- processed/blocklist.txt; then
-            echo "No changes to commit"
-          else
-            git add processed/blocklist.txt
-            git commit -m "Update processed-blocklist [skip ci]"  # Skip CI loop
-            git push
-          fi
+          # Debug: List files and check existence
+          echo "Current dir:" && pwd
+          echo "Files:" && ls -la processed/ || echo "processed/ missing!"
+          ls -la processed/blocklist.txt || echo "processed/blocklist.txt missing!"
 
       - name: Upload processed blocklist  # Keep as optional backup
         uses: actions/upload-artifact@v4
         with:
           name: processed-blocklist
           path: processed/blocklist.txt
+
+      - name: Commit processed-blocklist
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+        
+          # Check for changes
+          if ! git diff --exit-code -- processed/blocklist.txt; then
+            echo "Changes detected!"
+            git add processed/blocklist.txt
+            git status
+            git commit -m "Update processed-blocklist [skip ci]"
+            git push origin HEAD:${{ github.ref_name }}
+            echo "Commit & push successful"
+          else
+            echo "No changes to commit"
+          fi
+      
