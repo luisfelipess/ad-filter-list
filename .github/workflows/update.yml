@@ -24,14 +24,14 @@ jobs:
           chmod +x ./update.sh || true
           ./update.sh
           echo "Current dir:" && pwd
-          echo "Files:" && ls -la processed/
-          ls -la processed/blocklist.txt
+          echo "Processed dir contents:"
+          ls -la processed/
 
-      - name: Upload processed blocklist  # **First: Verify file generated**
+      - name: Upload entire processed dir  # **All files: blocklist.txt + rejected-entries.txt + etc.**
         uses: actions/upload-artifact@v4
         with:
-          name: processed-blocklist
-          path: processed/blocklist.txt  # **Yes: ONLY this single file**
+          name: processed-files
+          path: processed/  # **Entire dir** (recursive)
 
       - name: Commit processed-blocklist
         run: |
@@ -41,7 +41,7 @@ jobs:
           echo "=== Before ==="
           git status
           
-          git add processed/blocklist.txt
+          git add processed/
           
           echo "=== Staged ==="
           git diff --staged --name-only
@@ -49,7 +49,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes"
           else
-            git commit -m "Update processed/blocklist.txt [skip ci]"
+            git commit -m "Update processed/ files [skip ci]"
             git push origin HEAD:${{ github.ref_name }}
-            echo "✅ Pushed!"
+            echo "✅ Pushed blocklist + rejected files!"
           fi
