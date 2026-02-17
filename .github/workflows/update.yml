@@ -25,15 +25,15 @@ jobs:
           chmod +x ./update.sh || true
           ./update.sh
 
-      - name: Commit processed.txt
+      - name: Commit processed-blocklist
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          if git diff --exit-code -- processed.txt; then
+          if git diff --exit-code -- processed-blocklist.txt; then
             echo "No changes to commit"
           else
-            git add processed.txt
-            git commit -m "Update processed.txt [skip ci]"  # Skip CI loop
+            git add processed-blocklist.txt
+            git commit -m "Update processed-blocklist [skip ci]"  # Skip CI loop
             git push
           fi
 
@@ -41,4 +41,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: processed-blocklist
-          path: processed.txt
+          path: processed-blocklist.txt
