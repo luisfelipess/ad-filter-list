@@ -1,12 +1,12 @@
 {
-  "generated": "2026-02-17T23:43:46.608684Z",
+  "generated": "2026-02-18T04:52:19.432012Z",
   "summary": {
     "scanned": 781384,
     "unique": 713410,
     "duplicates": 67974,
     "reduction_pct": 8.6992,
-    "delta_added": 6844,
-    "delta_removed": 8701,
+    "delta_added": 0,
+    "delta_removed": 0,
     "rejected_total": 14
   },
   "sources": {
