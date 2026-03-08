@@ -1,12 +1,12 @@
 {
-  "generated": "2026-03-07T04:20:48.946443Z",
+  "generated": "2026-03-08T04:41:59.321838Z",
   "summary": {
-    "scanned": 748943,
-    "unique": 698969,
-    "duplicates": 49974,
-    "reduction_pct": 6.6726,
-    "delta_added": 9894,
-    "delta_removed": 16871,
+    "scanned": 767169,
+    "unique": 712874,
+    "duplicates": 54295,
+    "reduction_pct": 7.0773,
+    "delta_added": 32343,
+    "delta_removed": 18438,
     "rejected_total": 14
   },
   "sources": {
@@ -14,8 +14,8 @@
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/pro.txt",
       "format": "host",
       "format_reason": "host-style entries detected",
-      "scanned": 363340,
-      "accepted": 363340,
+      "scanned": 380596,
+      "accepted": 380596,
       "rejected": 0,
       "skipped": false
     },
@@ -23,8 +23,8 @@
       "url": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/tif.medium-onlydomains.txt",
       "format": "domain-only",
       "format_reason": "domain-only entries detected",
-      "scanned": 308078,
-      "accepted": 308078,
+      "scanned": 310118,
+      "accepted": 310118,
       "rejected": 0,
       "skipped": false
     },
@@ -32,8 +32,8 @@
       "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
       "format": "host",
       "format_reason": "host-style entries detected",
-      "scanned": 77539,
-      "accepted": 77525,
+      "scanned": 76469,
+      "accepted": 76455,
       "rejected": 14,
       "skipped": false
     }
