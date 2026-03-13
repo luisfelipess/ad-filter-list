@@ -1,12 +1,12 @@
 {
-  "generated": "2026-03-12T04:45:55.976580Z",
+  "generated": "2026-03-13T04:43:21.272833Z",
   "summary": {
-    "scanned": 774029,
-    "unique": 719102,
-    "duplicates": 54927,
-    "reduction_pct": 7.0962,
-    "delta_added": 15863,
-    "delta_removed": 9920,
+    "scanned": 790569,
+    "unique": 727037,
+    "duplicates": 63532,
+    "reduction_pct": 8.0362,
+    "delta_added": 25052,
+    "delta_removed": 17117,
     "rejected_total": 14
   },
   "sources": {
@@ -14,8 +14,8 @@
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/pro.txt",
       "format": "host",
       "format_reason": "host-style entries detected",
-      "scanned": 375348,
-      "accepted": 375348,
+      "scanned": 394089,
+      "accepted": 394089,
       "rejected": 0,
       "skipped": false
     },
@@ -23,8 +23,8 @@
       "url": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/tif.medium-onlydomains.txt",
       "format": "domain-only",
       "format_reason": "domain-only entries detected",
-      "scanned": 319195,
-      "accepted": 319195,
+      "scanned": 316994,
+      "accepted": 316994,
       "rejected": 0,
       "skipped": false
     },
