@@ -3,19 +3,25 @@ name: Update blocklists
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: '0 3 * * *'  # daily at 03:00 UTC
 
 permissions:
   contents: write
 
+# This opts JavaScript-based actions into Node 24 now.
+# GitHub may still show a Node 20 deprecation warning for some official actions
+# because of how the runner reports action metadata; that warning is currently
+# not always actionable from the workflow side.
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -30,14 +36,17 @@ jobs:
           echo "Processed dir contents:"
           ls -la processed/
 
-      - name: Upload entire processed dir
+      - name: Upload processed dir
         uses: actions/upload-artifact@v4
         with:
           name: processed-files
           path: processed/
 
-      - name: Commit processed-blocklist
+      - name: Commit processed files
+        shell: bash
         run: |
+          set -euo pipefail
+
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
@@ -51,8 +60,10 @@ jobs:
 
           if git diff --staged --quiet; then
             echo "No changes"
-          else
-            git commit -m "Update processed/ files [skip ci]"
-            git push origin HEAD:${{ github.ref_name }}
-            echo "✅ Pushed blocklist + rejected files!"
+            exit 0
           fi
+
+          git commit -m "Update processed/ files [skip ci]"
+          git push origin HEAD:${{ github.ref_name }}
+
+          echo "Pushed blocklist and related files."
