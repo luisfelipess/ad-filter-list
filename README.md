@@ -30,3 +30,5 @@ Outputs
 MikroTik compatibility
 
 The output uses `0.0.0.0 domain` format which is compatible with many devices and can be transformed or imported into MikroTik adlists using the companion scripts in the repository (see `mikrotik-adlist/transform.sh` for examples). The preserved per-source headers help with auditing and attribution when publishing.
+
+Check TODO.md for more
