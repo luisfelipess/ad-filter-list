@@ -8,6 +8,7 @@ a per-source JSON report next to the output file for auditing and CI use.
 from __future__ import annotations
 
 import argparse
+import gzip
 import json
 import os
 import re
@@ -251,8 +252,14 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True) 
     duplicates = max(0, total_candidates - total_unique)
     reduction_pct = (duplicates / total_candidates * 100) if total_candidates else 0.0
 
+    now_str = datetime.now(timezone.utc).isoformat().replace('+00:00','Z')
+    out_dir = os.path.dirname(out_path) or "."
+    rpz_path = os.path.join(out_dir, "blocklist-bind9.zone.gz")
+    adblock_path = os.path.join(out_dir, "blocklist-adblock.txt")
+
+    # 1. Standard hosts/MikroTik format
     with open(out_path, "w", encoding="utf-8") as out:
-        out.write(f"# Processed blocklist - generated: {datetime.now(timezone.utc).isoformat().replace('+00:00','Z')}\n")
+        out.write(f"# Processed blocklist - generated: {now_str}\n")
         out.write("# Format: 0.0.0.0 domain\n")
         out.write("# Summary: scanned entries: {0}, unique entries: {1}, removed duplicates: {2} ({3:.2f}% reduction)\n".format(total_candidates, total_unique, duplicates, reduction_pct))
         if delta_added or delta_removed:
@@ -265,8 +272,11 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True) 
             if headers:
                 for h in headers:
                     # ensure header lines start with '#'
-                    if h.lstrip().startswith('!'):
-                        out.write('#' + h + "\n")
+                    h_clean = h.lstrip()
+                    if h_clean.startswith('!') or h_clean.startswith(';'):
+                        out.write('#' + h_clean[1:] + "\n")
+                    elif not h_clean.startswith('#'):
+                        out.write('# ' + h + "\n")
                     else:
                         out.write(h + "\n")
             else:
@@ -277,8 +287,79 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True) 
         for d in ordered:
             out.write(f"0.0.0.0 {d}\n")
 
+    # 2. BIND9 RPZ format
+    serial = int(datetime.now(timezone.utc).timestamp())
+    with gzip.open(rpz_path, "wt", encoding="utf-8") as rpz:
+        rpz.write(f"; Processed blocklist (BIND9 RPZ) - generated: {now_str}\n")
+        rpz.write("; Format: BIND9 RPZ zone file (CNAME to .)\n")
+        rpz.write("; Summary: scanned entries: {0}, unique entries: {1}, removed duplicates: {2} ({3:.2f}% reduction)\n".format(total_candidates, total_unique, duplicates, reduction_pct))
+        if delta_added or delta_removed:
+            rpz.write(f"; Delta vs previous: added={delta_added} removed={delta_removed}\n")
+        rpz.write("; Sources and original headers (credits):\n\n")
+
+        for fname, headers, url, fmt in source_infos:
+            rpz.write(f"; ----- Source: {url or fname} ({fname}) -----\n")
+            rpz.write(f"; Detected format: {fmt}\n")
+            if headers:
+                for h in headers:
+                    # ensure header lines start with ';'
+                    h_clean = h.lstrip()
+                    if h_clean.startswith('!') or h_clean.startswith('#'):
+                        rpz.write(';' + h_clean[1:] + "\n")
+                    elif not h_clean.startswith(';'):
+                        rpz.write('; ' + h + "\n")
+                    else:
+                        rpz.write(h + "\n")
+            else:
+                rpz.write(f"; (no header in source file)\n")
+            rpz.write(";\n")
+
+        rpz.write("\n")
+        rpz.write("$TTL 2h\n")
+        rpz.write(f"@ IN SOA rpz.local. hostmaster.rpz.local. (\n")
+        rpz.write(f"    {serial} ; Serial\n")
+        rpz.write("    1h         ; Refresh\n")
+        rpz.write("    15m        ; Retry\n")
+        rpz.write("    30d        ; Expire\n")
+        rpz.write("    2h         ; Minimum TTL\n")
+        rpz.write(")\n")
+        rpz.write("    IN NS localhost.\n\n")
+        rpz.write("; ---- merged entries ----\n")
+        for d in ordered:
+            rpz.write(f"{d} IN CNAME .\n")
+            rpz.write(f"*.{d} IN CNAME .\n")
+
+    # 3. Adblock/uBlock syntax format
+    with open(adblock_path, "w", encoding="utf-8") as adblock:
+        adblock.write(f"! Processed blocklist (Adblock) - generated: {now_str}\n")
+        adblock.write("! Format: Adblock Filter Syntax (||domain.com^)\n")
+        adblock.write("! Summary: scanned entries: {0}, unique entries: {1}, removed duplicates: {2} ({3:.2f}% reduction)\n".format(total_candidates, total_unique, duplicates, reduction_pct))
+        if delta_added or delta_removed:
+            adblock.write(f"! Delta vs previous: added={delta_added} removed={delta_removed}\n")
+        adblock.write("! Sources and original headers (credits):\n\n")
+
+        for fname, headers, url, fmt in source_infos:
+            adblock.write(f"! ----- Source: {url or fname} ({fname}) -----\n")
+            adblock.write(f"! Detected format: {fmt}\n")
+            if headers:
+                for h in headers:
+                    # ensure header lines start with '!'
+                    h_clean = h.lstrip()
+                    if h_clean.startswith('#') or h_clean.startswith(';'):
+                        adblock.write('!' + h_clean[1:] + "\n")
+                    elif not h_clean.startswith('!'):
+                        adblock.write('! ' + h + "\n")
+                    else:
+                        adblock.write(h + "\n")
+            else:
+                adblock.write(f"! (no header in source file)\n")
+            adblock.write("!\n")
+
+        adblock.write("\n! ---- merged entries ----\n")
+        for d in ordered:
+            adblock.write(f"||{d}^\n")
+
     # write rejected entries file
-    out_dir = os.path.dirname(out_path) or "."
     rejected_path = os.path.join(out_dir, "rejected-entries.txt")
     if rejected_entries:
         with open(rejected_path, "w", encoding="utf-8") as rej:
