@@ -3,10 +3,13 @@ name: Update blocklists
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 3 * * *'  # daily at 03:00 UTC
+    - cron: '0 3 * * *'
 
 permissions:
   contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
@@ -15,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
@@ -27,25 +30,25 @@ jobs:
           echo "Processed dir contents:"
           ls -la processed/
 
-      - name: Upload entire processed dir  # **All files: blocklist.txt + rejected-entries.txt + etc.**
+      - name: Upload entire processed dir
         uses: actions/upload-artifact@v4
         with:
           name: processed-files
-          path: processed/  # **Entire dir** (recursive)
+          path: processed/
 
       - name: Commit processed-blocklist
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          
+
           echo "=== Before ==="
           git status
-          
+
           git add processed/
-          
+
           echo "=== Staged ==="
           git diff --staged --name-only
-          
+
           if git diff --staged --quiet; then
             echo "No changes"
           else
