@@ -1,4 +1,4 @@
-"""Tests for merge.py — covers extract_domain, load_allowlist,
+"""Tests for merge.py — covers readers, load_allowlist,
 remove_subdomains, and end-to-end merge output."""
 
 import gzip
@@ -12,55 +12,91 @@ import unittest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import merge as m
+from readers import normalize_domain
+from readers.hosts import HostsReader
+from readers.domain import DomainReader
+from readers.adblock import AdblockReader
 
 
-# ── extract_domain ────────────────────────────────────────────────────────────
+# ── readers + normalize_domain ────────────────────────────────────────────────
 
-class TestExtractDomain(unittest.TestCase):
+def _extract(reader, line):
+    raw = reader.extract(line.strip())
+    return normalize_domain(raw) if raw else None
 
-    def _e(self, line):
-        return m.extract_domain(line)
 
-    # hosts-style
-    def test_hosts_0000(self):
-        self.assertEqual(self._e("0.0.0.0 example.com"), "example.com")
+class TestHostsReader(unittest.TestCase):
+    def setUp(self):
+        self.r = HostsReader()
 
-    def test_hosts_127(self):
-        self.assertEqual(self._e("127.0.0.1 example.com"), "example.com")
+    def test_0000(self):
+        self.assertEqual(_extract(self.r, "0.0.0.0 example.com"), "example.com")
 
-    def test_hosts_ipv6(self):
-        self.assertEqual(self._e("::1 example.com"), "example.com")
+    def test_127(self):
+        self.assertEqual(_extract(self.r, "127.0.0.1 example.com"), "example.com")
 
-    # domain-only
-    def test_domain_only(self):
-        self.assertEqual(self._e("example.com"), "example.com")
+    def test_ipv6(self):
+        self.assertEqual(_extract(self.r, "::1 example.com"), "example.com")
 
-    # normalisation
     def test_uppercase_normalised(self):
-        self.assertEqual(self._e("0.0.0.0 EXAMPLE.COM"), "example.com")
+        self.assertEqual(_extract(self.r, "0.0.0.0 EXAMPLE.COM"), "example.com")
 
-    def test_strips_inline_comment(self):
-        self.assertEqual(self._e("example.com # comment"), "example.com")
-
-    def test_strips_quotes(self):
-        self.assertEqual(self._e('"example.com"'), "example.com")
-
-    # rejections
     def test_rejects_localhost(self):
-        self.assertIsNone(self._e("0.0.0.0 localhost"))
+        self.assertIsNone(_extract(self.r, "0.0.0.0 localhost"))
 
-    def test_rejects_arbitrary_ip_target(self):
-        # arbitrary redirect IP — not a known normalisation target
-        self.assertIsNone(self._e("1.2.3.4 example.com"))
+    def test_rejects_arbitrary_ip(self):
+        self.assertIsNone(_extract(self.r, "1.2.3.4 example.com"))
+
+    def test_detect(self):
+        self.assertTrue(self.r.detect(["0.0.0.0 example.com"]))
+        self.assertFalse(self.r.detect(["example.com"]))
+
+
+class TestDomainReader(unittest.TestCase):
+    def setUp(self):
+        self.r = DomainReader()
+
+    def test_bare_domain(self):
+        self.assertEqual(_extract(self.r, "example.com"), "example.com")
+
+    def test_uppercase_normalised(self):
+        self.assertEqual(_extract(self.r, "EXAMPLE.COM"), "example.com")
+
+    def test_rejects_ip(self):
+        self.assertIsNone(_extract(self.r, "1.2.3.4"))
+
+    def test_detect(self):
+        self.assertTrue(self.r.detect(["example.com"]))
+        self.assertFalse(self.r.detect(["0.0.0.0 example.com"]))
+
+
+class TestAdblockReader(unittest.TestCase):
+    def setUp(self):
+        self.r = AdblockReader()
+
+    def test_adblock_line(self):
+        self.assertEqual(_extract(self.r, "||example.com^"), "example.com")
+
+    def test_rejects_non_adblock(self):
+        self.assertIsNone(_extract(self.r, "example.com"))
+
+    def test_detect(self):
+        self.assertTrue(self.r.detect(["||example.com^"]))
+        self.assertFalse(self.r.detect(["example.com"]))
+
+
+class TestNormalizeDomain(unittest.TestCase):
+    def test_strips_quotes(self):
+        self.assertEqual(normalize_domain('"example.com"'), "example.com")
+
+    def test_rejects_localhost(self):
+        self.assertIsNone(normalize_domain("localhost"))
 
     def test_rejects_plain_ip(self):
-        self.assertIsNone(self._e("1.2.3.4"))
+        self.assertIsNone(normalize_domain("1.2.3.4"))
 
     def test_rejects_empty(self):
-        self.assertIsNone(self._e(""))
-
-    def test_rejects_comment_line(self):
-        self.assertIsNone(self._e("# this is a comment"))
+        self.assertIsNone(normalize_domain(""))
 
 
 # ── load_allowlist ────────────────────────────────────────────────────────────

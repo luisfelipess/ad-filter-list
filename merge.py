@@ -10,7 +10,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import re
 from datetime import datetime, timezone
 
 from writers import WriterMeta
@@ -19,6 +18,18 @@ from writers.adblock import AdblockWriter
 from writers.rpz import RpzWriter
 from writers.dnsmasq import DnsmasqWriter
 from writers.unbound import UnboundWriter
+
+from readers import normalize_domain, read_leading_header
+from readers.hosts import HostsReader
+from readers.domain import DomainReader
+from readers.adblock import AdblockReader
+
+# ── Registered readers — order matters: first match wins ─────────────────────
+READERS = [
+    HostsReader(),
+    AdblockReader(),   # before DomainReader — adblock lines also look domain-ish
+    DomainReader(),
+]
 
 # ── Registered writers — add new formats here ────────────────────────────────
 WRITERS = [
@@ -48,9 +59,6 @@ def load_writers_config(path: str = "writers.conf") -> list:
                 print(f"writers.conf: unknown writer '{name}' (ignored)")
     print(f"Writers enabled: {[w.__class__.__name__ for w in enabled]}")
     return enabled
-
-LOCAL_SKIP = {"localhost", "localhost.localdomain", "local"}
-
 
 def load_allowlist(path: str) -> set[str]:
     allowed: set[str] = set()
@@ -101,82 +109,25 @@ def read_map(map_path: str) -> list[tuple[str, str]]:
     return pairs
 
 
-IP_RE = re.compile(r"^(?:\d{1,3}\.){3}\d{1,3}$")
-ALLOWED_LEADING_IPS = {"0.0.0.0", "127.0.0.1", "::1", "::"}
-
-
-def extract_domain(line: str) -> str | None:
-    for c in ["#", "//", ";"]:
-        if c in line:
-            line = line.split(c, 1)[0]
-    line = line.strip()
-    if not line:
-        return None
-    tokens = line.split()
-    if not tokens:
-        return None
-
-    if IP_RE.match(tokens[0]) or tokens[0] in {"0.0.0.0", "::1", "::"}:
-        if tokens[0] not in ALLOWED_LEADING_IPS:
-            return None
-        domain = next((t for t in tokens[1:] if "." in t and not IP_RE.match(t)), None)
-        if domain is None:
-            return None
-    else:
-        domain = next((t for t in tokens if "." in t and not IP_RE.match(t)), None)
-        if domain is None:
-            return None
-
-    domain = domain.lower().strip().strip('"\'"').strip('.')
-    if domain in LOCAL_SKIP or IP_RE.match(domain):
-        return None
-    return domain
-
-
-def detect_format(path: str, sample_lines: int = 50) -> tuple[str, str]:
-    host_lines = domain_only_lines = seen = 0
-    if not os.path.exists(path):
-        return ("unsupported", "file not found")
-    with open(path, "r", encoding="utf-8", errors="ignore") as fh:
-        for line in fh:
-            s = line.strip()
-            if not s or s.lstrip().startswith(('#', '!')):
-                continue
-            seen += 1
-            tokens = s.split()
-            if tokens and (IP_RE.match(tokens[0]) or tokens[0] in ALLOWED_LEADING_IPS):
-                if len(tokens) > 1 and "." in tokens[1] and not IP_RE.match(tokens[1]):
-                    host_lines += 1
-            elif len(tokens) == 1 and "." in tokens[0] and not IP_RE.match(tokens[0]):
-                domain_only_lines += 1
-            if seen >= sample_lines:
-                break
-
-    if host_lines and not domain_only_lines:
-        return ("host", "host-style entries detected")
-    if domain_only_lines and not host_lines:
-        return ("domain-only", "domain-only entries detected")
-    if host_lines and domain_only_lines:
-        return ("mixed", "mix of host-style and domain-only entries")
-    return ("unsupported", "no recognizable host or domain-only entries in sample")
-
-
-def read_leading_header(path: str) -> list[str]:
-    headers = []
-    if not os.path.exists(path):
-        return headers
-    with open(path, "r", encoding="utf-8", errors="ignore") as fh:
-        for line in fh:
-            s = line.rstrip('\n')
-            if s.strip() == "":
-                if headers:
+def _pick_reader(path: str, sample_size: int = 50):
+    """Return the first reader that claims this file, or None."""
+    sample: list[str] = []
+    try:
+        with open(path, "r", encoding="utf-8", errors="ignore") as fh:
+            for line in fh:
+                s = line.strip()
+                if not s or s.lstrip().startswith(('#', '!')):
+                    continue
+                sample.append(s)
+                if len(sample) >= sample_size:
                     break
-                continue
-            if s.lstrip().startswith(('#', '!')):
-                headers.append(s)
-                continue
-            break
-    return headers
+    except OSError:
+        return None, "file not found"
+
+    for reader in READERS:
+        if reader.detect(sample):
+            return reader, f"{reader.name} format detected"
+    return None, "no recognizable format in sample"
 
 
 def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries):
@@ -194,19 +145,18 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
     for fname, url in sources:
         path = os.path.join(raw_dir, fname)
         headers = read_leading_header(path)
-        fmt, reason = detect_format(path)
+        reader, reason = _pick_reader(path)
+        fmt = reader.name if reader else "unsupported"
         source_infos.append((fname, headers, url, fmt))
         source_stats[fname] = {
             "url": url, "format": fmt, "format_reason": reason,
             "scanned": 0, "accepted": 0, "rejected": 0,
-            "skipped": fmt == "unsupported",
+            "skipped": reader is None,
         }
         print(f"{fname}: detected format={fmt} ({reason})")
-        if fmt == "unsupported":
+        if reader is None:
             rejected_entries.append((fname, 0, f"UNSUPPORTED_FILE: {reason}"))
             print(f"Skipping {fname}: {reason}")
-            continue
-        if not os.path.exists(path):
             continue
         with open(path, "r", encoding="utf-8", errors="ignore") as fh:
             for lineno, line in enumerate(fh, start=1):
@@ -214,7 +164,8 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
                 if not stripped or stripped.lstrip().startswith(('#', '!')):
                     continue
                 source_stats[fname]["scanned"] += 1
-                dom = extract_domain(line)
+                raw = reader.extract(stripped)
+                dom = normalize_domain(raw) if raw else None
                 if not dom:
                     source_stats[fname]["rejected"] += 1
                     rejected_entries.append((fname, lineno, line.rstrip('\n')))
