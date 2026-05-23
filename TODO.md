@@ -62,3 +62,8 @@ Downloading logic ported to `update.py`; `update.sh` kept as a legacy reference/
   - `update.py` exits non-zero if any source fails all retries; `processed/` is left untouched.
 - [x] **Regression test suite** (`tests/test_merge.py`)
   - 32 tests covering `extract_domain`, `load_allowlist`, `remove_subdomains`, and end-to-end merge output (hosts, adblock, RPZ, JSON report).
+
+
+### Dynamic README
+
+- [] **Support generate README dynamically** 
