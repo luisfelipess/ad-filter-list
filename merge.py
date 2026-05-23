@@ -309,6 +309,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         "summary": {
             "scanned": total_candidates,
             "unique": total_unique,
+            "wildcards": len(wildcard_domains),
             "duplicates": duplicates,
             "reduction_pct": round(reduction_pct, 4),
             "delta_added": delta_added,
@@ -321,7 +322,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         json.dump(report, rf, indent=2, ensure_ascii=False)
 
     print(f"Processed: scanned={total_candidates} unique={total_unique} "
-          f"duplicates={duplicates} reduction={reduction_pct:.2f}% "
+          f"wildcards={len(wildcard_domains)} duplicates={duplicates} reduction={reduction_pct:.2f}% "
           f"rejected={len(rejected_entries)} sorted={sort_output} -> {rejected_path}")
 
 

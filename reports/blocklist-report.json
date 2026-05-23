@@ -1,8 +1,9 @@
 {
-  "generated": "2026-05-23T11:04:26.905933Z",
+  "generated": "2026-05-23T11:10:09.481913Z",
   "summary": {
     "scanned": 992201,
     "unique": 503338,
+    "wildcards": 92799,
     "duplicates": 488863,
     "reduction_pct": 49.2706,
     "delta_added": 0,
