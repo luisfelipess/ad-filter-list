@@ -28,8 +28,10 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Run update.py
-        run: python3 update.py
+      - name: Run update.sh
+        run: |
+          chmod +x ./update.sh
+          ./update.sh
 
       - name: Commit processed files
         id: commit
