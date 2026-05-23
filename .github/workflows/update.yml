@@ -8,23 +8,16 @@ on:
 permissions:
   contents: write
 
-# This opts JavaScript-based actions into Node 24 now.
-# GitHub may still show a Node 20 deprecation warning for some official actions
-# because of how the runner reports action metadata; that warning is currently
-# not always actionable from the workflow side.
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.x'
 
@@ -60,7 +53,7 @@ jobs:
 
       - name: Upload processed dir
         if: steps.commit.outputs.changed == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: processed-files
           path: |
