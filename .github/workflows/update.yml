@@ -32,6 +32,9 @@ jobs:
         run: |
           chmod +x ./update.sh
           ./update.sh
+          echo "Current dir:" && pwd
+          echo "Processed dir contents:"
+          ls -la processed/
 
       - name: Commit processed files
         id: commit
