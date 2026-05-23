@@ -114,6 +114,8 @@ The direction is strictly one-way: wildcards degrade to exact for formats that d
 
 The `wildcards=N` field in the pipeline summary shows how many wildcard entries were collected, giving a sense of how much coverage relies on wildcard semantics vs exact matching.
 
+**Allowlist / blocklist** — `allowlist.txt` and `blocklist.txt` use the same `*.domain` syntax as domain-only sources: `*.example.com` applies to all proper subdomains (`sub.example.com`, `a.b.example.com`), not the apex `example.com` unless that name is listed explicitly.
+
 ---
 
 ## How it works
@@ -234,8 +236,8 @@ writers/                         pluggable output format writers
   unbound.py                     local-zone: always_nxdomain
 sources.conf                     preferred source URL list
 sources.txt                      legacy source URL list (fallback for compatibility)
-allowlist.txt                    domains that are never blocked
-blocklist.txt                    domains that are always blocked, even if absent from sources
+allowlist.txt                    domains that are never blocked (`example.com` exact, `*.example.com` all subdomains)
+blocklist.txt                    domains always blocked, even if absent from sources (same `*.domain` syntax)
 writers.conf                     enable/disable output writers
 client-scripts/
   bind9-update-rpz.sh            BIND9 RPZ fetch-and-reload script

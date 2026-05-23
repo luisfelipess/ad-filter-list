@@ -63,28 +63,62 @@ def load_writers_config(path: str = "writers.conf") -> list:
     return enabled
 
 
-def load_list_file(path: str) -> set[str]:
-    entries: set[str] = set()
+class ListEntries:
+    """Exact domains plus wildcard bases (*.base stored as base)."""
+
+    __slots__ = ("exact", "wildcards")
+
+    def __init__(self, exact: set[str] | None = None, wildcards: set[str] | None = None):
+        self.exact = exact if exact is not None else set()
+        self.wildcards = wildcards if wildcards is not None else set()
+
+    def __len__(self) -> int:
+        return len(self.exact) + len(self.wildcards)
+
+    def matches(self, domain: str) -> bool:
+        return domain in self.exact or subdomain_matches_wildcards(domain, self.wildcards)
+
+
+def subdomain_matches_wildcards(domain: str, wildcard_bases: set[str]) -> bool:
+    """True if domain is a proper subdomain of any *.base entry (apex itself does not match)."""
+    parts = domain.split(".")
+    return any(
+        ".".join(parts[i:]) in wildcard_bases
+        for i in range(1, len(parts))
+    )
+
+
+def load_list_file(path: str) -> ListEntries:
+    exact: set[str] = set()
+    wildcards: set[str] = set()
     if not os.path.exists(path):
-        return entries
+        return ListEntries(exact, wildcards)
     with open(path, "r", encoding="utf-8") as fh:
         for line in fh:
             line = line.strip()
             if not line or line[0] in ("#", "!", ";"):
                 continue
-            domain = line.split("#", 1)[0].strip().lower()
-            if domain:
-                entries.add(domain)
-    return entries
+            token = line.split("#", 1)[0].strip().lower()
+            if not token:
+                continue
+            if token.startswith("*."):
+                base = normalize_domain(token[2:])
+                if base:
+                    wildcards.add(base)
+            else:
+                dom = normalize_domain(token)
+                if dom:
+                    exact.add(dom)
+    return ListEntries(exact, wildcards)
 
 
-def load_allowlist(path: str) -> set[str]:
+def load_allowlist(path: str) -> ListEntries:
     allowed = load_list_file(path)
     print(f"Allowlist: loaded {len(allowed)} entries from {path}")
     return allowed
 
 
-def load_blocklist(path: str) -> set[str]:
+def load_blocklist(path: str) -> ListEntries:
     blocked = load_list_file(path)
     print(f"Blocklist: loaded {len(blocked)} entries from {path}")
     return blocked
@@ -200,7 +234,7 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
                     continue
                 source_stats[fname]["accepted"] += 1
                 total_candidates += 1
-                if dom not in seen and dom not in allowlist:
+                if dom not in seen and not allowlist.matches(dom):
                     seen.add(dom)
                     ordered.append(dom)
                 if is_wildcard:
@@ -224,8 +258,8 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries
     )
 
-    if blocklist:
-        conflicts = allowlist & blocklist
+    if blocklist.exact or blocklist.wildcards:
+        conflicts = allowlist.exact & blocklist.exact
         if conflicts:
             print(
                 f"Warning: {len(conflicts)} domain(s) present in both allowlist "
@@ -234,10 +268,16 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             )
         added = 0
         seen_set = set(ordered)
-        for dom in sorted(blocklist):
-            if dom not in seen_set and dom not in allowlist:
+        for dom in sorted(blocklist.exact):
+            if dom not in seen_set and not allowlist.matches(dom):
                 seen_set.add(dom)
                 ordered.append(dom)
+                added += 1
+        for base in sorted(blocklist.wildcards):
+            wildcard_domains.add(base)
+            if base not in seen_set and not allowlist.matches(base):
+                seen_set.add(base)
+                ordered.append(base)
                 added += 1
         if added:
             print(f"Blocklist: added {added} forced domain(s) from {blocklist_path}")

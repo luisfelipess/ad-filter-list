@@ -1,4 +1,4 @@
-"""Tests for merge.py — covers readers, load_allowlist,
+"""Tests for merge.py — covers readers, load_list_file,
 remove_subdomains, and end-to-end merge output."""
 
 import gzip
@@ -121,29 +121,33 @@ class TestNormalizeDomain(unittest.TestCase):
         self.assertIsNone(normalize_domain(""))
 
 
-# ── load_allowlist ────────────────────────────────────────────────────────────
+# ── load_list_file / allowlist / blocklist ────────────────────────────────────
 
-class TestLoadAllowlist(unittest.TestCase):
+class TestLoadListFile(unittest.TestCase):
 
-    def test_loads_domains(self):
+    def test_loads_exact_domains(self):
         with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
             f.write("# comment\nexample.com\ngood.org\n")
             path = f.name
         try:
-            result = m.load_allowlist(path)
-            self.assertEqual(result, {"example.com", "good.org"})
+            result = m.load_list_file(path)
+            self.assertEqual(result.exact, {"example.com", "good.org"})
+            self.assertEqual(result.wildcards, set())
         finally:
             os.unlink(path)
 
     def test_missing_file_returns_empty(self):
-        self.assertEqual(m.load_allowlist("/nonexistent/allowlist.txt"), set())
+        result = m.load_list_file("/nonexistent/list.txt")
+        self.assertEqual(result.exact, set())
+        self.assertEqual(result.wildcards, set())
 
     def test_ignores_comment_prefixes(self):
         with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
             f.write("! exclaim\n; semicolon\n# hash\nkeep.com\n")
             path = f.name
         try:
-            self.assertEqual(m.load_allowlist(path), {"keep.com"})
+            result = m.load_list_file(path)
+            self.assertEqual(result.exact, {"keep.com"})
         finally:
             os.unlink(path)
 
@@ -152,7 +156,7 @@ class TestLoadAllowlist(unittest.TestCase):
             f.write("keep.com  # reason\n")
             path = f.name
         try:
-            self.assertEqual(m.load_allowlist(path), {"keep.com"})
+            self.assertEqual(m.load_list_file(path).exact, {"keep.com"})
         finally:
             os.unlink(path)
 
@@ -161,32 +165,72 @@ class TestLoadAllowlist(unittest.TestCase):
             f.write("UPPER.COM\n")
             path = f.name
         try:
-            self.assertIn("upper.com", m.load_allowlist(path))
+            self.assertIn("upper.com", m.load_list_file(path).exact)
+        finally:
+            os.unlink(path)
+
+    def test_wildcard_splits_to_base(self):
+        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+            f.write("*.example.com\nplain.org\n")
+            path = f.name
+        try:
+            result = m.load_list_file(path)
+            self.assertEqual(result.exact, {"plain.org"})
+            self.assertEqual(result.wildcards, {"example.com"})
+        finally:
+            os.unlink(path)
+
+
+class TestListEntriesMatches(unittest.TestCase):
+    """*.example.com matches subdomains only, not the apex unless listed exactly."""
+
+    def setUp(self):
+        self.entries = m.ListEntries(exact={"example.com"}, wildcards={"allowed.com"})
+
+    def test_exact_match(self):
+        self.assertTrue(self.entries.matches("example.com"))
+
+    def test_wildcard_matches_subdomain(self):
+        self.assertTrue(self.entries.matches("sub.allowed.com"))
+        self.assertTrue(self.entries.matches("a.b.allowed.com"))
+
+    def test_wildcard_does_not_match_apex(self):
+        self.assertFalse(self.entries.matches("allowed.com"))
+
+    def test_unrelated_domain(self):
+        self.assertFalse(self.entries.matches("other.org"))
+
+
+class TestSubdomainMatchesWildcards(unittest.TestCase):
+    def test_matches_proper_subdomain(self):
+        self.assertTrue(m.subdomain_matches_wildcards("ads.example.com", {"example.com"}))
+
+    def test_does_not_match_apex(self):
+        self.assertFalse(m.subdomain_matches_wildcards("example.com", {"example.com"}))
+
+
+class TestLoadAllowlist(unittest.TestCase):
+
+    def test_load_allowlist_delegates_to_load_list_file(self):
+        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+            f.write("*.safe.com\n")
+            path = f.name
+        try:
+            result = m.load_allowlist(path)
+            self.assertEqual(result.wildcards, {"safe.com"})
         finally:
             os.unlink(path)
 
 
 class TestLoadBlocklist(unittest.TestCase):
 
-    def test_loads_domains(self):
+    def test_load_blocklist_delegates_to_load_list_file(self):
         with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
-            f.write("# comment\nexample.com\ngood.org\n")
+            f.write("block.com\n")
             path = f.name
         try:
             result = m.load_blocklist(path)
-            self.assertEqual(result, {"example.com", "good.org"})
-        finally:
-            os.unlink(path)
-
-    def test_missing_file_returns_empty(self):
-        self.assertEqual(m.load_blocklist("/nonexistent/blocklist.txt"), set())
-
-    def test_blocklist_ignores_comments(self):
-        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
-            f.write("! exclaim\n; semicolon\n# hash\nblock.com\n")
-            path = f.name
-        try:
-            self.assertEqual(m.load_blocklist(path), {"block.com"})
+            self.assertEqual(result.exact, {"block.com"})
         finally:
             os.unlink(path)
 
@@ -282,6 +326,45 @@ class TestMergeEndToEnd(unittest.TestCase):
         domains = self._read_hosts()
         self.assertIn("blocked.com", domains)
         self.assertNotIn("safe.com", domains)
+
+    def test_allowlist_wildcard_filters_subdomains_not_apex(self):
+        self._write_source(
+            "01_a.txt",
+            "0.0.0.0 example.com\n0.0.0.0 safe.com\n"
+            "0.0.0.0 sub.safe.com\n0.0.0.0 deep.sub.safe.com\n",
+        )
+        al = self._write_allowlist("*.safe.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                allowlist_path=al, optimize_subdomains=False)
+        domains = self._read_hosts()
+        self.assertIn("example.com", domains)
+        self.assertIn("safe.com", domains)
+        self.assertNotIn("sub.safe.com", domains)
+        self.assertNotIn("deep.sub.safe.com", domains)
+
+    def test_allowlist_wildcard_apex_requires_explicit_entry(self):
+        self._write_source("01_a.txt", "0.0.0.0 safe.com\n0.0.0.0 sub.safe.com\n")
+        al = self._write_allowlist("*.safe.com\nsafe.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                allowlist_path=al, optimize_subdomains=False)
+        domains = self._read_hosts()
+        self.assertNotIn("safe.com", domains)
+        self.assertNotIn("sub.safe.com", domains)
+
+    def test_blocklist_wildcard_forces_subdomain_coverage(self):
+        self._write_source("01_a.txt", "0.0.0.0 other.com\n")
+        bl = os.path.join(self.tmp, "blocklist.txt")
+        with open(bl, "w") as f:
+            f.write("*.forced.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                blocklist_path=bl, allowlist_path=self._write_allowlist(""),
+                optimize_subdomains=False)
+        domains = self._read_hosts()
+        self.assertIn("forced.com", domains)
+        adblock_path = os.path.join(self.out_dir, "blocklist-adblock.txt")
+        with open(adblock_path) as f:
+            content = f.read()
+        self.assertIn("||*.forced.com^", content)
 
     def test_blocklist_forces_domain(self):
         self._write_source("01_a.txt", "0.0.0.0 blocked.com\n")
