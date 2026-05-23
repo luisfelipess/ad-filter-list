@@ -270,7 +270,7 @@ class TestMergeEndToEnd(unittest.TestCase):
         self._write_source("01_a.txt", "0.0.0.0 example.com\n")
         m.merge(self.raw_dir, self.map_path, self.out_path,
                 allowlist_path=self._write_allowlist(""), optimize_subdomains=False)
-        report_path = os.path.join(self.out_dir, "blocklist-report.json")
+        report_path = os.path.join(self.tmp, "reports", "blocklist-report.json")
         self.assertTrue(os.path.exists(report_path))
         with open(report_path) as f:
             report = json.loads(f.read())
