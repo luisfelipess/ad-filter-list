@@ -1,0 +1,28 @@
+# allowlist.txt — domains that should never be blocked
+# One domain per line. Lines starting with #, !, or ; are ignored.
+# Inline comments are supported: domain.com  # reason
+
+# ── Microsoft / Windows Update ───────────────────────────────────────────────
+windowsupdate.microsoft.com
+update.microsoft.com
+download.windowsupdate.com
+download.microsoft.com
+
+# ── Apple / macOS Update ─────────────────────────────────────────────────────
+swscan.apple.com
+swdownload.apple.com
+swcdn.apple.com
+mesu.apple.com
+
+# ── Google (core services) ───────────────────────────────────────────────────
+clients.google.com
+accounts.google.com
+oauth2.googleapis.com
+
+# ── Let's Encrypt (OCSP / certificate validation) ────────────────────────────
+ocsp.int-x3.letsencrypt.org
+r3.o.lencr.org
+
+# ── NTP ──────────────────────────────────────────────────────────────────────
+pool.ntp.org
+time.cloudflare.com

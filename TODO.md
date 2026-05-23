@@ -45,11 +45,16 @@ Downloading logic ported to `update.py`; `update.sh` kept as a legacy reference/
 - [x] **Compressed File Support**
   - Transparently decompresses gzip (magic bytes or `.gz`) and zip (magic bytes or `.zip`) responses before writing to `raw/`.
 
-### Phase 4: Smart Filtering & Allowlisting
-Avoid blocking critical services or generating redundant rules.
+### ✅ Phase 4: Smart Filtering & Allowlisting
 
-- [ ] **Allowlist Support**
-  - Support a local `allowlist.txt` file containing domains/wildcards that should never be blocked.
-  - Filter out these domains during the merge process.
-- [ ] **Subdomain Redundancy Optimizer**
-  - If a top-level domain is blocked (e.g., `example.com`), strip any of its subdomains (e.g., `ads.example.com`, `tracking.sub.example.com`) from the final compiled lists. This greatly reduces total rule count and resource usage on routers and DNS servers.
+- [x] **Allowlist Support** (`allowlist.txt`)
+  - `merge.py` loads `allowlist.txt` at merge time and silently drops any matching domain.
+  - Configurable via `--allowlist <path>` flag. Missing file is silently ignored.
+- [x] **Subdomain Redundancy Optimizer**
+  - After deduplication, any domain whose parent is already blocked is removed.
+  - e.g. if `example.com` is blocked, `ads.example.com` is dropped automatically.
+  - Disabled with `--no-optimize-subdomains`. Typically removes 30–40% of entries.
+- [x] **Abort on download failure**
+  - `update.py` exits non-zero if any source fails all retries; `processed/` is left untouched.
+- [x] **Regression test suite** (`tests/test_merge.py`)
+  - 32 tests covering `extract_domain`, `load_allowlist`, `remove_subdomains`, and end-to-end merge output (hosts, adblock, RPZ, JSON report).

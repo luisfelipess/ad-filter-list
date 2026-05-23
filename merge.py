@@ -18,6 +18,47 @@ from datetime import datetime, timezone
 LOCAL_SKIP = {"localhost", "localhost.localdomain", "local"}
 
 
+def load_allowlist(path: str) -> set[str]:
+    """Load domains from allowlist.txt; lines starting with #/!/; are ignored."""
+    allowed: set[str] = set()
+    if not os.path.exists(path):
+        return allowed
+    with open(path, "r", encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line or line[0] in ("#", "!", ";"):
+                continue
+            domain = line.split("#", 1)[0].strip().lower()
+            if domain:
+                allowed.add(domain)
+    print(f"Allowlist: loaded {len(allowed)} entries from {path}")
+    return allowed
+
+
+def remove_subdomains(domains: list[str]) -> list[str]:
+    """Remove any domain whose parent is already in the set.
+
+    e.g. if 'example.com' is blocked, drop 'ads.example.com'.
+    """
+    domain_set = set(domains)
+    result = []
+    for d in domains:
+        parts = d.split(".")
+        # check every suffix of length 2..n-1 (skip the domain itself)
+        dominated = False
+        for i in range(1, len(parts) - 1):
+            parent = ".".join(parts[i:])
+            if parent in domain_set:
+                dominated = True
+                break
+        if not dominated:
+            result.append(d)
+    removed = len(domains) - len(result)
+    if removed:
+        print(f"Subdomain optimizer: removed {removed} redundant subdomain entries")
+    return result
+
+
 def read_map(map_path: str) -> list[tuple[str, str]]:
     pairs = []
     if not os.path.exists(map_path):
@@ -137,7 +178,9 @@ def read_leading_header(path: str) -> list[str]:
     return headers
 
 
-def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True) -> None:
+def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
+          allowlist_path: str = "allowlist.txt", optimize_subdomains: bool = True) -> None:
+    allowlist = load_allowlist(allowlist_path)
     pairs = read_map(map_path)
     seen: set[str] = set()
     ordered: list[str] = []
@@ -183,7 +226,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True) 
                         continue
                     source_stats[fname]["accepted"] += 1
                     total_candidates += 1
-                    if dom not in seen:
+                    if dom not in seen and dom not in allowlist:
                         seen.add(dom)
                         ordered.append(dom)
     else:
@@ -208,13 +251,17 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True) 
                         continue
                     source_stats[fname]["accepted"] += 1
                     total_candidates += 1
-                    if dom not in seen:
+                    if dom not in seen and dom not in allowlist:
                         seen.add(dom)
                         ordered.append(dom)
 
     # optionally sort output (alphabetical by domain)
     if sort_output:
         ordered = sorted(ordered)
+
+    # remove subdomains whose parent domain is already blocked
+    if optimize_subdomains:
+        ordered = remove_subdomains(ordered)
 
     # prepare previous backup and compute delta vs previous file if exists
     prev_path = out_path
@@ -398,9 +445,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--map", default="raw/sources.map", help="mapping file produced by update script")
     p.add_argument("--out", default="processed/blocklist.txt", help="output file path")
     p.add_argument("--unsorted", action="store_true", help="keep first-seen order instead of sorting alphabetically")
+    p.add_argument("--allowlist", default="allowlist.txt", help="path to allowlist file (default: allowlist.txt)")
+    p.add_argument("--no-optimize-subdomains", action="store_true", help="disable subdomain redundancy optimizer")
     args = p.parse_args(argv)
 
-    merge(args.raw, args.map, args.out, sort_output=not args.unsorted)
+    merge(args.raw, args.map, args.out,
+          sort_output=not args.unsorted,
+          allowlist_path=args.allowlist,
+          optimize_subdomains=not args.no_optimize_subdomains)
     return 0
 
 

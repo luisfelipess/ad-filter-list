@@ -1,0 +1,258 @@
+"""Tests for merge.py — covers extract_domain, load_allowlist,
+remove_subdomains, and end-to-end merge output."""
+
+import gzip
+import json
+import os
+import sys
+import tempfile
+import unittest
+
+# ensure repo root is on the path when running from tests/
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
+import merge as m
+
+
+# ── extract_domain ────────────────────────────────────────────────────────────
+
+class TestExtractDomain(unittest.TestCase):
+
+    def _e(self, line):
+        return m.extract_domain(line)
+
+    # hosts-style
+    def test_hosts_0000(self):
+        self.assertEqual(self._e("0.0.0.0 example.com"), "example.com")
+
+    def test_hosts_127(self):
+        self.assertEqual(self._e("127.0.0.1 example.com"), "example.com")
+
+    def test_hosts_ipv6(self):
+        self.assertEqual(self._e("::1 example.com"), "example.com")
+
+    # domain-only
+    def test_domain_only(self):
+        self.assertEqual(self._e("example.com"), "example.com")
+
+    # normalisation
+    def test_uppercase_normalised(self):
+        self.assertEqual(self._e("0.0.0.0 EXAMPLE.COM"), "example.com")
+
+    def test_strips_inline_comment(self):
+        self.assertEqual(self._e("example.com # comment"), "example.com")
+
+    def test_strips_quotes(self):
+        self.assertEqual(self._e('"example.com"'), "example.com")
+
+    # rejections
+    def test_rejects_localhost(self):
+        self.assertIsNone(self._e("0.0.0.0 localhost"))
+
+    def test_rejects_arbitrary_ip_target(self):
+        # arbitrary redirect IP — not a known normalisation target
+        self.assertIsNone(self._e("1.2.3.4 example.com"))
+
+    def test_rejects_plain_ip(self):
+        self.assertIsNone(self._e("1.2.3.4"))
+
+    def test_rejects_empty(self):
+        self.assertIsNone(self._e(""))
+
+    def test_rejects_comment_line(self):
+        self.assertIsNone(self._e("# this is a comment"))
+
+
+# ── load_allowlist ────────────────────────────────────────────────────────────
+
+class TestLoadAllowlist(unittest.TestCase):
+
+    def test_loads_domains(self):
+        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+            f.write("# comment\nexample.com\ngood.org\n")
+            path = f.name
+        try:
+            result = m.load_allowlist(path)
+            self.assertEqual(result, {"example.com", "good.org"})
+        finally:
+            os.unlink(path)
+
+    def test_missing_file_returns_empty(self):
+        self.assertEqual(m.load_allowlist("/nonexistent/allowlist.txt"), set())
+
+    def test_ignores_comment_prefixes(self):
+        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+            f.write("! exclaim\n; semicolon\n# hash\nkeep.com\n")
+            path = f.name
+        try:
+            self.assertEqual(m.load_allowlist(path), {"keep.com"})
+        finally:
+            os.unlink(path)
+
+    def test_strips_inline_comment(self):
+        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+            f.write("keep.com  # reason\n")
+            path = f.name
+        try:
+            self.assertEqual(m.load_allowlist(path), {"keep.com"})
+        finally:
+            os.unlink(path)
+
+    def test_normalises_to_lowercase(self):
+        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+            f.write("UPPER.COM\n")
+            path = f.name
+        try:
+            self.assertIn("upper.com", m.load_allowlist(path))
+        finally:
+            os.unlink(path)
+
+
+# ── remove_subdomains ─────────────────────────────────────────────────────────
+
+class TestRemoveSubdomains(unittest.TestCase):
+
+    def test_removes_subdomain_when_parent_present(self):
+        result = m.remove_subdomains(["example.com", "ads.example.com"])
+        self.assertIn("example.com", result)
+        self.assertNotIn("ads.example.com", result)
+
+    def test_removes_deep_subdomain(self):
+        result = m.remove_subdomains(["example.com", "a.b.example.com"])
+        self.assertNotIn("a.b.example.com", result)
+
+    def test_keeps_unrelated_domains(self):
+        result = m.remove_subdomains(["example.com", "other.org"])
+        self.assertIn("other.org", result)
+
+    def test_keeps_subdomain_when_parent_absent(self):
+        result = m.remove_subdomains(["ads.example.com"])
+        self.assertIn("ads.example.com", result)
+
+    def test_empty_list(self):
+        self.assertEqual(m.remove_subdomains([]), [])
+
+    def test_no_redundancy(self):
+        domains = ["alpha.com", "beta.org", "gamma.net"]
+        self.assertEqual(sorted(m.remove_subdomains(domains)), sorted(domains))
+
+    def test_does_not_remove_sibling(self):
+        # ads.example.com and track.example.com are siblings — neither removes the other
+        result = m.remove_subdomains(["ads.example.com", "track.example.com"])
+        self.assertIn("ads.example.com", result)
+        self.assertIn("track.example.com", result)
+
+
+# ── end-to-end merge ──────────────────────────────────────────────────────────
+
+class TestMergeEndToEnd(unittest.TestCase):
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.raw_dir = os.path.join(self.tmp, "raw")
+        self.out_dir = os.path.join(self.tmp, "processed")
+        os.makedirs(self.raw_dir)
+        os.makedirs(self.out_dir)
+        self.out_path = os.path.join(self.out_dir, "blocklist.txt")
+        self.map_path = os.path.join(self.raw_dir, "sources.map")
+
+    def _write_source(self, fname, content):
+        path = os.path.join(self.raw_dir, fname)
+        with open(path, "w") as f:
+            f.write(content)
+        with open(self.map_path, "a") as mf:
+            mf.write(f"{fname} http://example.com/{fname}\n")
+
+    def _write_allowlist(self, content):
+        path = os.path.join(self.tmp, "allowlist.txt")
+        with open(path, "w") as f:
+            f.write(content)
+        return path
+
+    def _read_hosts(self):
+        with open(self.out_path) as f:
+            return [
+                line.split()[1]
+                for line in f
+                if line.strip() and not line.startswith("#")
+            ]
+
+    def test_basic_deduplication(self):
+        self._write_source("01_a.txt", "0.0.0.0 dup.com\n0.0.0.0 dup.com\n0.0.0.0 other.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path, optimize_subdomains=False)
+        domains = self._read_hosts()
+        self.assertEqual(domains.count("dup.com"), 1)
+
+    def test_allowlist_filters_domain(self):
+        self._write_source("01_a.txt", "0.0.0.0 blocked.com\n0.0.0.0 safe.com\n")
+        al = self._write_allowlist("safe.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                allowlist_path=al, optimize_subdomains=False)
+        domains = self._read_hosts()
+        self.assertIn("blocked.com", domains)
+        self.assertNotIn("safe.com", domains)
+
+    def test_subdomain_optimizer_removes_redundant(self):
+        self._write_source("01_a.txt", "0.0.0.0 example.com\n0.0.0.0 ads.example.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                allowlist_path=self._write_allowlist(""), optimize_subdomains=True)
+        domains = self._read_hosts()
+        self.assertIn("example.com", domains)
+        self.assertNotIn("ads.example.com", domains)
+
+    def test_subdomain_optimizer_disabled(self):
+        self._write_source("01_a.txt", "0.0.0.0 example.com\n0.0.0.0 ads.example.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                allowlist_path=self._write_allowlist(""), optimize_subdomains=False)
+        domains = self._read_hosts()
+        self.assertIn("example.com", domains)
+        self.assertIn("ads.example.com", domains)
+
+    def test_adblock_output_written(self):
+        self._write_source("01_a.txt", "0.0.0.0 example.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                allowlist_path=self._write_allowlist(""), optimize_subdomains=False)
+        adblock_path = os.path.join(self.out_dir, "blocklist-adblock.txt")
+        self.assertTrue(os.path.exists(adblock_path))
+        with open(adblock_path) as f:
+            content = f.read()
+        self.assertIn("||example.com^", content)
+
+    def test_rpz_output_written_and_valid(self):
+        self._write_source("01_a.txt", "0.0.0.0 example.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                allowlist_path=self._write_allowlist(""), optimize_subdomains=False)
+        rpz_path = os.path.join(self.out_dir, "blocklist-bind9.zone.gz")
+        self.assertTrue(os.path.exists(rpz_path))
+        content = gzip.open(rpz_path, "rt").read()
+        self.assertIn("ns.rpz.local.", content)
+        self.assertIn("ns IN A 127.0.0.1", content)
+        self.assertIn("example.com IN CNAME .", content)
+        self.assertIn("*.example.com IN CNAME .", content)
+
+    def test_json_report_written(self):
+        self._write_source("01_a.txt", "0.0.0.0 example.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                allowlist_path=self._write_allowlist(""), optimize_subdomains=False)
+        report_path = os.path.join(self.out_dir, "blocklist-report.json")
+        self.assertTrue(os.path.exists(report_path))
+        with open(report_path) as f:
+            report = json.loads(f.read())
+        self.assertIn("summary", report)
+        self.assertIn("sources", report)
+
+    def test_domain_only_source_format(self):
+        self._write_source("01_a.txt", "example.com\nother.org\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                allowlist_path=self._write_allowlist(""), optimize_subdomains=False)
+        domains = self._read_hosts()
+        self.assertIn("example.com", domains)
+        self.assertIn("other.org", domains)
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmp)
+
+
+if __name__ == "__main__":
+    unittest.main()

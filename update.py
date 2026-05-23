@@ -131,13 +131,21 @@ def main(argv: list[str] | None = None) -> int:
 
     # write sources.map in original order (sorted by index)
     results.sort(key=lambda r: r[0])
+    failures = [(url, err) for _, _, url, err in results if err]
+    if failures:
+        for url, err in failures:
+            print(f"  FAILED {url}: {err}", file=sys.stderr)
+        print(
+            f"\nAborting: {len(failures)} source(s) failed after {args.retries} retries. "
+            "processed/ is unchanged.",
+            file=sys.stderr,
+        )
+        return 1
+
     with open(map_path, "w", encoding="utf-8") as mf:
         for _, fname, url, err in results:
-            if err:
-                print(f"  FAILED {url}: {err}", file=sys.stderr)
-            else:
-                print(f"  OK     {url} -> {args.raw}/{fname}")
-                mf.write(f"{fname} {url}\n")
+            print(f"  OK     {url} -> {args.raw}/{fname}")
+            mf.write(f"{fname} {url}\n")
 
     # invoke merge.py
     import merge  # local module
