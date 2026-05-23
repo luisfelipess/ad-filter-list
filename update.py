@@ -5,8 +5,8 @@ Reads sources.txt, downloads all URLs in parallel, writes raw/ files and
 raw/sources.map, then invokes merge.py.  Supports gzip/zip sources natively.
 
 Usage:
-    python3 update.py [--unsorted] [--sources sources.txt] [--raw raw]
-                      [--out processed/blocklist.txt]
+    python3 update.py [--unsorted] [--skip-download] [--sources sources.txt]
+                      [--raw raw] [--out processed/blocklist.txt]
                       [--workers 8] [--retries 3] [--timeout 30]
 """
 
@@ -92,12 +92,31 @@ def download_one(
 # Main
 # ---------------------------------------------------------------------------
 
+def _invoke_merge(args: argparse.Namespace, map_path: str) -> int:
+    import merge  # local module
+
+    merge_argv = [
+        "--raw", args.raw,
+        "--map", map_path,
+        "--out", args.out,
+        "--blocklist", args.blocklist,
+    ]
+    if args.unsorted:
+        merge_argv.append("--unsorted")
+    return merge.main(merge_argv)
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description="Concurrent blocklist downloader")
     p.add_argument("--sources", default="sources.conf")
     p.add_argument("--raw", default="raw")
     p.add_argument("--out", default="processed/blocklist.txt")
     p.add_argument("--unsorted", action="store_true")
+    p.add_argument(
+        "--skip-download",
+        action="store_true",
+        help="skip downloading; merge existing files in --raw",
+    )
     p.add_argument("--workers", type=int, default=8)
     p.add_argument("--retries", type=int, default=3)
     p.add_argument("--timeout", type=int, default=30)
@@ -106,6 +125,16 @@ def main(argv: list[str] | None = None) -> int:
 
     os.makedirs(args.raw, exist_ok=True)
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
+
+    map_path = os.path.join(args.raw, "sources.map")
+    if args.skip_download:
+        print(f"Skipping download; using existing files in {args.raw}/")
+        if not os.path.isfile(map_path):
+            print(
+                f"Note: {map_path} not found; merge will scan {args.raw}/ for files.",
+                file=sys.stderr,
+            )
+        return _invoke_merge(args, map_path)
 
     # clear previous raw files
     for f in os.listdir(args.raw):
@@ -118,7 +147,6 @@ def main(argv: list[str] | None = None) -> int:
         print("No sources found.", file=sys.stderr)
         return 1
 
-    map_path = os.path.join(args.raw, "sources.map")
     results: list[tuple[int, str, str, str | None]] = []
 
     print(f"Downloading {len(urls)} source(s) with {args.workers} workers…")
@@ -150,13 +178,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  OK     {url} -> {args.raw}/{fname}")
             mf.write(f"{fname} {url}\n")
 
-    # invoke merge.py
-    import merge  # local module
-    merge_argv = ["--raw", args.raw, "--map", map_path, "--out", args.out,
-                  "--blocklist", args.blocklist]
-    if args.unsorted:
-        merge_argv.append("--unsorted")
-    return merge.main(merge_argv)
+    return _invoke_merge(args, map_path)
 
 
 if __name__ == "__main__":

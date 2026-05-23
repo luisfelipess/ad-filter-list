@@ -16,7 +16,7 @@ Run diagnostics land in `reports/`:
 
 | File | Contents |
 |---|---|
-| `reports/blocklist-report.json` | Per-source stats (scanned, accepted, rejected, delta) |
+| `reports/blocklist-report.json` | Per-source stats plus run summary (`matched_allowlisted`, `added_by_blocklist_override`, deltas, wildcards) |
 | `reports/rejected-entries.txt` | Lines that could not be parsed, for debugging source quality |
 
 All files are committed back to the repository automatically after each run.
@@ -34,21 +34,49 @@ cd ad-filter-list
 
 Outputs land in `processed/`. Raw downloaded files go to `raw/` (gitignored).
 
-### Options
+### Local testing workflow
+
+When tuning `allowlist.txt` or `blocklist.txt`, avoid re-downloading on every edit:
+
+1. **Full run once** — `./update.sh` fetches all sources into `raw/` and writes `processed/` + `reports/`.
+2. **Iterate on lists** — edit allowlist/blocklist, then `./update.sh --skip-download` (add `--unsorted` if you need first-seen order preserved).
+3. **Prerequisite** — `--skip-download` reuses whatever is already in `raw/` from a prior download. An empty `raw/` means no source data to merge; only blocklist overrides (if any) will appear in the output.
+
+For merge-only experiments (no download at all):
 
 ```bash
-./update.sh              # default: Python concurrent downloader (update.py)
-./update.sh --unsorted   # preserve first-seen order instead of alphabetical sort
-./update.sh --legacy     # use original curl-based downloader (fallback)
+python3 merge.py --raw raw --map raw/sources.map --out processed/blocklist.txt
+```
+
+### Options
+
+| Flag | `update.sh` | `update.py` | Effect |
+|---|---|---|---|
+| *(default)* | yes | yes | Download sources, then merge |
+| `--skip-download` | yes | yes | Skip network fetch; merge existing files in `raw/` |
+| `--unsorted` | yes | yes | Preserve first-seen domain order instead of sorting |
+| `--legacy` | yes | — | Use curl-based downloader instead of `update.py` (no `--skip-download`) |
+| `--workers N` | — | yes | Parallel download threads (default 8) |
+| `--retries N` | — | yes | Per-URL retry count (default 3) |
+| `--timeout N` | — | yes | Per-request timeout in seconds (default 30) |
+
+```bash
+./update.sh                              # download + merge
+./update.sh --skip-download              # merge only (fast iteration)
+./update.sh --skip-download --unsorted
+./update.sh --legacy                     # curl downloader (fallback)
 ./update.sh --legacy --unsorted
 ```
 
 ### Direct Python usage
 
 ```bash
-python3 update.py [--unsorted] [--workers 8] [--retries 3] [--timeout 30]
+python3 update.py [--unsorted] [--skip-download] [--workers 8] [--retries 3] [--timeout 30]
                   [--sources sources.conf] [--raw raw] [--out processed/blocklist.txt]
+                  [--blocklist blocklist.txt]
 ```
+
+With `--skip-download`, `update.py` does not clear `raw/`; it runs `merge.py` against the files already there. If `raw/sources.map` is missing, merge still scans `raw/` for downloaded files.
 
 `merge.py` can also be run standalone if raw files are already downloaded:
 
@@ -89,6 +117,41 @@ Override the config path with `--writers-config /path/to/other.conf`.
 
 ---
 
+## Allowlist and blocklist
+
+Two optional files at the repository root adjust the merged output without editing upstream source URLs:
+
+| File | Purpose |
+|---|---|
+| `allowlist.txt` | Domains that must **never** be blocked, even if they appear in downloaded lists |
+| `blocklist.txt` | Domains that must **always** be blocked, even if no source lists them |
+
+One domain per line. Lines starting with `#`, `!`, or `;` are ignored. Inline comments after `#` are supported (`domain.com  # reason`).
+
+| Entry | What it matches |
+|---|---|
+| `example.com` | The apex host only |
+| `*.example.com` | All **proper** subdomains (`www.example.com`, `cdn.ads.example.com`) — **not** `example.com` unless you add that name explicitly |
+
+Wildcard semantics match domain-only sources and the pipeline’s `*.domain` handling (see [Wildcard handling](#wildcard-handling-and-deduplication) below).
+
+**Precedence during merge:**
+
+1. Domains are collected from everything in `raw/`.
+2. Any collected domain that matches the allowlist is dropped. Allowlist wins over source entries.
+3. Blocklist entries are merged in afterward: exact domains and wildcard bases (`*.foo` → base `foo`) are added if missing and not allowlisted. On overlap, allowlist still wins (a warning is printed if the same apex appears in both files).
+
+**Run metrics** — after merge, check the terminal `Processed:` line or `reports/blocklist-report.json` → `summary`:
+
+| Field | Meaning |
+|---|---|
+| `matched_allowlisted` | Unique source domains removed because they matched the allowlist |
+| `added_by_blocklist_override` | Domains (or wildcard bases) forced into the output solely from `blocklist.txt` |
+
+Example `Processed:` tail: `… matched_allowlisted=12 added_by_blocklist_override=3 …`
+
+---
+
 ## Wildcard handling and deduplication
 
 Some sources publish wildcard entries (`*.domain`) meaning "block this domain and all subdomains". The pipeline handles these with format-aware logic:
@@ -114,7 +177,7 @@ The direction is strictly one-way: wildcards degrade to exact for formats that d
 
 The `wildcards=N` field in the pipeline summary shows how many wildcard entries were collected, giving a sense of how much coverage relies on wildcard semantics vs exact matching.
 
-**Allowlist / blocklist** — `allowlist.txt` and `blocklist.txt` use the same `*.domain` syntax as domain-only sources: `*.example.com` applies to all proper subdomains (`sub.example.com`, `a.b.example.com`), not the apex `example.com` unless that name is listed explicitly.
+Allowlist and blocklist wildcards follow the same `*.domain` rules; see [Allowlist and blocklist](#allowlist-and-blocklist).
 
 ---
 
@@ -134,7 +197,7 @@ raw/  (gitignored)
     ▼
 merge.py  ──── format detection per source  (readers/)
     │           domain extraction & normalisation
-    │           allowlist filtering
+    │           allowlist filter + blocklist override
     │           deduplication + subdomain optimizer
     │           delta vs previous run
     │

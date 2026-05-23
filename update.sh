@@ -10,16 +10,18 @@ cd "$(dirname "$0")"
 # ── argument parsing ────────────────────────────────────────────────────────
 LEGACY=false
 UNSORTED_FLAG=""
+SKIP_DOWNLOAD_FLAG=""
 for arg in "$@"; do
   case "$arg" in
-    --legacy)   LEGACY=true ;;
-    --unsorted) UNSORTED_FLAG="--unsorted" ;;
+    --legacy)         LEGACY=true ;;
+    --unsorted)       UNSORTED_FLAG="--unsorted" ;;
+    --skip-download)  SKIP_DOWNLOAD_FLAG="--skip-download" ;;
   esac
 done
 
 # ── default path: Python downloader ────────────────────────────────────────
 if [ "$LEGACY" = false ]; then
-  exec python3 update.py $UNSORTED_FLAG
+  exec python3 update.py $UNSORTED_FLAG $SKIP_DOWNLOAD_FLAG
 fi
 
 # ── legacy path: original curl loop ────────────────────────────────────────
