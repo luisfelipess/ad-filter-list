@@ -1,6 +1,6 @@
 # ad-filter-list
 
-Automated blocklist compiler. Fetches DNS/ad-block lists from multiple sources daily, merges and deduplicates them, and publishes three output formats directly to this repository via GitHub Actions.
+Automated blocklist compiler. Fetches DNS/ad-block lists from multiple sources daily, merges and deduplicates them, and publishes five output formats directly to this repository via GitHub Actions.
 
 ## Output formats
 
@@ -48,7 +48,9 @@ python3 update.py [--unsorted] [--workers 8] [--retries 3] [--timeout 30]
 `merge.py` can also be run standalone if raw files are already downloaded:
 
 ```bash
-python3 merge.py [--raw raw] [--map raw/sources.map] [--out processed/blocklist.txt] [--unsorted]
+python3 merge.py [--raw raw] [--map raw/sources.map] [--out processed/blocklist.txt]
+                 [--unsorted] [--allowlist allowlist.txt]
+                 [--no-optimize-subdomains] [--writers-config writers.conf]
 ```
 
 ---
@@ -63,6 +65,22 @@ https://example.com/hosts.txt        # optional comment
 ```
 
 Supported source formats are auto-detected: hosts-style (`0.0.0.0 domain` / `127.0.0.1 domain`), domain-only, and mixed. Gzip (`.gz`) and zip (`.zip`) sources are decompressed automatically.
+
+---
+
+## Enabling or disabling output formats
+
+Edit `writers.conf` — one writer name per line. Comment out a line to disable that format. If the file is missing, all formats are produced.
+
+```
+hosts
+adblock
+rpz
+# dnsmasq    ← disabled
+unbound
+```
+
+Override the config path with `--writers-config /path/to/other.conf`.
 
 ---
 
@@ -82,14 +100,24 @@ raw/  (gitignored)
     ▼
 merge.py  ──── format detection per source
     │           domain extraction & normalisation
-    │           deduplication
+    │           allowlist filtering
+    │           deduplication + subdomain optimizer
     │           delta vs previous run
+    │
+    ├── writers/ (controlled by writers.conf)
+    │     hosts.py      → blocklist.txt
+    │     adblock.py    → blocklist-adblock.txt
+    │     rpz.py        → blocklist-bind9.zone.gz
+    │     dnsmasq.py    → blocklist-dnsmasq.conf
+    │     unbound.py    → blocklist-unbound.conf
     │
     ▼
 processed/
   blocklist.txt
-  blocklist-bind9.zone.gz
   blocklist-adblock.txt
+  blocklist-bind9.zone.gz
+  blocklist-dnsmasq.conf
+  blocklist-unbound.conf
   blocklist-report.json
   rejected-entries.txt
 ```
@@ -168,6 +196,7 @@ writers/                         pluggable output format writers
   unbound.py                     local-zone: always_nxdomain
 sources.txt                      list of source URLs
 allowlist.txt                    domains that are never blocked
+writers.conf                     enable/disable output writers
 client-scripts/
   bind9-update-rpz.sh            BIND9 RPZ fetch-and-reload script
   README.md                      BIND9 setup guide
