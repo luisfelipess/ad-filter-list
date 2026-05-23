@@ -14,53 +14,25 @@ Transform this tool into a highly optimized, fully automated blocklist compiler.
 
 ## 📋 Roadmap & Tasks
 
-### Phase 1: Support for Multiple Output Formats
-Enhance `merge.py` to write two additional output formats alongside the standard hosts file:
+### ✅ Phase 1: Support for Multiple Output Formats
+`merge.py` now writes three output formats alongside the standard hosts file:
 
-- [ ] **BIND9 Response Policy Zone (RPZ) Format**
-  - **Path**: `processed/blocklist-bind9.zone`
-  - **Syntax**: Standard DNS zone file with an SOA/NS header, mapping domains using CNAMEs to `.` (which resolves to `NXDOMAIN`).
-  - **Example**:
-    ```text
-    $TTL 2h
-    @ IN SOA rpz.local. hostmaster.rpz.local. (
-        2026052201 ; Serial (YYYYMMDDNN)
-        1h         ; Refresh
-        15m        ; Retry
-        30d        ; Expire
-        2h         ; Minimum TTL
-    )
-        IN NS localhost.
-
-    ; Blocked domains
-    example.com IN CNAME .
-    *.example.com IN CNAME .
-    ```
-- [ ] **Adblock/uBlock Filter Syntax**
+- [x] **BIND9 Response Policy Zone (RPZ) Format**
+  - **Path**: `processed/blocklist-bind9.zone.gz` (gzip-compressed to keep repo size manageable)
+  - **Syntax**: Standard DNS zone file with SOA/NS header, mapping domains using CNAMEs to `.` (NXDOMAIN).
+- [x] **Adblock/uBlock Filter Syntax**
   - **Path**: `processed/blocklist-adblock.txt`
-  - **Syntax**: Uses standard browser extension network rule filters.
-  - **Example**:
-    ```text
-    ! Title: Ad-Filter-List (Adblock Format)
-    ! Homepage: https://github.com/luisfelipess/ad-filter-list
-    ! Total lines: ...
-    ||example.com^
-    ```
+  - **Syntax**: `||domain.com^` format compatible with uBlock Origin and similar extensions.
 
-### Phase 2: Daily Automation via GitHub Actions
-Set up a robust, hands-free compilation workflow using GitHub workflows.
+### ✅ Phase 2: Daily Automation via GitHub Actions
+Hands-free compilation workflow implemented at `.github/workflows/update.yml`.
 
-- [ ] **Create GitHub Actions Workflow**
-  - Define `.github/workflows/update-blocklists.yml`.
-  - **Schedule**: Trigger daily (e.g., `0 4 * * *` at 4 AM UTC) + manual trigger (`workflow_dispatch`).
-  - **Workflow steps**:
-    1. Check out repository.
-    2. Set up Python.
-    3. Run `update.sh` (or the new Python download tool).
-    4. Automatically commit and push modified files (`processed/blocklist.txt`, `processed/blocklist-bind9.zone`, `processed/blocklist-adblock.txt`, and reports) back to the repository.
+- [x] **GitHub Actions Workflow** (`.github/workflows/update.yml`)
+  - **Schedule**: Daily at 03:00 UTC + manual trigger (`workflow_dispatch`).
+  - **Steps**: checkout → setup Python → run `update.sh` → commit & push `processed/` back to the repository with `[skip ci]`.
 - [ ] **Provide a BIND9 Client Integration Script**
   - Write a helper/setup guide or script (`bind9/update-rpz.sh`) that a remote BIND9 server can run daily via a cron job to:
-    1. Fetch the raw `blocklist-bind9.zone` directly from the raw GitHub URL.
+    1. Fetch `blocklist-bind9.zone.gz` directly from the raw GitHub URL.
     2. Reload BIND9 (`rndc reload` or `rndc reload rpz.local`) to apply the blocklist seamlessly.
 
 ### Phase 3: Python-based Downloader & Performance
