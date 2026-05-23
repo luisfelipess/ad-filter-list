@@ -136,6 +136,13 @@ Steps:
 
 No secrets or tokens required beyond the default `GITHUB_TOKEN` — the workflow uses `permissions: contents: write`.
 
+To trigger the same workflow from your machine (uses your existing `gh auth login` session, no repo secrets):
+
+```bash
+./trigger-update-workflow.sh          # trigger and print the latest run URL
+./trigger-update-workflow.sh --watch  # wait until the run finishes
+```
+
 ---
 
 ## BIND9 RPZ integration
