@@ -89,6 +89,33 @@ Override the config path with `--writers-config /path/to/other.conf`.
 
 ---
 
+## Wildcard handling and deduplication
+
+Some sources publish wildcard entries (`*.domain`) meaning "block this domain and all subdomains". The pipeline handles these with format-aware logic:
+
+**Detection** — `DomainReader` recognises `*.domain` lines and flags them as wildcards. `HostsReader` always produces exact entries (`is_wildcard=False`) — a hosts file entry is never promoted to a wildcard.
+
+**Deduplication** — after collection, the subdomain optimizer runs two passes:
+1. Drop any exact domain whose parent is already in the exact-match set (e.g. `ads.example.com` is redundant if `example.com` is blocked).
+2. Drop any exact domain covered by a wildcard ancestor (e.g. `tracker.ads.example.com` is redundant if `*.ads.example.com` is in the wildcard set).
+
+**Per-format output:**
+
+| Format | Wildcard handling |
+|---|---|
+| `hosts` | Wildcards degrade to exact match (`0.0.0.0 domain`) — best effort, no wildcard syntax exists |
+| `adblock` | Wildcard entries emit `\|\|*.domain^`; covered exact entries are dropped |
+| `rpz` | Wildcard entries emit both `domain IN CNAME .` and `*.domain IN CNAME .`; covered exact entries still get both records |
+| `dnsmasq` | `address=/domain/#` natively matches all subdomains; covered exact entries are dropped |
+| `unbound` | `local-zone: "domain." always_nxdomain` natively matches all subdomains; covered exact entries are dropped |
+| `domains` | Same as hosts — exact match only |
+
+The direction is strictly one-way: wildcards degrade to exact for formats that don't support them, but exact entries from hosts sources are never promoted to wildcards. If a domain appears as both an exact entry (from a hosts source) and a wildcard entry (from a wildcard source), wildcard-capable writers drop the redundant exact entry while the hosts writer keeps it — harmless duplication, best effort.
+
+The `wildcards=N` field in the pipeline summary shows how many wildcard entries were collected, giving a sense of how much coverage relies on wildcard semantics vs exact matching.
+
+---
+
 ## How it works
 
 ```
