@@ -18,6 +18,7 @@ from writers.adblock import AdblockWriter
 from writers.rpz import RpzWriter
 from writers.dnsmasq import DnsmasqWriter
 from writers.unbound import UnboundWriter
+from writers.domains import DomainsWriter
 
 from readers import normalize_domain, read_leading_header
 from readers.hosts import HostsReader
@@ -38,6 +39,7 @@ WRITERS = [
     RpzWriter(),
     DnsmasqWriter(),
     UnboundWriter(),
+    DomainsWriter(),
 ]
 
 _WRITER_REGISTRY: dict[str, BaseWriter] = {w.__class__.__name__.lower().replace("writer", ""): w for w in WRITERS}
