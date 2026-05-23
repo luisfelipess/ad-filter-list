@@ -327,6 +327,50 @@ class TestMergeEndToEnd(unittest.TestCase):
         self.assertIn("blocked.com", domains)
         self.assertNotIn("safe.com", domains)
 
+    def _read_report_summary(self):
+        report_path = os.path.join(self.tmp, "reports", "blocklist-report.json")
+        with open(report_path) as f:
+            return json.loads(f.read())["summary"]
+
+    def test_allowlist_wildcard_supersedes_source_subdomain(self):
+        """*.youtube.com allowlist drops ads.youtube.com from sources (allowlist wins)."""
+        self._write_source(
+            "01_a.txt",
+            "0.0.0.0 ads.youtube.com\n0.0.0.0 other.com\n",
+        )
+        al = self._write_allowlist("*.youtube.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                allowlist_path=al, optimize_subdomains=False)
+        domains = self._read_hosts()
+        self.assertNotIn("ads.youtube.com", domains)
+        self.assertIn("other.com", domains)
+        summary = self._read_report_summary()
+        self.assertEqual(summary["matched_allowlisted"], 1)
+        self.assertEqual(summary["added_by_blocklist_override"], 0)
+
+    def test_matched_allowlisted_counts_unique_domains_only(self):
+        self._write_source(
+            "01_a.txt",
+            "0.0.0.0 skip.com\n0.0.0.0 skip.com\n0.0.0.0 keep.com\n",
+        )
+        al = self._write_allowlist("skip.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                allowlist_path=al, optimize_subdomains=False)
+        summary = self._read_report_summary()
+        self.assertEqual(summary["matched_allowlisted"], 1)
+
+    def test_added_by_blocklist_override_in_report(self):
+        self._write_source("01_a.txt", "0.0.0.0 other.com\n")
+        bl = os.path.join(self.tmp, "blocklist.txt")
+        with open(bl, "w") as f:
+            f.write("forced.com\n*.wildcard-forced.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                blocklist_path=bl, allowlist_path=self._write_allowlist(""),
+                optimize_subdomains=False)
+        summary = self._read_report_summary()
+        self.assertEqual(summary["added_by_blocklist_override"], 2)
+        self.assertEqual(summary["matched_allowlisted"], 0)
+
     def test_allowlist_wildcard_filters_subdomains_not_apex(self):
         self._write_source(
             "01_a.txt",
@@ -437,6 +481,8 @@ class TestMergeEndToEnd(unittest.TestCase):
             report = json.loads(f.read())
         self.assertIn("summary", report)
         self.assertIn("sources", report)
+        self.assertIn("matched_allowlisted", report["summary"])
+        self.assertIn("added_by_blocklist_override", report["summary"])
 
     def test_domain_only_source_format(self):
         self._write_source("01_a.txt", "example.com\nother.org\n")

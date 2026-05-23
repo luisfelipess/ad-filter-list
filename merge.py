@@ -187,11 +187,13 @@ def _pick_reader(path: str, sample_size: int = 50):
 
 
 def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries):
-    """Scan source files and return (ordered_domains, total_candidates, wildcard_domains)."""
+    """Scan source files and return (ordered_domains, total_candidates, wildcard_domains, matched_allowlisted)."""
     seen: set[str] = set()
+    allowlisted_skipped: set[str] = set()
     ordered: list[str] = []
     wildcard_domains: set[str] = set()
     total_candidates = 0
+    matched_allowlisted = 0
 
     sources = pairs if pairs else [
         (fname, "")
@@ -234,13 +236,17 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
                     continue
                 source_stats[fname]["accepted"] += 1
                 total_candidates += 1
-                if dom not in seen and not allowlist.matches(dom):
+                if allowlist.matches(dom):
+                    if dom not in allowlisted_skipped:
+                        allowlisted_skipped.add(dom)
+                        matched_allowlisted += 1
+                elif dom not in seen:
                     seen.add(dom)
                     ordered.append(dom)
                 if is_wildcard:
                     wildcard_domains.add(dom)
 
-    return ordered, total_candidates, wildcard_domains
+    return ordered, total_candidates, wildcard_domains, matched_allowlisted
 
 
 def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
@@ -254,10 +260,11 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
     rejected_entries: list[tuple[str, int, str]] = []
     source_stats: dict[str, dict] = {}
 
-    ordered, total_candidates, wildcard_domains = _collect_domains(
+    ordered, total_candidates, wildcard_domains, matched_allowlisted = _collect_domains(
         raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries
     )
 
+    added_by_blocklist_override = 0
     if blocklist.exact or blocklist.wildcards:
         conflicts = allowlist.exact & blocklist.exact
         if conflicts:
@@ -266,21 +273,23 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
                 f"and blocklist; allowlist entries will take precedence: "
                 f"{', '.join(sorted(conflicts))}"
             )
-        added = 0
         seen_set = set(ordered)
         for dom in sorted(blocklist.exact):
             if dom not in seen_set and not allowlist.matches(dom):
                 seen_set.add(dom)
                 ordered.append(dom)
-                added += 1
+                added_by_blocklist_override += 1
         for base in sorted(blocklist.wildcards):
             wildcard_domains.add(base)
             if base not in seen_set and not allowlist.matches(base):
                 seen_set.add(base)
                 ordered.append(base)
-                added += 1
-        if added:
-            print(f"Blocklist: added {added} forced domain(s) from {blocklist_path}")
+                added_by_blocklist_override += 1
+        if added_by_blocklist_override:
+            print(
+                f"Blocklist: added {added_by_blocklist_override} forced domain(s) "
+                f"from {blocklist_path}"
+            )
 
     if sort_output:
         ordered = sorted(ordered)
@@ -355,6 +364,8 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             "delta_added": delta_added,
             "delta_removed": delta_removed,
             "rejected_total": len(rejected_entries),
+            "matched_allowlisted": matched_allowlisted,
+            "added_by_blocklist_override": added_by_blocklist_override,
         },
         "sources": source_stats,
     }
@@ -363,7 +374,9 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
 
     print(f"Processed: scanned={total_candidates} unique={total_unique} "
           f"wildcards={len(wildcard_domains)} duplicates={duplicates} reduction={reduction_pct:.2f}% "
-          f"rejected={len(rejected_entries)} sorted={sort_output} -> {rejected_path}")
+          f"rejected={len(rejected_entries)} matched_allowlisted={matched_allowlisted} "
+          f"added_by_blocklist_override={added_by_blocklist_override} "
+          f"sorted={sort_output} -> {rejected_path}")
 
 
 def main(argv: list[str] | None = None) -> int:
