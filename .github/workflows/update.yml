@@ -28,13 +28,8 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Run update.sh
-        run: |
-          chmod +x ./update.sh || true
-          ./update.sh
-          echo "Current dir:" && pwd
-          echo "Processed dir contents:"
-          ls -la processed/
+      - name: Run update.py
+        run: python3 update.py
 
       - name: Commit processed files
         id: commit

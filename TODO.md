@@ -35,15 +35,16 @@ Hands-free compilation workflow implemented at `.github/workflows/update.yml`.
     1. Fetch `blocklist-bind9.zone.gz` directly from the raw GitHub URL.
     2. Reload BIND9 (`rndc reload` or `rndc reload rpz.local`) to apply the blocklist seamlessly.
 
-### Phase 3: Python-based Downloader & Performance
-Reduce dependencies on shell commands (`curl`, `bash`, `sed`) to make the compiler robust, cross-platform, and fast.
+### ✅ Phase 3: Python-based Downloader & Performance
+Downloading logic ported to `update.py`; `update.sh` kept as a legacy reference/fallback.
 
-- [ ] **Parallel Downloader in Python**
-  - Port downloading logic from `update.sh` into Python (either inside `merge.py` or a dedicated `download.py`).
-  - Implement concurrent downloading using asynchronous programming (`asyncio`/`httpx`) or multi-threading (`ThreadPoolExecutor`).
-  - Add download retry policies, connection timeouts, and proper exception handling.
-- [ ] **Compressed File Support**
-  - Support downloading and parsing gzip (`.gz`) or zip (`.zip`) files automatically to conserve remote server bandwidth.
+- [x] **Parallel Downloader in Python** (`update.py`)
+  - Concurrent downloads via `ThreadPoolExecutor` (default 8 workers).
+  - Retry with exponential backoff (default 3 attempts), configurable timeout.
+  - Parses `sources.txt` (skips comments/blank lines, strips inline comments).
+  - Writes `raw/sources.map` and invokes `merge.py` directly as a module.
+- [x] **Compressed File Support**
+  - Transparently decompresses gzip (magic bytes or `.gz`) and zip (magic bytes or `.zip`) responses before writing to `raw/`.
 
 ### Phase 4: Smart Filtering & Allowlisting
 Avoid blocking critical services or generating redundant rules.

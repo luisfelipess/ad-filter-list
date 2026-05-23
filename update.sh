@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# LEGACY — kept as a reference/fallback for the original curl-based download loop.
+# The default pipeline now uses update.py (concurrent, retry, gzip/zip support).
+# To use this script manually: ./update.sh [--unsorted]
 set -euo pipefail
 
 cd "$(dirname "$0")"
