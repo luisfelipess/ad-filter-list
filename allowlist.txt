@@ -2,11 +2,16 @@
 # One domain per line. Lines starting with #, !, or ; are ignored.
 # Inline comments are supported: domain.com  # reason
 
+# ── YouTube ──────────────────────────────────────────────────────────────────
+s.youtube.com
+# *.youtube.com
+
 # ── Microsoft / Windows Update ───────────────────────────────────────────────
 windowsupdate.microsoft.com
 update.microsoft.com
 download.windowsupdate.com
 download.microsoft.com
+v10.vortex-win.data.microsoft.com
 
 # ── Apple / macOS Update ─────────────────────────────────────────────────────
 swscan.apple.com
@@ -18,6 +23,7 @@ mesu.apple.com
 clients.google.com
 accounts.google.com
 oauth2.googleapis.com
+google.com
 
 # ── Let's Encrypt (OCSP / certificate validation) ────────────────────────────
 ocsp.int-x3.letsencrypt.org
