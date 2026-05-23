@@ -21,8 +21,21 @@ from readers.adblock import AdblockReader
 # ── readers + normalize_domain ────────────────────────────────────────────────
 
 def _extract(reader, line):
-    raw = reader.extract(line.strip())
+    result = reader.extract(line.strip())
+    if result is None:
+        return None
+    raw, _ = result
     return normalize_domain(raw) if raw else None
+
+
+def _extract_wc(reader, line):
+    """Return (domain, is_wildcard) or None."""
+    result = reader.extract(line.strip())
+    if result is None:
+        return None
+    raw, is_wildcard = result
+    dom = normalize_domain(raw) if raw else None
+    return (dom, is_wildcard) if dom else None
 
 
 class TestHostsReader(unittest.TestCase):
@@ -68,6 +81,15 @@ class TestDomainReader(unittest.TestCase):
     def test_detect(self):
         self.assertTrue(self.r.detect(["example.com"]))
         self.assertFalse(self.r.detect(["0.0.0.0 example.com"]))
+
+    def test_wildcard_line(self):
+        self.assertEqual(_extract(self.r, "*.example.com"), "example.com")
+
+    def test_wildcard_is_flagged(self):
+        self.assertEqual(_extract_wc(self.r, "*.example.com"), ("example.com", True))
+
+    def test_exact_not_flagged(self):
+        self.assertEqual(_extract_wc(self.r, "example.com"), ("example.com", False))
 
 
 class TestAdblockReader(unittest.TestCase):
@@ -202,6 +224,14 @@ class TestRemoveSubdomains(unittest.TestCase):
         result = m.remove_subdomains(["ads.example.com", "track.example.com"])
         self.assertIn("ads.example.com", result)
         self.assertIn("track.example.com", result)
+
+    def test_wildcard_removes_covered_exact(self):
+        # *.ads.example.com wildcard → tracker.ads.example.com is redundant
+        result = m.remove_subdomains(
+            ["ads.example.com", "tracker.ads.example.com"],
+            wildcard_domains={"ads.example.com"}
+        )
+        self.assertNotIn("tracker.ads.example.com", result)
 
 
 # ── end-to-end merge ──────────────────────────────────────────────────────────

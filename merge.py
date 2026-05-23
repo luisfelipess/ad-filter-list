@@ -88,15 +88,23 @@ def load_blocklist(path: str) -> set[str]:
     return blocked
 
 
-def remove_subdomains(domains: list[str]) -> list[str]:
+def remove_subdomains(domains: list[str], wildcard_domains: set[str] | None = None) -> list[str]:
     domain_set = set(domains)
+    wc = wildcard_domains or set()
     result = []
     for d in domains:
         parts = d.split(".")
+        # drop if a parent exact-match exists
         dominated = any(
             ".".join(parts[i:]) in domain_set
             for i in range(1, len(parts) - 1)
         )
+        # drop if any ancestor is a wildcard entry (*.ancestor covers this domain)
+        if not dominated:
+            dominated = any(
+                ".".join(parts[i:]) in wc
+                for i in range(1, len(parts))
+            )
         if not dominated:
             result.append(d)
     removed = len(domains) - len(result)
@@ -143,9 +151,10 @@ def _pick_reader(path: str, sample_size: int = 50):
 
 
 def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries):
-    """Scan source files and return (ordered_domains, total_candidates, seen_domains)."""
+    """Scan source files and return (ordered_domains, total_candidates, wildcard_domains)."""
     seen: set[str] = set()
     ordered: list[str] = []
+    wildcard_domains: set[str] = set()
     total_candidates = 0
 
     sources = pairs if pairs else [
@@ -176,7 +185,12 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
                 if not stripped or stripped.lstrip().startswith(('#', '!')):
                     continue
                 source_stats[fname]["scanned"] += 1
-                raw = reader.extract(stripped)
+                result = reader.extract(stripped)
+                if result is None:
+                    source_stats[fname]["rejected"] += 1
+                    rejected_entries.append((fname, lineno, line.rstrip('\n')))
+                    continue
+                raw, is_wildcard = result
                 dom = normalize_domain(raw) if raw else None
                 if not dom:
                     source_stats[fname]["rejected"] += 1
@@ -187,8 +201,10 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
                 if dom not in seen and dom not in allowlist:
                     seen.add(dom)
                     ordered.append(dom)
+                if is_wildcard:
+                    wildcard_domains.add(dom)
 
-    return ordered, total_candidates, seen
+    return ordered, total_candidates, wildcard_domains
 
 
 def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
@@ -202,7 +218,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
     rejected_entries: list[tuple[str, int, str]] = []
     source_stats: dict[str, dict] = {}
 
-    ordered, total_candidates, seen = _collect_domains(
+    ordered, total_candidates, wildcard_domains = _collect_domains(
         raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries
     )
 
@@ -215,9 +231,10 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
                 f"{', '.join(sorted(conflicts))}"
             )
         added = 0
+        seen_set = set(ordered)
         for dom in sorted(blocklist):
-            if dom not in seen and dom not in allowlist:
-                seen.add(dom)
+            if dom not in seen_set and dom not in allowlist:
+                seen_set.add(dom)
                 ordered.append(dom)
                 added += 1
         if added:
@@ -226,7 +243,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
     if sort_output:
         ordered = sorted(ordered)
     if optimize_subdomains:
-        ordered = remove_subdomains(ordered)
+        ordered = remove_subdomains(ordered, wildcard_domains)
 
     # delta vs previous hosts file
     out_dir = os.path.dirname(out_path) or "."
@@ -264,6 +281,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         delta_added=delta_added,
         delta_removed=delta_removed,
         source_infos=source_infos,
+        wildcard_domains=frozenset(wildcard_domains),
     )
 
     # ── run enabled writers ───────────────────────────────────────────────────

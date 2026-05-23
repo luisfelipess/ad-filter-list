@@ -14,6 +14,6 @@ class AdblockReader(BaseReader):
     def detect(self, sample_lines: list[str]) -> bool:
         return any(_ADBLOCK_RE.match(line) for line in sample_lines)
 
-    def extract(self, line: str) -> str | None:
+    def extract(self, line: str) -> tuple[str, bool] | None:
         m = _ADBLOCK_RE.match(line.strip())
-        return m.group(1) if m else None
+        return (m.group(1), False) if m else None

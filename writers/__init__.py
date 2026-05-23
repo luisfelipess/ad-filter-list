@@ -14,10 +14,12 @@ class WriterMeta:
     __slots__ = (
         "now_str", "total_candidates", "total_unique", "duplicates",
         "reduction_pct", "delta_added", "delta_removed", "source_infos",
+        "wildcard_domains",
     )
 
     def __init__(self, now_str, total_candidates, total_unique, duplicates,
-                 reduction_pct, delta_added, delta_removed, source_infos):
+                 reduction_pct, delta_added, delta_removed, source_infos,
+                 wildcard_domains=frozenset()):
         self.now_str = now_str
         self.total_candidates = total_candidates
         self.total_unique = total_unique
@@ -25,7 +27,8 @@ class WriterMeta:
         self.reduction_pct = reduction_pct
         self.delta_added = delta_added
         self.delta_removed = delta_removed
-        self.source_infos = source_infos  # list[(fname, headers, url, fmt)]
+        self.source_infos = source_infos
+        self.wildcard_domains = wildcard_domains  # frozenset[str]
 
 
 class BaseWriter(ABC):
@@ -55,6 +58,27 @@ def write_source_credits(fh, source_infos, comment_char: str) -> None:
         else:
             fh.write(f"{comment_char} (no header in source file)\n")
         fh.write(f"{comment_char}\n")
+
+
+def split_wildcard_domains(domains: list[str], wildcard_domains: frozenset) -> tuple[list[str], list[str]]:
+    """Split domains into (exact_only, wildcards).
+
+    exact_only: domains not covered by any wildcard entry.
+    wildcards:  domains that should be emitted as wildcard records (*.domain).
+    Exact domains whose ancestor is in wildcard_domains are dropped entirely.
+    """
+    exact = []
+    for d in domains:
+        parts = d.split(".")
+        covered = any(
+            ".".join(parts[i:]) in wildcard_domains
+            for i in range(1, len(parts) + 1)
+        )
+        if not covered:
+            exact.append(d)
+    # wildcards are emitted in sorted order
+    wildcards = sorted(wildcard_domains & set(domains))
+    return exact, wildcards
 
 
 def summary_line(meta: WriterMeta, comment_char: str) -> list[str]:

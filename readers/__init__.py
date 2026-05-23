@@ -55,5 +55,5 @@ class BaseReader(ABC):
         """Return True if this reader recognises the format from a sample."""
 
     @abstractmethod
-    def extract(self, line: str) -> str | None:
-        """Extract and return the raw domain token from one line, or None."""
+    def extract(self, line: str) -> tuple[str, bool] | None:
+        """Extract (domain, is_wildcard) from one line, or None to reject."""

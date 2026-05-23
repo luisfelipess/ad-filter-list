@@ -22,8 +22,9 @@ class HostsReader(BaseReader):
                 hits += 1
         return hits > 0
 
-    def extract(self, line: str) -> str | None:
+    def extract(self, line: str) -> tuple[str, bool] | None:
         tokens = line.split()
         if len(tokens) < 2 or tokens[0] not in _ALLOWED:
             return None
-        return next((t for t in tokens[1:] if "." in t and not IP_RE.match(t)), None)
+        domain = next((t for t in tokens[1:] if "." in t and not IP_RE.match(t)), None)
+        return (domain, False) if domain else None
