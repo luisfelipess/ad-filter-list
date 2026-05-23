@@ -29,6 +29,26 @@ WRITERS = [
     UnboundWriter(),
 ]
 
+_WRITER_REGISTRY: dict[str, BaseWriter] = {w.__class__.__name__.lower().replace("writer", ""): w for w in WRITERS}
+
+
+def load_writers_config(path: str = "writers.conf") -> list:
+    """Return enabled writers from config file. Falls back to all if file missing."""
+    if not os.path.exists(path):
+        return WRITERS
+    enabled = []
+    with open(path, "r", encoding="utf-8") as fh:
+        for line in fh:
+            name = line.split("#", 1)[0].strip().lower()
+            if not name:
+                continue
+            if name in _WRITER_REGISTRY:
+                enabled.append(_WRITER_REGISTRY[name])
+            else:
+                print(f"writers.conf: unknown writer '{name}' (ignored)")
+    print(f"Writers enabled: {[w.__class__.__name__ for w in enabled]}")
+    return enabled
+
 LOCAL_SKIP = {"localhost", "localhost.localdomain", "local"}
 
 
@@ -209,8 +229,10 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
 
 
 def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
-          allowlist_path: str = "allowlist.txt", optimize_subdomains: bool = True) -> None:
+          allowlist_path: str = "allowlist.txt", optimize_subdomains: bool = True,
+          writers_config: str = "writers.conf") -> None:
     allowlist = load_allowlist(allowlist_path)
+    active_writers = load_writers_config(writers_config)
     pairs = read_map(map_path)
     source_infos: list[tuple[str, list[str], str, str]] = []
     rejected_entries: list[tuple[str, int, str]] = []
@@ -263,8 +285,8 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         source_infos=source_infos,
     )
 
-    # ── run all registered writers ────────────────────────────────────────────
-    for writer in WRITERS:
+    # ── run enabled writers ───────────────────────────────────────────────────
+    for writer in active_writers:
         writer.write(ordered, meta, out_dir)
 
     # ── rejected entries ──────────────────────────────────────────────────────
@@ -306,12 +328,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--unsorted", action="store_true")
     p.add_argument("--allowlist", default="allowlist.txt")
     p.add_argument("--no-optimize-subdomains", action="store_true")
+    p.add_argument("--writers-config", default="writers.conf")
     args = p.parse_args(argv)
 
     merge(args.raw, args.map, args.out,
           sort_output=not args.unsorted,
           allowlist_path=args.allowlist,
-          optimize_subdomains=not args.no_optimize_subdomains)
+          optimize_subdomains=not args.no_optimize_subdomains,
+          writers_config=args.writers_config)
     return 0
 
 
