@@ -30,10 +30,9 @@ Hands-free compilation workflow implemented at `.github/workflows/update.yml`.
 - [x] **GitHub Actions Workflow** (`.github/workflows/update.yml`)
   - **Schedule**: Daily at 03:00 UTC + manual trigger (`workflow_dispatch`).
   - **Steps**: checkout → setup Python → run `update.sh` → commit & push `processed/` back to the repository with `[skip ci]`.
-- [ ] **Provide a BIND9 Client Integration Script**
-  - Write a helper/setup guide or script (`bind9/update-rpz.sh`) that a remote BIND9 server can run daily via a cron job to:
-    1. Fetch `blocklist-bind9.zone.gz` directly from the raw GitHub URL.
-    2. Reload BIND9 (`rndc reload` or `rndc reload rpz.local`) to apply the blocklist seamlessly.
+- [x] **Provide a BIND9 Client Integration Script** (`client-scripts/bind9-update-rpz.sh`)
+  - Fetches `blocklist-bind9.zone.gz` from the raw GitHub URL, validates with `named-checkzone`, installs to `/etc/bind/db.rpz.local`, and runs `rndc reload rpz.local`.
+  - See [`client-scripts/README.md`](client-scripts/README.md) for setup and cron instructions.
 
 ### ✅ Phase 3: Python-based Downloader & Performance
 Downloading logic ported to `update.py`; `update.sh` kept as a legacy reference/fallback.
