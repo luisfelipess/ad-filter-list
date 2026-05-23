@@ -11,8 +11,13 @@ Automated blocklist compiler. Fetches DNS/ad-block lists from multiple sources d
 | `processed/blocklist-adblock.txt` | `\|\|domain^` adblock syntax | uBlock Origin, AdGuard, browser extensions |
 | `processed/blocklist-dnsmasq.conf` | `address=/domain/#` dnsmasq config | OpenWrt, DD-WRT, Pi-hole (dnsmasq mode) |
 | `processed/blocklist-unbound.conf` | `local-zone: always_nxdomain` | Unbound resolver |
-| `processed/blocklist-report.json` | Per-source JSON stats | Auditing, CI checks |
-| `processed/rejected-entries.txt` | Unparseable lines | Debugging source quality |
+
+Run diagnostics land in `reports/`:
+
+| File | Contents |
+|---|---|
+| `reports/blocklist-report.json` | Per-source stats (scanned, accepted, rejected, delta) |
+| `reports/rejected-entries.txt` | Lines that could not be parsed, for debugging source quality |
 
 All files are committed back to the repository automatically after each run.
 
@@ -98,28 +103,22 @@ update.py  ──── concurrent downloads (ThreadPoolExecutor)
 raw/  (gitignored)
     │
     ▼
-merge.py  ──── format detection per source
+merge.py  ──── format detection per source  (readers/)
     │           domain extraction & normalisation
     │           allowlist filtering
     │           deduplication + subdomain optimizer
     │           delta vs previous run
     │
     ├── writers/ (controlled by writers.conf)
-    │     hosts.py      → blocklist.txt
-    │     adblock.py    → blocklist-adblock.txt
-    │     rpz.py        → blocklist-bind9.zone.gz
-    │     dnsmasq.py    → blocklist-dnsmasq.conf
-    │     unbound.py    → blocklist-unbound.conf
+    │     hosts.py      → processed/blocklist.txt
+    │     adblock.py    → processed/blocklist-adblock.txt
+    │     rpz.py        → processed/blocklist-bind9.zone.gz
+    │     dnsmasq.py    → processed/blocklist-dnsmasq.conf
+    │     unbound.py    → processed/blocklist-unbound.conf
     │
-    ▼
-processed/
-  blocklist.txt
-  blocklist-adblock.txt
-  blocklist-bind9.zone.gz
-  blocklist-dnsmasq.conf
-  blocklist-unbound.conf
-  blocklist-report.json
-  rejected-entries.txt
+    └── reports/
+          blocklist-report.json
+          rejected-entries.txt
 ```
 
 ---
@@ -187,6 +186,11 @@ The hosts-format output (`0.0.0.0 domain`) is directly compatible with MikroTik 
 update.sh                        entry point (delegates to update.py by default)
 update.py                        concurrent Python downloader
 merge.py                         parser, deduplicator, writer orchestrator
+readers/                         pluggable source format readers
+  __init__.py                    BaseReader, normalize_domain, read_leading_header
+  hosts.py                       0.0.0.0/127.0.0.1 domain format
+  domain.py                      bare domain-only lists
+  adblock.py                     ||domain^ sources
 writers/                         pluggable output format writers
   __init__.py                    BaseWriter, WriterMeta, shared helpers
   hosts.py                       0.0.0.0 domain (MikroTik, Pi-hole)
@@ -201,6 +205,7 @@ client-scripts/
   bind9-update-rpz.sh            BIND9 RPZ fetch-and-reload script
   README.md                      BIND9 setup guide
 processed/                       compiled output (committed by CI)
+reports/                         run diagnostics (committed by CI)
 raw/                             downloaded source files (gitignored)
 .github/workflows/update.yml     daily automation workflow
 tests/

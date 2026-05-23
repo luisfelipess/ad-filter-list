@@ -45,7 +45,7 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-          git add processed/
+          git add processed/ reports/
 
           if git diff --staged --quiet; then
             echo "No changes"
@@ -63,4 +63,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: processed-files
-          path: processed/
+          path: |
+            processed/
+            reports/

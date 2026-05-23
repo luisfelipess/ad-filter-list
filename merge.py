@@ -240,8 +240,12 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
     for writer in active_writers:
         writer.write(ordered, meta, out_dir)
 
-    # ── rejected entries ──────────────────────────────────────────────────────
-    rejected_path = os.path.join(out_dir, "rejected-entries.txt")
+    # ── rejected entries + JSON report → reports/ ─────────────────────────────
+    reports_dir = os.path.join(os.path.dirname(out_path) or ".", "..", "reports")
+    reports_dir = os.path.normpath(reports_dir)
+    os.makedirs(reports_dir, exist_ok=True)
+
+    rejected_path = os.path.join(reports_dir, "rejected-entries.txt")
     if rejected_entries:
         with open(rejected_path, "w", encoding="utf-8") as rej:
             rej.write(f"# Rejected entries - generated: {now_str}\n")
@@ -263,7 +267,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         },
         "sources": source_stats,
     }
-    with open(os.path.join(out_dir, "blocklist-report.json"), "w", encoding="utf-8") as rf:
+    with open(os.path.join(reports_dir, "blocklist-report.json"), "w", encoding="utf-8") as rf:
         json.dump(report, rf, indent=2, ensure_ascii=False)
 
     print(f"Processed: scanned={total_candidates} unique={total_unique} "
