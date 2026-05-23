@@ -47,14 +47,14 @@ Outputs land in `processed/`. Raw downloaded files go to `raw/` (gitignored).
 
 ```bash
 python3 update.py [--unsorted] [--workers 8] [--retries 3] [--timeout 30]
-                  [--sources sources.txt] [--raw raw] [--out processed/blocklist.txt]
+                  [--sources sources.conf] [--raw raw] [--out processed/blocklist.txt]
 ```
 
 `merge.py` can also be run standalone if raw files are already downloaded:
 
 ```bash
 python3 merge.py [--raw raw] [--map raw/sources.map] [--out processed/blocklist.txt]
-                 [--unsorted] [--allowlist allowlist.txt]
+                 [--unsorted] [--allowlist allowlist.txt] [--blocklist blocklist.txt]
                  [--no-optimize-subdomains] [--writers-config writers.conf]
 ```
 
@@ -62,7 +62,7 @@ python3 merge.py [--raw raw] [--map raw/sources.map] [--out processed/blocklist.
 
 ## Adding or removing sources
 
-Edit `sources.txt` — one URL per line. Lines starting with `#`, `;`, or `!` are ignored. Inline comments are supported:
+Edit `sources.conf` — one URL per line. Lines starting with `#`, `;`, or `!` are ignored. Inline comments are supported. For backward compatibility, `sources.txt` is still accepted if `sources.conf` is missing.
 
 ```
 https://example.com/hosts.txt        # optional comment
@@ -198,8 +198,10 @@ writers/                         pluggable output format writers
   rpz.py                         BIND9 RPZ gzip zone file
   dnsmasq.py                     address=/domain/# (OpenWrt, DD-WRT)
   unbound.py                     local-zone: always_nxdomain
-sources.txt                      list of source URLs
+sources.conf                     preferred source URL list
+sources.txt                      legacy source URL list (fallback for compatibility)
 allowlist.txt                    domains that are never blocked
+blocklist.txt                    domains that are always blocked, even if absent from sources
 writers.conf                     enable/disable output writers
 client-scripts/
   bind9-update-rpz.sh            BIND9 RPZ fetch-and-reload script

@@ -144,6 +144,31 @@ class TestLoadAllowlist(unittest.TestCase):
             os.unlink(path)
 
 
+class TestLoadBlocklist(unittest.TestCase):
+
+    def test_loads_domains(self):
+        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+            f.write("# comment\nexample.com\ngood.org\n")
+            path = f.name
+        try:
+            result = m.load_blocklist(path)
+            self.assertEqual(result, {"example.com", "good.org"})
+        finally:
+            os.unlink(path)
+
+    def test_missing_file_returns_empty(self):
+        self.assertEqual(m.load_blocklist("/nonexistent/blocklist.txt"), set())
+
+    def test_blocklist_ignores_comments(self):
+        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+            f.write("! exclaim\n; semicolon\n# hash\nblock.com\n")
+            path = f.name
+        try:
+            self.assertEqual(m.load_blocklist(path), {"block.com"})
+        finally:
+            os.unlink(path)
+
+
 # ── remove_subdomains ─────────────────────────────────────────────────────────
 
 class TestRemoveSubdomains(unittest.TestCase):
@@ -227,6 +252,29 @@ class TestMergeEndToEnd(unittest.TestCase):
         domains = self._read_hosts()
         self.assertIn("blocked.com", domains)
         self.assertNotIn("safe.com", domains)
+
+    def test_blocklist_forces_domain(self):
+        self._write_source("01_a.txt", "0.0.0.0 blocked.com\n")
+        bl = os.path.join(self.tmp, "blocklist.txt")
+        with open(bl, "w") as f:
+            f.write("forceblock.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                blocklist_path=bl, allowlist_path=self._write_allowlist(""), optimize_subdomains=False)
+        domains = self._read_hosts()
+        self.assertIn("blocked.com", domains)
+        self.assertIn("forceblock.com", domains)
+
+    def test_blocklist_does_not_override_allowlist(self):
+        self._write_source("01_a.txt", "0.0.0.0 blocked.com\n")
+        al = self._write_allowlist("forceblock.com\n")
+        bl = os.path.join(self.tmp, "blocklist.txt")
+        with open(bl, "w") as f:
+            f.write("forceblock.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                blocklist_path=bl, allowlist_path=al, optimize_subdomains=False)
+        domains = self._read_hosts()
+        self.assertIn("blocked.com", domains)
+        self.assertNotIn("forceblock.com", domains)
 
     def test_subdomain_optimizer_removes_redundant(self):
         self._write_source("01_a.txt", "0.0.0.0 example.com\n0.0.0.0 ads.example.com\n")

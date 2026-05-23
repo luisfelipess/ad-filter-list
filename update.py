@@ -30,6 +30,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 def read_sources(path: str) -> list[str]:
     urls = []
+    if not os.path.exists(path) and path == "sources.conf" and os.path.exists("sources.txt"):
+        path = "sources.txt"
     with open(path, "r", encoding="utf-8") as fh:
         for line in fh:
             line = line.strip()
@@ -92,13 +94,14 @@ def download_one(
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description="Concurrent blocklist downloader")
-    p.add_argument("--sources", default="sources.txt")
+    p.add_argument("--sources", default="sources.conf")
     p.add_argument("--raw", default="raw")
     p.add_argument("--out", default="processed/blocklist.txt")
     p.add_argument("--unsorted", action="store_true")
     p.add_argument("--workers", type=int, default=8)
     p.add_argument("--retries", type=int, default=3)
     p.add_argument("--timeout", type=int, default=30)
+    p.add_argument("--blocklist", default="blocklist.txt")
     args = p.parse_args(argv)
 
     os.makedirs(args.raw, exist_ok=True)
@@ -149,7 +152,8 @@ def main(argv: list[str] | None = None) -> int:
 
     # invoke merge.py
     import merge  # local module
-    merge_argv = ["--raw", args.raw, "--map", map_path, "--out", args.out]
+    merge_argv = ["--raw", args.raw, "--map", map_path, "--out", args.out,
+                  "--blocklist", args.blocklist]
     if args.unsorted:
         merge_argv.append("--unsorted")
     return merge.main(merge_argv)

@@ -60,10 +60,11 @@ def load_writers_config(path: str = "writers.conf") -> list:
     print(f"Writers enabled: {[w.__class__.__name__ for w in enabled]}")
     return enabled
 
-def load_allowlist(path: str) -> set[str]:
-    allowed: set[str] = set()
+
+def load_list_file(path: str) -> set[str]:
+    entries: set[str] = set()
     if not os.path.exists(path):
-        return allowed
+        return entries
     with open(path, "r", encoding="utf-8") as fh:
         for line in fh:
             line = line.strip()
@@ -71,9 +72,20 @@ def load_allowlist(path: str) -> set[str]:
                 continue
             domain = line.split("#", 1)[0].strip().lower()
             if domain:
-                allowed.add(domain)
+                entries.add(domain)
+    return entries
+
+
+def load_allowlist(path: str) -> set[str]:
+    allowed = load_list_file(path)
     print(f"Allowlist: loaded {len(allowed)} entries from {path}")
     return allowed
+
+
+def load_blocklist(path: str) -> set[str]:
+    blocked = load_list_file(path)
+    print(f"Blocklist: loaded {len(blocked)} entries from {path}")
+    return blocked
 
 
 def remove_subdomains(domains: list[str]) -> list[str]:
@@ -131,7 +143,7 @@ def _pick_reader(path: str, sample_size: int = 50):
 
 
 def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries):
-    """Scan source files and return (ordered_domains, total_candidates)."""
+    """Scan source files and return (ordered_domains, total_candidates, seen_domains)."""
     seen: set[str] = set()
     ordered: list[str] = []
     total_candidates = 0
@@ -176,22 +188,40 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
                     seen.add(dom)
                     ordered.append(dom)
 
-    return ordered, total_candidates
+    return ordered, total_candidates, seen
 
 
 def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
-          allowlist_path: str = "allowlist.txt", optimize_subdomains: bool = True,
-          writers_config: str = "writers.conf") -> None:
+          allowlist_path: str = "allowlist.txt", blocklist_path: str = "blocklist.txt",
+          optimize_subdomains: bool = True, writers_config: str = "writers.conf") -> None:
     allowlist = load_allowlist(allowlist_path)
+    blocklist = load_blocklist(blocklist_path)
     active_writers = load_writers_config(writers_config)
     pairs = read_map(map_path)
     source_infos: list[tuple[str, list[str], str, str]] = []
     rejected_entries: list[tuple[str, int, str]] = []
     source_stats: dict[str, dict] = {}
 
-    ordered, total_candidates = _collect_domains(
+    ordered, total_candidates, seen = _collect_domains(
         raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries
     )
+
+    if blocklist:
+        conflicts = allowlist & blocklist
+        if conflicts:
+            print(
+                f"Warning: {len(conflicts)} domain(s) present in both allowlist "
+                f"and blocklist; allowlist entries will take precedence: "
+                f"{', '.join(sorted(conflicts))}"
+            )
+        added = 0
+        for dom in sorted(blocklist):
+            if dom not in seen and dom not in allowlist:
+                seen.add(dom)
+                ordered.append(dom)
+                added += 1
+        if added:
+            print(f"Blocklist: added {added} forced domain(s) from {blocklist_path}")
 
     if sort_output:
         ordered = sorted(ordered)
@@ -282,6 +312,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--out", default="processed/blocklist.txt")
     p.add_argument("--unsorted", action="store_true")
     p.add_argument("--allowlist", default="allowlist.txt")
+    p.add_argument("--blocklist", default="blocklist.txt")
     p.add_argument("--no-optimize-subdomains", action="store_true")
     p.add_argument("--writers-config", default="writers.conf")
     args = p.parse_args(argv)
@@ -289,6 +320,7 @@ def main(argv: list[str] | None = None) -> int:
     merge(args.raw, args.map, args.out,
           sort_output=not args.unsorted,
           allowlist_path=args.allowlist,
+          blocklist_path=args.blocklist,
           optimize_subdomains=not args.no_optimize_subdomains,
           writers_config=args.writers_config)
     return 0

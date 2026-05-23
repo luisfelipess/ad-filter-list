@@ -1,0 +1,5 @@
+# blocklist.txt — domains that should always be blocked
+# One domain per line. Lines starting with #, !, or ; are ignored.
+# Inline comments are supported: example.com  # reason
+
+# Add mandatory block domains here.

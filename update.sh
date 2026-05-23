@@ -27,6 +27,15 @@ echo "Running legacy curl-based downloader…"
 mkdir -p raw processed
 rm -f raw/*
 
+if [ -f sources.conf ]; then
+  SOURCES_FILE="sources.conf"
+elif [ -f sources.txt ]; then
+  SOURCES_FILE="sources.txt"
+else
+  echo "No sources.conf or sources.txt found." >&2
+  exit 1
+fi
+
 i=0
 while IFS= read -r line || [ -n "$line" ]; do
   line="$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
@@ -45,7 +54,7 @@ while IFS= read -r line || [ -n "$line" ]; do
   else
     echo "Warning: failed fetching $url" >&2
   fi
-done < sources.txt
+done < "$SOURCES_FILE"
 
 python3 merge.py --raw raw --map raw/sources.map --out processed/blocklist.txt $UNSORTED_FLAG
 echo "Done (legacy mode)."
