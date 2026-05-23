@@ -1,40 +1,67 @@
 {
-  "generated": "2026-05-23T10:02:12.128398Z",
+  "generated": "2026-05-23T10:40:46.599748Z",
   "summary": {
-    "scanned": 877450,
-    "unique": 489755,
-    "duplicates": 387695,
-    "reduction_pct": 44.1843,
-    "delta_added": 0,
+    "scanned": 992201,
+    "unique": 504596,
+    "duplicates": 487605,
+    "reduction_pct": 49.1438,
+    "delta_added": 13788,
     "delta_removed": 0,
     "rejected_total": 14
   },
   "sources": {
     "01_pro.txt": {
-      "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/pro.txt",
+      "url": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/hosts/pro.txt",
       "format": "host",
       "format_reason": "host format detected",
-      "scanned": 485059,
-      "accepted": 485059,
+      "scanned": 494723,
+      "accepted": 494723,
       "rejected": 0,
       "skipped": false
     },
-    "02_tif.medium-onlydomains.txt": {
+    "02_pro.plus.mini.txt": {
+      "url": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/pro.plus.mini.txt",
+      "format": "domain-only",
+      "format_reason": "domain-only format detected",
+      "scanned": 92799,
+      "accepted": 92799,
+      "rejected": 0,
+      "skipped": false
+    },
+    "03_tif.medium-onlydomains.txt": {
       "url": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/tif.medium-onlydomains.txt",
       "format": "domain-only",
       "format_reason": "domain-only format detected",
-      "scanned": 308161,
-      "accepted": 308161,
+      "scanned": 302433,
+      "accepted": 302433,
       "rejected": 0,
       "skipped": false
     },
-    "03_hosts": {
+    "04_fake-onlydomains.txt": {
+      "url": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/fake-onlydomains.txt",
+      "format": "domain-only",
+      "format_reason": "domain-only format detected",
+      "scanned": 15829,
+      "accepted": 15829,
+      "rejected": 0,
+      "skipped": false
+    },
+    "05_hosts": {
       "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
       "format": "host",
       "format_reason": "host format detected",
       "scanned": 84244,
       "accepted": 84230,
       "rejected": 14,
+      "skipped": false
+    },
+    "06_hosts": {
+      "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-only/hosts",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 2187,
+      "accepted": 2187,
+      "rejected": 0,
       "skipped": false
     }
   }
