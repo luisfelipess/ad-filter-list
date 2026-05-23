@@ -9,6 +9,8 @@ Automated blocklist compiler. Fetches DNS/ad-block lists from multiple sources d
 | `processed/blocklist.txt` | `0.0.0.0 domain` hosts format | MikroTik adlists, Pi-hole, generic hosts |
 | `processed/blocklist-bind9.zone.gz` | BIND9 RPZ zone file (gzip) | BIND9 `response-policy` |
 | `processed/blocklist-adblock.txt` | `\|\|domain^` adblock syntax | uBlock Origin, AdGuard, browser extensions |
+| `processed/blocklist-dnsmasq.conf` | `address=/domain/#` dnsmasq config | OpenWrt, DD-WRT, Pi-hole (dnsmasq mode) |
+| `processed/blocklist-unbound.conf` | `local-zone: always_nxdomain` | Unbound resolver |
 | `processed/blocklist-report.json` | Per-source JSON stats | Auditing, CI checks |
 | `processed/rejected-entries.txt` | Unparseable lines | Debugging source quality |
 
@@ -156,14 +158,24 @@ The hosts-format output (`0.0.0.0 domain`) is directly compatible with MikroTik 
 ```
 update.sh                        entry point (delegates to update.py by default)
 update.py                        concurrent Python downloader
-merge.py                         parser, deduplicator, multi-format writer
+merge.py                         parser, deduplicator, writer orchestrator
+writers/                         pluggable output format writers
+  __init__.py                    BaseWriter, WriterMeta, shared helpers
+  hosts.py                       0.0.0.0 domain (MikroTik, Pi-hole)
+  adblock.py                     ||domain^ (uBlock Origin, AdGuard)
+  rpz.py                         BIND9 RPZ gzip zone file
+  dnsmasq.py                     address=/domain/# (OpenWrt, DD-WRT)
+  unbound.py                     local-zone: always_nxdomain
 sources.txt                      list of source URLs
+allowlist.txt                    domains that are never blocked
 client-scripts/
   bind9-update-rpz.sh            BIND9 RPZ fetch-and-reload script
   README.md                      BIND9 setup guide
 processed/                       compiled output (committed by CI)
 raw/                             downloaded source files (gitignored)
 .github/workflows/update.yml     daily automation workflow
+tests/
+  test_merge.py                  regression test suite
 ```
 
 ---

@@ -5,10 +5,14 @@ This document outlines the planned improvements for the `ad-filter-list` tool to
 ---
 
 ## 🎯 High-Level Objective
-Transform this tool into a highly optimized, fully automated blocklist compiler. It will fetch DNS/ad-block lists daily, compile them, deduplicate them, and output **three distinct formats** directly to the repository using GitHub Actions:
-1. **MikroTik/Standard Hosts (Canonical)**: `0.0.0.0 domain` (remains in `processed/blocklist.txt`)
-2. **BIND9 RPZ Zone File**: Response Policy Zone (RPZ) format (e.g., `processed/blocklist-bind9.zone`) for seamless BIND9 integration.
-3. **Adblock/uBlock Syntax**: Standard ad-blocking rule format (e.g., `processed/blocklist-adblock.txt`) with `||domain.com^`.
+Fully automated blocklist compiler that fetches DNS/ad-block lists daily, compiles and deduplicates them, and publishes **five output formats** to the repository via GitHub Actions:
+1. **Hosts** (`0.0.0.0 domain`) — MikroTik, Pi-hole, generic hosts
+2. **BIND9 RPZ** — `response-policy` zone file (gzip)
+3. **Adblock/uBlock** — `||domain^` syntax
+4. **dnsmasq** — `address=/domain/#` (OpenWrt, DD-WRT)
+5. **Unbound** — `local-zone: always_nxdomain`
+
+Output writers live in `writers/`. Adding a new format = one new file + one line in `merge.py`.
 
 ---
 

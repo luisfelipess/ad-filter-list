@@ -1,25 +1,38 @@
 #!/usr/bin/env python3
 """Merge and sanitize raw host/block files into a single processed blocklist.
 
-This is a copy adapted for the `ad-filter-list` layout. It additionally writes
-a per-source JSON report next to the output file for auditing and CI use.
+Output formats are handled by pluggable writers in the writers/ package.
+Add a new format by creating writers/<name>.py and appending to WRITERS below.
 """
 
 from __future__ import annotations
 
 import argparse
-import gzip
 import json
 import os
 import re
 from datetime import datetime, timezone
 
+from writers import WriterMeta
+from writers.hosts import HostsWriter
+from writers.adblock import AdblockWriter
+from writers.rpz import RpzWriter
+from writers.dnsmasq import DnsmasqWriter
+from writers.unbound import UnboundWriter
+
+# ── Registered writers — add new formats here ────────────────────────────────
+WRITERS = [
+    HostsWriter(),
+    AdblockWriter(),
+    RpzWriter(),
+    DnsmasqWriter(),
+    UnboundWriter(),
+]
 
 LOCAL_SKIP = {"localhost", "localhost.localdomain", "local"}
 
 
 def load_allowlist(path: str) -> set[str]:
-    """Load domains from allowlist.txt; lines starting with #/!/; are ignored."""
     allowed: set[str] = set()
     if not os.path.exists(path):
         return allowed
@@ -36,21 +49,14 @@ def load_allowlist(path: str) -> set[str]:
 
 
 def remove_subdomains(domains: list[str]) -> list[str]:
-    """Remove any domain whose parent is already in the set.
-
-    e.g. if 'example.com' is blocked, drop 'ads.example.com'.
-    """
     domain_set = set(domains)
     result = []
     for d in domains:
         parts = d.split(".")
-        # check every suffix of length 2..n-1 (skip the domain itself)
-        dominated = False
-        for i in range(1, len(parts) - 1):
-            parent = ".".join(parts[i:])
-            if parent in domain_set:
-                dominated = True
-                break
+        dominated = any(
+            ".".join(parts[i:]) in domain_set
+            for i in range(1, len(parts) - 1)
+        )
         if not dominated:
             result.append(d)
     removed = len(domains) - len(result)
@@ -69,22 +75,17 @@ def read_map(map_path: str) -> list[tuple[str, str]]:
             if not line:
                 continue
             parts = line.split(None, 1)
-            if len(parts) == 2:
-                fname, url = parts
-            else:
-                fname = parts[0]
-                url = ""
+            fname = parts[0]
+            url = parts[1] if len(parts) == 2 else ""
             pairs.append((fname, url))
     return pairs
 
 
 IP_RE = re.compile(r"^(?:\d{1,3}\.){3}\d{1,3}$")
-# allowed leading IPs we accept and normalize to 0.0.0.0
 ALLOWED_LEADING_IPS = {"0.0.0.0", "127.0.0.1", "::1", "::"}
 
 
 def extract_domain(line: str) -> str | None:
-    # strip inline comment markers
     for c in ["#", "//", ";"]:
         if c in line:
             line = line.split(c, 1)[0]
@@ -95,43 +96,25 @@ def extract_domain(line: str) -> str | None:
     if not tokens:
         return None
 
-    # If first token is an IP, only proceed if it's an allowed leading IP
     if IP_RE.match(tokens[0]) or tokens[0] in {"0.0.0.0", "::1", "::"}:
         if tokens[0] not in ALLOWED_LEADING_IPS:
-            # skip entries with arbitrary IPs (we only normalize known host-style IPs)
             return None
-        for t in tokens[1:]:
-            if "." in t and not IP_RE.match(t):
-                domain = t
-                break
-        else:
+        domain = next((t for t in tokens[1:] if "." in t and not IP_RE.match(t)), None)
+        if domain is None:
             return None
     else:
-        # find first token that looks like a domain
-        domain = None
-        for t in tokens:
-            if "." in t and not IP_RE.match(t):
-                domain = t
-                break
+        domain = next((t for t in tokens if "." in t and not IP_RE.match(t)), None)
         if domain is None:
             return None
 
-    # normalize: lower, trim whitespace, strip surrounding dots and quotes
-    domain = domain.lower().strip()
-    domain = domain.strip('"\'"')
-    domain = domain.strip('.')
-    if domain in LOCAL_SKIP:
-        return None
-    # discard obvious IPs
-    if IP_RE.match(domain):
+    domain = domain.lower().strip().strip('"\'"').strip('.')
+    if domain in LOCAL_SKIP or IP_RE.match(domain):
         return None
     return domain
 
 
 def detect_format(path: str, sample_lines: int = 50) -> tuple[str, str]:
-    host_lines = 0
-    domain_only_lines = 0
-    seen = 0
+    host_lines = domain_only_lines = seen = 0
     if not os.path.exists(path):
         return ("unsupported", "file not found")
     with open(path, "r", encoding="utf-8", errors="ignore") as fh:
@@ -144,9 +127,8 @@ def detect_format(path: str, sample_lines: int = 50) -> tuple[str, str]:
             if tokens and (IP_RE.match(tokens[0]) or tokens[0] in ALLOWED_LEADING_IPS):
                 if len(tokens) > 1 and "." in tokens[1] and not IP_RE.match(tokens[1]):
                     host_lines += 1
-            else:
-                if len(tokens) == 1 and "." in tokens[0] and not IP_RE.match(tokens[0]):
-                    domain_only_lines += 1
+            elif len(tokens) == 1 and "." in tokens[0] and not IP_RE.match(tokens[0]):
+                domain_only_lines += 1
             if seen >= sample_lines:
                 break
 
@@ -169,8 +151,7 @@ def read_leading_header(path: str) -> list[str]:
             if s.strip() == "":
                 if headers:
                     break
-                else:
-                    continue
+                continue
             if s.lstrip().startswith(('#', '!')):
                 headers.append(s)
                 continue
@@ -178,247 +159,126 @@ def read_leading_header(path: str) -> list[str]:
     return headers
 
 
+def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries):
+    """Scan source files and return (ordered_domains, total_candidates)."""
+    seen: set[str] = set()
+    ordered: list[str] = []
+    total_candidates = 0
+
+    sources = pairs if pairs else [
+        (fname, "")
+        for fname in sorted(os.listdir(raw_dir))
+        if os.path.isfile(os.path.join(raw_dir, fname))
+    ]
+
+    for fname, url in sources:
+        path = os.path.join(raw_dir, fname)
+        headers = read_leading_header(path)
+        fmt, reason = detect_format(path)
+        source_infos.append((fname, headers, url, fmt))
+        source_stats[fname] = {
+            "url": url, "format": fmt, "format_reason": reason,
+            "scanned": 0, "accepted": 0, "rejected": 0,
+            "skipped": fmt == "unsupported",
+        }
+        print(f"{fname}: detected format={fmt} ({reason})")
+        if fmt == "unsupported":
+            rejected_entries.append((fname, 0, f"UNSUPPORTED_FILE: {reason}"))
+            print(f"Skipping {fname}: {reason}")
+            continue
+        if not os.path.exists(path):
+            continue
+        with open(path, "r", encoding="utf-8", errors="ignore") as fh:
+            for lineno, line in enumerate(fh, start=1):
+                stripped = line.strip()
+                if not stripped or stripped.lstrip().startswith(('#', '!')):
+                    continue
+                source_stats[fname]["scanned"] += 1
+                dom = extract_domain(line)
+                if not dom:
+                    source_stats[fname]["rejected"] += 1
+                    rejected_entries.append((fname, lineno, line.rstrip('\n')))
+                    continue
+                source_stats[fname]["accepted"] += 1
+                total_candidates += 1
+                if dom not in seen and dom not in allowlist:
+                    seen.add(dom)
+                    ordered.append(dom)
+
+    return ordered, total_candidates
+
+
 def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
           allowlist_path: str = "allowlist.txt", optimize_subdomains: bool = True) -> None:
     allowlist = load_allowlist(allowlist_path)
     pairs = read_map(map_path)
-    seen: set[str] = set()
-    ordered: list[str] = []
-    source_infos: list[tuple[str, list[str], str, str]] = []  # (filename, headers, url, format)
+    source_infos: list[tuple[str, list[str], str, str]] = []
     rejected_entries: list[tuple[str, int, str]] = []
-
-    # per-source stats for JSON report
     source_stats: dict[str, dict] = {}
 
-    total_candidates = 0
-    if pairs:
-        for fname, url in pairs:
-            path = os.path.join(raw_dir, fname)
-            headers = read_leading_header(path)
-            fmt, reason = detect_format(path)
-            source_infos.append((fname, headers, url, fmt))
-            source_stats[fname] = {
-                "url": url,
-                "format": fmt,
-                "format_reason": reason,
-                "scanned": 0,
-                "accepted": 0,
-                "rejected": 0,
-                "skipped": fmt == "unsupported",
-            }
-            print(f"{fname}: detected format={fmt} ({reason})")
-            if fmt == "unsupported":
-                rejected_entries.append((fname, 0, f"UNSUPPORTED_FILE: {reason}"))
-                print(f"Skipping {fname}: {reason}")
-                continue
-            if not os.path.exists(path):
-                continue
-            with open(path, "r", encoding="utf-8", errors="ignore") as fh:
-                for lineno, line in enumerate(fh, start=1):
-                    stripped = line.strip()
-                    if not stripped or stripped.lstrip().startswith(('#', '!')):
-                        continue
-                    source_stats[fname]["scanned"] += 1
-                    dom = extract_domain(line)
-                    if not dom:
-                        source_stats[fname]["rejected"] += 1
-                        rejected_entries.append((fname, lineno, line.rstrip('\n')))
-                        continue
-                    source_stats[fname]["accepted"] += 1
-                    total_candidates += 1
-                    if dom not in seen and dom not in allowlist:
-                        seen.add(dom)
-                        ordered.append(dom)
-    else:
-        # fallback: scan all files in raw_dir
-        for fname in sorted(os.listdir(raw_dir)):
-            path = os.path.join(raw_dir, fname)
-            if os.path.isdir(path):
-                continue
-            headers = read_leading_header(path)
-            source_infos.append((fname, headers, "", "unknown"))
-            source_stats[fname] = {"url": "", "format": "unknown", "scanned": 0, "accepted": 0, "rejected": 0, "skipped": False}
-            with open(path, "r", encoding="utf-8", errors="ignore") as fh:
-                for lineno, line in enumerate(fh, start=1):
-                    stripped = line.strip()
-                    if not stripped or stripped.lstrip().startswith(('#', '!')):
-                        continue
-                    source_stats[fname]["scanned"] += 1
-                    dom = extract_domain(line)
-                    if not dom:
-                        source_stats[fname]["rejected"] += 1
-                        rejected_entries.append((fname, lineno, line.rstrip('\n')))
-                        continue
-                    source_stats[fname]["accepted"] += 1
-                    total_candidates += 1
-                    if dom not in seen and dom not in allowlist:
-                        seen.add(dom)
-                        ordered.append(dom)
+    ordered, total_candidates = _collect_domains(
+        raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries
+    )
 
-    # optionally sort output (alphabetical by domain)
     if sort_output:
         ordered = sorted(ordered)
-
-    # remove subdomains whose parent domain is already blocked
     if optimize_subdomains:
         ordered = remove_subdomains(ordered)
 
-    # prepare previous backup and compute delta vs previous file if exists
-    prev_path = out_path
+    # delta vs previous hosts file
+    out_dir = os.path.dirname(out_path) or "."
     prev_domains: set[str] = set()
-    delta_added = 0
-    delta_removed = 0
-    if os.path.exists(prev_path):
-        # read previous domains
-        with open(prev_path, "r", encoding="utf-8", errors="ignore") as pf:
+    delta_added = delta_removed = 0
+    if os.path.exists(out_path):
+        with open(out_path, "r", encoding="utf-8", errors="ignore") as pf:
             for line in pf:
                 s = line.strip()
                 if not s or s.startswith("#"):
                     continue
                 parts = s.split()
-                if len(parts) >= 2:
-                    prev_domains.add(parts[1].lower())
-                elif len(parts) == 1:
-                    prev_domains.add(parts[0].lower())
-        # write a backup copy
-        backup_path = prev_path + ".old"
+                prev_domains.add(parts[1].lower() if len(parts) >= 2 else parts[0].lower())
         try:
-            with open(backup_path, "w", encoding="utf-8") as bp, open(prev_path, "r", encoding="utf-8", errors="ignore") as pf:
+            with open(out_path + ".old", "w", encoding="utf-8") as bp, \
+                 open(out_path, "r", encoding="utf-8", errors="ignore") as pf:
                 bp.write(pf.read())
         except Exception:
             pass
-        # compute deltas
-        new_set = set(d.lower() for d in ordered)
-        added_set = new_set - prev_domains
-        removed_set = prev_domains - new_set
-        delta_added = len(added_set)
-        delta_removed = len(removed_set)
+        new_set = {d.lower() for d in ordered}
+        delta_added = len(new_set - prev_domains)
+        delta_removed = len(prev_domains - new_set)
 
-    # write output
     total_unique = len(ordered)
     duplicates = max(0, total_candidates - total_unique)
     reduction_pct = (duplicates / total_candidates * 100) if total_candidates else 0.0
+    now_str = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 
-    now_str = datetime.now(timezone.utc).isoformat().replace('+00:00','Z')
-    out_dir = os.path.dirname(out_path) or "."
-    rpz_path = os.path.join(out_dir, "blocklist-bind9.zone.gz")
-    adblock_path = os.path.join(out_dir, "blocklist-adblock.txt")
+    meta = WriterMeta(
+        now_str=now_str,
+        total_candidates=total_candidates,
+        total_unique=total_unique,
+        duplicates=duplicates,
+        reduction_pct=reduction_pct,
+        delta_added=delta_added,
+        delta_removed=delta_removed,
+        source_infos=source_infos,
+    )
 
-    # 1. Standard hosts/MikroTik format
-    with open(out_path, "w", encoding="utf-8") as out:
-        out.write(f"# Processed blocklist - generated: {now_str}\n")
-        out.write("# Format: 0.0.0.0 domain\n")
-        out.write("# Summary: scanned entries: {0}, unique entries: {1}, removed duplicates: {2} ({3:.2f}% reduction)\n".format(total_candidates, total_unique, duplicates, reduction_pct))
-        if delta_added or delta_removed:
-            out.write(f"# Delta vs previous: added={delta_added} removed={delta_removed}\n")
-        out.write("# Sources and original headers (credits):\n\n")
+    # ── run all registered writers ────────────────────────────────────────────
+    for writer in WRITERS:
+        writer.write(ordered, meta, out_dir)
 
-        for fname, headers, url, fmt in source_infos:
-            out.write(f"# ----- Source: {url or fname} ({fname}) -----\n")
-            out.write(f"# Detected format: {fmt}\n")
-            if headers:
-                for h in headers:
-                    # ensure header lines start with '#'
-                    h_clean = h.lstrip()
-                    if h_clean.startswith('!') or h_clean.startswith(';'):
-                        out.write('#' + h_clean[1:] + "\n")
-                    elif not h_clean.startswith('#'):
-                        out.write('# ' + h + "\n")
-                    else:
-                        out.write(h + "\n")
-            else:
-                out.write(f"# (no header in source file)\n")
-            out.write("#\n")
-
-        out.write("# ---- merged entries ----\n")
-        for d in ordered:
-            out.write(f"0.0.0.0 {d}\n")
-
-    # 2. BIND9 RPZ format
-    serial = int(datetime.now(timezone.utc).timestamp())
-    with gzip.open(rpz_path, "wt", encoding="utf-8") as rpz:
-        rpz.write(f"; Processed blocklist (BIND9 RPZ) - generated: {now_str}\n")
-        rpz.write("; Format: BIND9 RPZ zone file (CNAME to .)\n")
-        rpz.write("; Summary: scanned entries: {0}, unique entries: {1}, removed duplicates: {2} ({3:.2f}% reduction)\n".format(total_candidates, total_unique, duplicates, reduction_pct))
-        if delta_added or delta_removed:
-            rpz.write(f"; Delta vs previous: added={delta_added} removed={delta_removed}\n")
-        rpz.write("; Sources and original headers (credits):\n\n")
-
-        for fname, headers, url, fmt in source_infos:
-            rpz.write(f"; ----- Source: {url or fname} ({fname}) -----\n")
-            rpz.write(f"; Detected format: {fmt}\n")
-            if headers:
-                for h in headers:
-                    # ensure header lines start with ';'
-                    h_clean = h.lstrip()
-                    if h_clean.startswith('!') or h_clean.startswith('#'):
-                        rpz.write(';' + h_clean[1:] + "\n")
-                    elif not h_clean.startswith(';'):
-                        rpz.write('; ' + h + "\n")
-                    else:
-                        rpz.write(h + "\n")
-            else:
-                rpz.write(f"; (no header in source file)\n")
-            rpz.write(";\n")
-
-        rpz.write("\n")
-        rpz.write("$TTL 2h\n")
-        rpz.write(f"@ IN SOA ns.rpz.local. hostmaster.rpz.local. (\n")
-        rpz.write(f"    {serial} ; Serial\n")
-        rpz.write("    1h         ; Refresh\n")
-        rpz.write("    15m        ; Retry\n")
-        rpz.write("    30d        ; Expire\n")
-        rpz.write("    2h         ; Minimum TTL\n")
-        rpz.write(")\n")
-        rpz.write("@ IN NS ns.rpz.local.\n")
-        rpz.write("ns IN A 127.0.0.1\n\n")
-        rpz.write("; ---- merged entries ----\n")
-        for d in ordered:
-            rpz.write(f"{d} IN CNAME .\n")
-            rpz.write(f"*.{d} IN CNAME .\n")
-
-    # 3. Adblock/uBlock syntax format
-    with open(adblock_path, "w", encoding="utf-8") as adblock:
-        adblock.write(f"! Processed blocklist (Adblock) - generated: {now_str}\n")
-        adblock.write("! Format: Adblock Filter Syntax (||domain.com^)\n")
-        adblock.write("! Summary: scanned entries: {0}, unique entries: {1}, removed duplicates: {2} ({3:.2f}% reduction)\n".format(total_candidates, total_unique, duplicates, reduction_pct))
-        if delta_added or delta_removed:
-            adblock.write(f"! Delta vs previous: added={delta_added} removed={delta_removed}\n")
-        adblock.write("! Sources and original headers (credits):\n\n")
-
-        for fname, headers, url, fmt in source_infos:
-            adblock.write(f"! ----- Source: {url or fname} ({fname}) -----\n")
-            adblock.write(f"! Detected format: {fmt}\n")
-            if headers:
-                for h in headers:
-                    # ensure header lines start with '!'
-                    h_clean = h.lstrip()
-                    if h_clean.startswith('#') or h_clean.startswith(';'):
-                        adblock.write('!' + h_clean[1:] + "\n")
-                    elif not h_clean.startswith('!'):
-                        adblock.write('! ' + h + "\n")
-                    else:
-                        adblock.write(h + "\n")
-            else:
-                adblock.write(f"! (no header in source file)\n")
-            adblock.write("!\n")
-
-        adblock.write("\n! ---- merged entries ----\n")
-        for d in ordered:
-            adblock.write(f"||{d}^\n")
-
-    # write rejected entries file
+    # ── rejected entries ──────────────────────────────────────────────────────
     rejected_path = os.path.join(out_dir, "rejected-entries.txt")
     if rejected_entries:
         with open(rejected_path, "w", encoding="utf-8") as rej:
-            rej.write(f"# Rejected entries - generated: {datetime.now(timezone.utc).isoformat().replace('+00:00','Z')}\n")
+            rej.write(f"# Rejected entries - generated: {now_str}\n")
             rej.write("# Format: source_file line_number : original_line\n\n")
             for fname, lineno, orig in rejected_entries:
                 rej.write(f"{fname} {lineno}: {orig}\n")
 
-    # write JSON report with per-source stats
+    # ── JSON report ───────────────────────────────────────────────────────────
     report = {
-        "generated": datetime.now(timezone.utc).isoformat().replace('+00:00','Z'),
+        "generated": now_str,
         "summary": {
             "scanned": total_candidates,
             "unique": total_unique,
@@ -430,23 +290,22 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         },
         "sources": source_stats,
     }
-    report_path = os.path.join(out_dir, "blocklist-report.json")
-    with open(report_path, "w", encoding="utf-8") as rf:
+    with open(os.path.join(out_dir, "blocklist-report.json"), "w", encoding="utf-8") as rf:
         json.dump(report, rf, indent=2, ensure_ascii=False)
 
-    # also print a short summary to stdout for convenience
-    sorted_flag = not (not sort_output)
-    print(f"Processed: scanned={total_candidates} unique={total_unique} duplicates={duplicates} reduction={reduction_pct:.2f}% rejected={len(rejected_entries)} sorted={sorted_flag} -> {rejected_path}")
+    print(f"Processed: scanned={total_candidates} unique={total_unique} "
+          f"duplicates={duplicates} reduction={reduction_pct:.2f}% "
+          f"rejected={len(rejected_entries)} sorted={sort_output} -> {rejected_path}")
 
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description="Merge raw host files into one processed blocklist")
-    p.add_argument("--raw", default="raw", help="raw files directory")
-    p.add_argument("--map", default="raw/sources.map", help="mapping file produced by update script")
-    p.add_argument("--out", default="processed/blocklist.txt", help="output file path")
-    p.add_argument("--unsorted", action="store_true", help="keep first-seen order instead of sorting alphabetically")
-    p.add_argument("--allowlist", default="allowlist.txt", help="path to allowlist file (default: allowlist.txt)")
-    p.add_argument("--no-optimize-subdomains", action="store_true", help="disable subdomain redundancy optimizer")
+    p.add_argument("--raw", default="raw")
+    p.add_argument("--map", default="raw/sources.map")
+    p.add_argument("--out", default="processed/blocklist.txt")
+    p.add_argument("--unsorted", action="store_true")
+    p.add_argument("--allowlist", default="allowlist.txt")
+    p.add_argument("--no-optimize-subdomains", action="store_true")
     args = p.parse_args(argv)
 
     merge(args.raw, args.map, args.out,
