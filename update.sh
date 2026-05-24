@@ -1,31 +1,39 @@
 #!/usr/bin/env bash
-# update.sh — main entry point for the blocklist pipeline.
+# DEPRECATED — kept for backward compatibility only.
 #
-# Default: delegates to update.py (concurrent, retry, gzip/zip support).
-# Legacy:  ./update.sh --legacy [--unsorted]  — original curl-based loop.
+# The pipeline entry point is now run.py:
+#
+#   python3 run.py [--skip-download] [--unsorted] [--workers N] ...
+#
+# This script delegates to run.py so existing CI/cron jobs continue to
+# work unchanged.  The original curl-based downloader (--legacy) is
+# preserved below as historical reference.
 set -euo pipefail
 
 cd "$(dirname "$0")"
 
+echo "Warning: update.sh is deprecated. Use: python3 run.py" >&2
+
 # ── argument parsing ────────────────────────────────────────────────────────
 LEGACY=false
-UNSORTED_FLAG=""
-SKIP_DOWNLOAD_FLAG=""
+PASSTHROUGH_FLAGS=""
 for arg in "$@"; do
   case "$arg" in
-    --legacy)         LEGACY=true ;;
-    --unsorted)       UNSORTED_FLAG="--unsorted" ;;
-    --skip-download)  SKIP_DOWNLOAD_FLAG="--skip-download" ;;
+    --legacy)        LEGACY=true ;;
+    --unsorted)      PASSTHROUGH_FLAGS="$PASSTHROUGH_FLAGS --unsorted" ;;
+    --skip-download) PASSTHROUGH_FLAGS="$PASSTHROUGH_FLAGS --skip-download" ;;
   esac
 done
 
-# ── default path: Python downloader ────────────────────────────────────────
+# ── default path: delegate to run.py ────────────────────────────────────────
 if [ "$LEGACY" = false ]; then
-  exec python3 update.py $UNSORTED_FLAG $SKIP_DOWNLOAD_FLAG
+  # shellcheck disable=SC2086
+  exec python3 run.py $PASSTHROUGH_FLAGS
 fi
 
-# ── legacy path: original curl loop ────────────────────────────────────────
-echo "Running legacy curl-based downloader…"
+# ── legacy path: original curl loop ─────────────────────────────────────────
+# Kept as historical reference only — superseded by fetch.py / run.py.
+echo "Running legacy curl-based downloader…" >&2
 mkdir -p raw processed
 rm -f raw/*
 
@@ -58,5 +66,5 @@ while IFS= read -r line || [ -n "$line" ]; do
   fi
 done < "$SOURCES_FILE"
 
-python3 merge.py --raw raw --map raw/sources.map --out processed/blocklist.txt $UNSORTED_FLAG
+python3 merge.py --raw raw --map raw/sources.map --out processed/blocklist.txt $PASSTHROUGH_FLAGS
 echo "Done (legacy mode)."

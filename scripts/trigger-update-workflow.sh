@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-# trigger-update-workflow.sh — run the "Update blocklists" GitHub Actions workflow
-# via your local gh session (no tokens in this repo).
+# Trigger the "Update blocklists" GitHub Actions workflow via your local gh session.
 set -euo pipefail
 
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 
 WORKFLOW_FILE=".github/workflows/update.yml"
 WORKFLOW_NAME="Update blocklists"
@@ -13,7 +12,7 @@ usage() {
   cat <<EOF
 Usage: $(basename "$0") [--watch]
 
-Trigger the "$WORKFLOW_NAME" workflow on GitHub (same job as ./update.sh in CI).
+Trigger the "$WORKFLOW_NAME" workflow on GitHub (same job as CI runs daily).
 
 Options:
   --watch   Wait until the run finishes (gh run watch)
@@ -52,7 +51,6 @@ fi
 echo "Triggering workflow: $WORKFLOW_NAME"
 gh workflow run "$WORKFLOW_FILE"
 
-# Brief pause so the new run appears in the list.
 sleep 2
 
 RUN_ID="$(gh run list --workflow="$WORKFLOW_FILE" --limit=1 --json databaseId --jq '.[0].databaseId')"

@@ -21,10 +21,9 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Run update.sh
+      - name: Run pipeline
         run: |
-          chmod +x ./update.sh
-          ./update.sh
+          python3 run.py
           echo "Current dir:" && pwd
           echo "Processed dir contents:"
           ls -la processed/
@@ -38,7 +37,7 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-          git add processed/ reports/
+          git add processed/ reports/ README.md
 
           if git diff --staged --quiet; then
             echo "No changes"

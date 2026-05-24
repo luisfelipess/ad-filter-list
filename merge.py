@@ -320,12 +320,6 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
                     continue
                 parts = s.split()
                 prev_domains.add(parts[1].lower() if len(parts) >= 2 else parts[0].lower())
-        try:
-            with open(out_path + ".old", "w", encoding="utf-8") as bp, \
-                 open(out_path, "r", encoding="utf-8", errors="ignore") as pf:
-                bp.write(pf.read())
-        except Exception:
-            pass
         new_set = {d.lower() for d in ordered_all}
         delta_added = len(new_set - prev_domains)
         delta_removed = len(prev_domains - new_set)

@@ -2,6 +2,19 @@
 
 Automated blocklist compiler. Fetches DNS/ad-block lists from multiple sources daily, merges and deduplicates them, and publishes five output formats directly to this repository via GitHub Actions.
 
+<!-- stats:start -->
+**Last run:** 2026-05-24 &nbsp;·&nbsp; **Sources:** 6 &nbsp;·&nbsp; **Unique domains:** 815,804 *(hosts/domains)* · 589,557 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 90,060
+
+| Format | Download | Domains |
+|---|---|---|
+| Hosts (`0.0.0.0 domain`) | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist.txt) | 815,804 |
+| Plain domains | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-domains.txt) | 815,804 |
+| Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-adblock.txt) | 589,557 |
+| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-bind9.zone.gz) | 589,557 |
+| dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-dnsmasq.conf) | 589,557 |
+| Unbound | [blocklist-unbound.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-unbound.conf) | 589,557 |
+<!-- stats:end -->
+
 ## Output formats
 
 | File | Format | Use case |
@@ -26,10 +39,9 @@ All files are committed back to the repository automatically after each run.
 ## Quick start
 
 ```bash
-# clone and run
 git clone https://github.com/luisfelipess/ad-filter-list.git
 cd ad-filter-list
-./update.sh
+python3 run.py
 ```
 
 Outputs land in `processed/`. Raw downloaded files go to `raw/` (gitignored).
@@ -38,11 +50,11 @@ Outputs land in `processed/`. Raw downloaded files go to `raw/` (gitignored).
 
 When tuning `allowlist.txt` or `blocklist.txt`, avoid re-downloading on every edit:
 
-1. **Full run once** — `./update.sh` fetches all sources into `raw/` and writes `processed/` + `reports/`.
-2. **Iterate on lists** — edit allowlist/blocklist, then `./update.sh --skip-download` (add `--unsorted` if you need first-seen order preserved).
-3. **Prerequisite** — `--skip-download` reuses whatever is already in `raw/` from a prior download. An empty `raw/` means no source data to merge; only blocklist overrides (if any) will appear in the output.
+1. **Full run once** — `python3 run.py` downloads all sources into `raw/` and writes `processed/` + `reports/`.
+2. **Iterate fast** — edit allowlist/blocklist, then `python3 run.py --skip-download` (add `--unsorted` to preserve first-seen order).
+3. **Note** — `--skip-download` reuses whatever is in `raw/` from a prior download. An empty `raw/` means only blocklist overrides will appear.
 
-For merge-only experiments (no download at all):
+For merge-only experiments (no download):
 
 ```bash
 python3 merge.py --raw raw --map raw/sources.map --out processed/blocklist.txt
@@ -50,41 +62,32 @@ python3 merge.py --raw raw --map raw/sources.map --out processed/blocklist.txt
 
 ### Options
 
-| Flag | `update.sh` | `update.py` | Effect |
-|---|---|---|---|
-| *(default)* | yes | yes | Download sources, then merge |
-| `--skip-download` | yes | yes | Skip network fetch; merge existing files in `raw/` |
-| `--unsorted` | yes | yes | Preserve first-seen domain order instead of sorting |
-| `--no-optimize-subdomains` | yes | yes | Disable subdomain optimization for DNS formats — every unique domain is written to all output files (useful when you want a flat list with no implicit parent-domain coverage) |
-| `--legacy` | yes | — | Use curl-based downloader instead of `update.py` (no `--skip-download`) |
-| `--workers N` | — | yes | Parallel download threads (default 8) |
-| `--retries N` | — | yes | Per-URL retry count (default 3) |
-| `--timeout N` | — | yes | Per-request timeout in seconds (default 30) |
+| Flag | Effect |
+|---|---|
+| *(default)* | Download sources, merge, update README stats |
+| `--skip-download` | Skip fetch stage; merge existing files in `raw/` |
+| `--unsorted` | Preserve first-seen domain order instead of sorting alphabetically |
+| `--no-optimize-subdomains` | Disable subdomain optimization for DNS formats — every unique domain is written to all output files |
+| `--no-post-run` | Skip the README stats update step |
+| `--workers N` | Parallel download threads (default 8) |
+| `--retries N` | Per-URL retry count (default 3) |
+| `--timeout N` | Per-request timeout in seconds (default 30) |
 
 ```bash
-./update.sh                              # download + merge
-./update.sh --skip-download              # merge only (fast iteration)
-./update.sh --skip-download --unsorted
-./update.sh --legacy                     # curl downloader (fallback)
-./update.sh --legacy --unsorted
+python3 run.py                            # full pipeline
+python3 run.py --skip-download            # merge only (fast iteration)
+python3 run.py --skip-download --unsorted
+python3 run.py --no-post-run              # skip README stats update
 ```
 
-### Direct Python usage
+Individual stages can also be called directly:
 
 ```bash
-python3 update.py [--unsorted] [--skip-download] [--workers 8] [--retries 3] [--timeout 30]
-                  [--sources sources.conf] [--raw raw] [--out processed/blocklist.txt]
-                  [--blocklist blocklist.txt]
-```
-
-With `--skip-download`, `update.py` does not clear `raw/`; it runs `merge.py` against the files already there. If `raw/sources.map` is missing, merge still scans `raw/` for downloaded files.
-
-`merge.py` can also be run standalone if raw files are already downloaded:
-
-```bash
+python3 fetch.py [--sources sources.conf] [--raw raw] [--workers 8] [--retries 3] [--timeout 30]
 python3 merge.py [--raw raw] [--map raw/sources.map] [--out processed/blocklist.txt]
                  [--unsorted] [--allowlist allowlist.txt] [--blocklist blocklist.txt]
                  [--no-optimize-subdomains] [--writers-config writers.conf]
+python3 post_run.py [--report reports/blocklist-report.json] [--readme README.md]
 ```
 
 ---
@@ -172,6 +175,16 @@ Some sources publish wildcard entries (`*.domain`) meaning "block this domain an
 
 `DomainReader` recognises `*.domain` lines and flags them as wildcards (stripping the `*.` prefix so the base domain enters the collected set). `HostsReader` always produces exact entries — a hosts-file line is never promoted to a wildcard.
 
+Source files are classified by the proportion of wildcard lines in a 50-line sample:
+
+| `"format"` in report | Condition |
+|---|---|
+| `domain-only` | < 10 % of sample lines are `*.domain` |
+| `wildcard-domain` | > 90 % of sample lines are `*.domain` |
+| `mixed-domain` | 10 – 90 % (genuinely mixed file) |
+| `host` | Lines match `0.0.0.0 domain` / `127.0.0.1 domain` |
+| `adblock` | Lines match `\|\|domain^` |
+
 **Stage 2 — Format-aware deduplication**
 
 The pipeline produces two domain lists with different deduplication levels:
@@ -207,12 +220,12 @@ Allowlist and blocklist wildcards follow the same `*.domain` rules; see [Allowli
 ## How it works
 
 ```
-sources.txt
+sources.conf
     │
     ▼
-update.py  ──── concurrent downloads (ThreadPoolExecutor)
-    │            retry with exponential backoff
-    │            transparent gzip/zip decompression
+fetch.py  ───── concurrent downloads (ThreadPoolExecutor)
+    │             retry with exponential backoff
+    │             transparent gzip/zip decompression
     │
     ▼
 raw/  (gitignored)
@@ -259,8 +272,8 @@ No secrets or tokens required beyond the default `GITHUB_TOKEN` — the workflow
 To trigger the same workflow from your machine (uses your existing `gh auth login` session, no repo secrets):
 
 ```bash
-./trigger-update-workflow.sh          # trigger and print the latest run URL
-./trigger-update-workflow.sh --watch  # wait until the run finishes
+./scripts/trigger-update-workflow.sh          # trigger and print the latest run URL
+./scripts/trigger-update-workflow.sh --watch  # wait until the run finishes
 ```
 
 ---
@@ -310,13 +323,16 @@ The hosts-format output (`0.0.0.0 domain`) is directly compatible with MikroTik 
 ## Repository layout
 
 ```
-update.sh                        entry point (delegates to update.py by default)
-update.py                        concurrent Python downloader
-merge.py                         parser, deduplicator, writer orchestrator
+run.py                           pipeline entry point (fetch → merge → post_run)
+fetch.py                         concurrent source downloader
+merge.py                         merge, deduplicate, and write all output formats
+post_run.py                      update README.md stats block after each run
+update.sh                        DEPRECATED wrapper — calls run.py (kept for compat)
+update.py                        DEPRECATED shim  — calls run.py (kept for compat)
 readers/                         pluggable source format readers
   __init__.py                    BaseReader, normalize_domain, read_leading_header
   hosts.py                       0.0.0.0/127.0.0.1 domain format
-  domain.py                      bare domain-only lists
+  domain.py                      bare domain-only / wildcard-domain lists
   adblock.py                     ||domain^ sources
 writers/                         pluggable output format writers
   __init__.py                    BaseWriter, WriterMeta, shared helpers
@@ -326,10 +342,13 @@ writers/                         pluggable output format writers
   rpz.py                         BIND9 RPZ gzip zone file            [optimized]
   dnsmasq.py                     address=/domain/# (OpenWrt, DD-WRT) [optimized]
   unbound.py                     local-zone: always_nxdomain         [optimized]
-sources.conf                     preferred source URL list
-sources.txt                      legacy source URL list (fallback for compatibility)
-allowlist.txt                    domains that are never blocked (`example.com` exact, `*.example.com` all subdomains)
-blocklist.txt                    domains always blocked, even if absent from sources (same `*.domain` syntax)
+scripts/
+  compare.sh                     diff current blocklist against last git-committed version
+  trigger-update-workflow.sh     trigger the GitHub Actions workflow via gh CLI
+sources.conf                     source URL list (one URL per line)
+sources.txt                      legacy source URL list (fallback if sources.conf missing)
+allowlist.txt                    domains that are never blocked
+blocklist.txt                    domains always blocked, even if absent from sources
 writers.conf                     enable/disable output writers
 client-scripts/
   bind9-update-rpz.sh            BIND9 RPZ fetch-and-reload script
