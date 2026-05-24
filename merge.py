@@ -165,7 +165,7 @@ def read_map(map_path: str) -> list[tuple[str, str]]:
 
 
 def _pick_reader(path: str, sample_size: int = 50):
-    """Return the first reader that claims this file, or None."""
+    """Return (reader, fmt, reason) for the first reader that claims this file."""
     sample: list[str] = []
     try:
         with open(path, "r", encoding="utf-8", errors="ignore") as fh:
@@ -177,12 +177,13 @@ def _pick_reader(path: str, sample_size: int = 50):
                 if len(sample) >= sample_size:
                     break
     except OSError:
-        return None, "file not found"
+        return None, "unsupported", "file not found"
 
     for reader in READERS:
         if reader.detect(sample):
-            return reader, f"{reader.name} format detected"
-    return None, "no recognizable format in sample"
+            fmt = reader.classify(sample)
+            return reader, fmt, f"{fmt} format detected"
+    return None, "unsupported", "no recognizable format in sample"
 
 
 def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries):
@@ -203,8 +204,7 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
     for fname, url in sources:
         path = os.path.join(raw_dir, fname)
         headers = read_leading_header(path)
-        reader, reason = _pick_reader(path)
-        fmt = reader.name if reader else "unsupported"
+        reader, fmt, reason = _pick_reader(path)
         source_infos.append((fname, headers, url, fmt))
         source_stats[fname] = {
             "url": url, "format": fmt, "format_reason": reason,

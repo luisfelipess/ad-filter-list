@@ -54,6 +54,14 @@ class BaseReader(ABC):
     def detect(self, sample_lines: list[str]) -> bool:
         """Return True if this reader recognises the format from a sample."""
 
+    def classify(self, sample_lines: list[str]) -> str:
+        """Return a specific format label for this sample (defaults to self.name).
+
+        Override when a single reader handles multiple sub-formats that should be
+        reported distinctly (e.g. domain-only vs wildcard-domain).
+        """
+        return self.name
+
     @abstractmethod
     def extract(self, line: str) -> tuple[str, bool] | None:
         """Extract (domain, is_wildcard) from one line, or None to reject."""

@@ -91,6 +91,22 @@ class TestDomainReader(unittest.TestCase):
     def test_exact_not_flagged(self):
         self.assertEqual(_extract_wc(self.r, "example.com"), ("example.com", False))
 
+    def test_classify_plain_returns_domain_only(self):
+        sample = ["example.com", "other.org", "third.net"]
+        self.assertEqual(self.r.classify(sample), "domain-only")
+
+    def test_classify_wildcard_majority_returns_wildcard_domain(self):
+        sample = ["*.example.com", "*.other.org", "*.third.net", "plain.com"]
+        self.assertEqual(self.r.classify(sample), "wildcard-domain")
+
+    def test_classify_all_wildcards_returns_wildcard_domain(self):
+        sample = ["*.a.com", "*.b.com", "*.c.com"]
+        self.assertEqual(self.r.classify(sample), "wildcard-domain")
+
+    def test_classify_ignores_comment_lines(self):
+        sample = ["# header", "*.a.com", "*.b.com", "*.c.com"]
+        self.assertEqual(self.r.classify(sample), "wildcard-domain")
+
 
 class TestAdblockReader(unittest.TestCase):
     def setUp(self):
@@ -498,6 +514,16 @@ class TestMergeEndToEnd(unittest.TestCase):
         self.assertIn("sources", report)
         self.assertIn("matched_allowlisted", report["summary"])
         self.assertIn("added_by_blocklist_override", report["summary"])
+
+    def test_wildcard_domain_source_classified_correctly(self):
+        """A file whose lines are all *.domain must be classified as wildcard-domain."""
+        self._write_source("01_wc.txt", "*.example.com\n*.other.org\n*.third.net\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                allowlist_path=self._write_allowlist(""), optimize_subdomains=False)
+        report_path = os.path.join(self.tmp, "reports", "blocklist-report.json")
+        with open(report_path) as f:
+            report = json.loads(f.read())
+        self.assertEqual(report["sources"]["01_wc.txt"]["format"], "wildcard-domain")
 
     def test_json_report_has_both_reduction_breakdowns(self):
         # Both dedup-only (hosts/domains) and subdomain-optimized (DNS) stats must be present.
