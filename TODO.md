@@ -1,69 +1,79 @@
 # ad-filter-list Roadmap & Tasks
 
-This document outlines the planned improvements for the `ad-filter-list` tool to extend its performance, format compatibility, and automation.
-
 ---
 
 ## 🎯 High-Level Objective
-Fully automated blocklist compiler that fetches DNS/ad-block lists daily, compiles and deduplicates them, and publishes **five output formats** to the repository via GitHub Actions:
+
+Fully automated blocklist compiler that fetches DNS/ad-block lists daily, compiles and deduplicates them, and publishes **six output formats** to the repository via GitHub Actions:
+
 1. **Hosts** (`0.0.0.0 domain`) — MikroTik, Pi-hole, generic hosts
-2. **BIND9 RPZ** — `response-policy` zone file (gzip)
-3. **Adblock/uBlock** — `||domain^` syntax
-4. **dnsmasq** — `address=/domain/#` (OpenWrt, DD-WRT)
-5. **Unbound** — `local-zone: always_nxdomain`
+2. **Plain domains** (one per line) — generic use
+3. **BIND9 RPZ** — `response-policy` zone file (gzip)
+4. **Adblock/uBlock** — `||domain^` syntax
+5. **dnsmasq** — `address=/domain/#` (OpenWrt, DD-WRT)
+6. **Unbound** — `local-zone: always_nxdomain`
 
 Output writers live in `writers/`. Adding a new format = one new file + one line in `merge.py`.
 
 ---
 
-## 📋 Roadmap & Tasks
+## ✅ Phase 1: Multiple Output Formats
 
-### ✅ Phase 1: Support for Multiple Output Formats
-`merge.py` now writes three output formats alongside the standard hosts file:
+- [x] BIND9 RPZ (`processed/blocklist-bind9.zone.gz`)
+- [x] Adblock/uBlock (`processed/blocklist-adblock.txt`)
+- [x] dnsmasq (`processed/blocklist-dnsmasq.conf`)
+- [x] Unbound (`processed/blocklist-unbound.conf`)
+- [x] Plain domains (`processed/blocklist-domains.txt`)
+- [x] Pluggable writer architecture — new format = one file in `writers/`
 
-- [x] **BIND9 Response Policy Zone (RPZ) Format**
-  - **Path**: `processed/blocklist-bind9.zone.gz` (gzip-compressed to keep repo size manageable)
-  - **Syntax**: Standard DNS zone file with SOA/NS header, mapping domains using CNAMEs to `.` (NXDOMAIN).
-- [x] **Adblock/uBlock Filter Syntax**
-  - **Path**: `processed/blocklist-adblock.txt`
-  - **Syntax**: `||domain.com^` format compatible with uBlock Origin and similar extensions.
+## ✅ Phase 2: Daily Automation via GitHub Actions
 
-### ✅ Phase 2: Daily Automation via GitHub Actions
-Hands-free compilation workflow implemented at `.github/workflows/update.yml`.
+- [x] Workflow at `.github/workflows/update.yml` — daily 03:00 UTC + manual trigger
+- [x] BIND9 client integration script (`client-scripts/bind9-update-rpz.sh`)
 
-- [x] **GitHub Actions Workflow** (`.github/workflows/update.yml`)
-  - **Schedule**: Daily at 03:00 UTC + manual trigger (`workflow_dispatch`).
-  - **Steps**: checkout → setup Python → run `update.sh` → commit & push `processed/` back to the repository with `[skip ci]`.
-- [x] **Provide a BIND9 Client Integration Script** (`client-scripts/bind9-update-rpz.sh`)
-  - Fetches `blocklist-bind9.zone.gz` from the raw GitHub URL, validates with `named-checkzone`, installs to `/etc/bind/db.rpz.local`, and runs `rndc reload rpz.local`.
-  - See [`client-scripts/README.md`](client-scripts/README.md) for setup and cron instructions.
+## ✅ Phase 3: Python Downloader & Performance
 
-### ✅ Phase 3: Python-based Downloader & Performance
-Downloading logic ported to `update.py`; `update.sh` kept as a legacy reference/fallback.
+- [x] `fetch.py` — concurrent downloads via `ThreadPoolExecutor`, retry with exponential backoff, gzip/zip decompression
+- [x] `--skip-download` flag for fast local iteration without re-fetching
 
-- [x] **Parallel Downloader in Python** (`update.py`)
-  - Concurrent downloads via `ThreadPoolExecutor` (default 8 workers).
-  - Retry with exponential backoff (default 3 attempts), configurable timeout.
-  - Parses `sources.txt` (skips comments/blank lines, strips inline comments).
-  - Writes `raw/sources.map` and invokes `merge.py` directly as a module.
-- [x] **Compressed File Support**
-  - Transparently decompresses gzip (magic bytes or `.gz`) and zip (magic bytes or `.zip`) responses before writing to `raw/`.
+## ✅ Phase 4: Smart Filtering & Allowlisting
 
-### ✅ Phase 4: Smart Filtering & Allowlisting
+- [x] Allowlist (`allowlist.txt`) with `*.domain` wildcard support
+- [x] Blocklist override (`blocklist.txt`) with `*.domain` wildcard support
+- [x] Subdomain redundancy optimizer (`remove_subdomains`) — typically removes 20–30% of entries for DNS formats
+- [x] Abort on download failure — `processed/` left untouched
+- [x] Regression test suite (`tests/test_merge.py`)
 
-- [x] **Allowlist Support** (`allowlist.txt`)
-  - `merge.py` loads `allowlist.txt` at merge time and silently drops any matching domain.
-  - Configurable via `--allowlist <path>` flag. Missing file is silently ignored.
-- [x] **Subdomain Redundancy Optimizer**
-  - After deduplication, any domain whose parent is already blocked is removed.
-  - e.g. if `example.com` is blocked, `ads.example.com` is dropped automatically.
-  - Disabled with `--no-optimize-subdomains`. Typically removes 30–40% of entries.
-- [x] **Abort on download failure**
-  - `update.py` exits non-zero if any source fails all retries; `processed/` is left untouched.
-- [x] **Regression test suite** (`tests/test_merge.py`)
-  - 32 tests covering `extract_domain`, `load_allowlist`, `remove_subdomains`, and end-to-end merge output (hosts, adblock, RPZ, JSON report).
+## ✅ Phase 5: Wildcard Source Support & Format-Aware Deduplication
 
+- [x] `DomainReader` parses `*.domain` wildcard entries, flags `is_wildcard=True`
+- [x] `wildcard_domains` set tracked through merge; wildcard-capable writers emit `||*.domain^`, `*.domain IN CNAME .`, etc.
+- [x] **Two-list deduplication**: hosts/domains writers receive all unique entries (exact dedup only); DNS resolver writers receive the subdomain-optimized list
+- [x] `BaseWriter.optimize_subdomains` flag routes each writer to the correct list
+- [x] `WriterMeta` carries both stat sets (`_all` for hosts/domains, optimized for DNS formats)
+- [x] Fixed `remove_subdomains` bug: wildcard bases excluded from `explicit_set` so they don't act as parents
+- [x] `summary_line(optimized=True/False)` — each writer's header reports the correct counts
 
-### Dynamic README
+## ✅ Phase 6: Source Classification
 
-- [] **Support generate README dynamically** 
+- [x] `BaseReader.classify(sample)` — returns specific format label beyond `name`
+- [x] `DomainReader.classify()` — `domain-only` / `wildcard-domain` / `mixed-domain` based on 10/90% thresholds
+- [x] Format label flows through to `source_stats`, JSON report, and per-file console output
+
+## ✅ Phase 7: Pipeline Restructure & Dynamic README
+
+- [x] `run.py` — unified pipeline entry point (fetch → merge → post_run)
+- [x] `fetch.py` — pure downloader, no merge coupling
+- [x] `post_run.py` — updates `<!-- stats:start/end -->` block in README.md with current counts and direct download links after every run
+- [x] `update.py` / `update.sh` deprecated as shims forwarding to `run.py`
+- [x] `compare.sh` and `trigger-update-workflow.sh` moved to `scripts/`; `compare.sh` now uses git history instead of a stale `.old` file
+- [x] `blocklist.txt.old` backup removed — git history is the source of truth
+- [x] GitHub Actions workflow commits `processed/`, `reports/`, and `README.md` each run
+
+---
+
+## 🔭 Ideas / Future
+
+- [ ] **Source health dashboard** — flag sources that consistently produce 0 accepted entries or high rejection rates
+- [ ] **Incremental downloads** — `If-Modified-Since` / ETag support to skip unchanged sources
+- [ ] **Per-format delta tracking** — currently delta is computed only against the hosts file
