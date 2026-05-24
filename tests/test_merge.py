@@ -536,12 +536,12 @@ class TestMergeEndToEnd(unittest.TestCase):
         m.merge(self.raw_dir, self.map_path, self.out_path,
                 allowlist_path=self._write_allowlist(""), optimize_subdomains=True)
         summary = self._read_report_summary()
-        self.assertIn("unique_all", summary)
-        self.assertIn("reduction_pct_all", summary)
-        self.assertIn("unique", summary)
-        self.assertIn("reduction_pct", summary)
+        self.assertIn("unique_deduped", summary)
+        self.assertIn("reduction_pct_deduped", summary)
+        self.assertIn("unique_optimized", summary)
+        self.assertIn("reduction_pct_optimized", summary)
         # dedup-only count must be >= optimized count
-        self.assertGreaterEqual(summary["unique_all"], summary["unique"])
+        self.assertGreaterEqual(summary["unique_deduped"], summary["unique_optimized"])
 
     def test_domain_only_source_format(self):
         self._write_source("01_a.txt", "example.com\nother.org\n")

@@ -42,8 +42,8 @@ def _build_block(report: dict, raw_base: str) -> str:
     s = report.get("summary", {})
     date = report.get("generated", "")[:10] or "unknown"
     n_sources = len(report.get("sources", {}))
-    unique_all = s.get("unique_all", 0)
-    unique_opt = s.get("unique", 0)
+    unique_all = s.get("unique_deduped", 0)
+    unique_opt = s.get("unique_optimized", 0)
     wildcards = s.get("wildcards", 0)
 
     lines = [

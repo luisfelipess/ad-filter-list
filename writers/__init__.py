@@ -13,25 +13,25 @@ class WriterMeta:
     """Shared metadata passed to every writer."""
     __slots__ = (
         "now_str", "total_candidates",
-        "total_unique", "duplicates", "reduction_pct",          # subdomain-optimized (DNS formats)
-        "total_unique_all", "duplicates_all", "reduction_pct_all",  # dedup-only (hosts/domains)
+        "total_unique_optimized", "duplicates_optimized", "reduction_pct_optimized",  # DNS formats
+        "total_unique_deduped", "duplicates_deduped", "reduction_pct_deduped",        # hosts/domains
         "delta_added", "delta_removed", "source_infos",
         "wildcard_domains",
     )
 
     def __init__(self, now_str, total_candidates,
-                 total_unique, duplicates, reduction_pct,
-                 total_unique_all, duplicates_all, reduction_pct_all,
+                 total_unique_optimized, duplicates_optimized, reduction_pct_optimized,
+                 total_unique_deduped, duplicates_deduped, reduction_pct_deduped,
                  delta_added, delta_removed, source_infos,
                  wildcard_domains=frozenset()):
         self.now_str = now_str
         self.total_candidates = total_candidates
-        self.total_unique = total_unique
-        self.duplicates = duplicates
-        self.reduction_pct = reduction_pct
-        self.total_unique_all = total_unique_all
-        self.duplicates_all = duplicates_all
-        self.reduction_pct_all = reduction_pct_all
+        self.total_unique_optimized = total_unique_optimized
+        self.duplicates_optimized = duplicates_optimized
+        self.reduction_pct_optimized = reduction_pct_optimized
+        self.total_unique_deduped = total_unique_deduped
+        self.duplicates_deduped = duplicates_deduped
+        self.reduction_pct_deduped = reduction_pct_deduped
         self.delta_added = delta_added
         self.delta_removed = delta_removed
         self.source_infos = source_infos
@@ -95,9 +95,9 @@ def split_wildcard_domains(domains: list[str], wildcard_domains: frozenset) -> t
 
 def summary_line(meta: WriterMeta, comment_char: str, optimized: bool = True) -> list[str]:
     if optimized:
-        unique, dupes, pct = meta.total_unique, meta.duplicates, meta.reduction_pct
+        unique, dupes, pct = meta.total_unique_optimized, meta.duplicates_optimized, meta.reduction_pct_optimized
     else:
-        unique, dupes, pct = meta.total_unique_all, meta.duplicates_all, meta.reduction_pct_all
+        unique, dupes, pct = meta.total_unique_deduped, meta.duplicates_deduped, meta.reduction_pct_deduped
     lines = [
         f"{comment_char} Summary: scanned={meta.total_candidates} unique={unique}"
         f" duplicates={dupes} ({pct:.2f}% reduction)\n",

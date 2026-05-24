@@ -293,20 +293,20 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
     if sort_output:
         ordered = sorted(ordered)
 
-    # ordered_all: all unique entries after exact dedup only (hosts / domains files)
-    ordered_all = list(ordered)
-    total_unique_all = len(ordered_all)
-    duplicates_all = max(0, total_candidates - total_unique_all)
-    reduction_pct_all = (duplicates_all / total_candidates * 100) if total_candidates else 0.0
+    # ordered_deduped: all unique entries after exact dedup only (hosts / domains files)
+    ordered_deduped = list(ordered)
+    total_unique_deduped = len(ordered_deduped)
+    duplicates_deduped = max(0, total_candidates - total_unique_deduped)
+    reduction_pct_deduped = (duplicates_deduped / total_candidates * 100) if total_candidates else 0.0
 
     # ordered_optimized: after subdomain optimization (DNS resolver formats)
     if optimize_subdomains:
-        ordered_optimized = remove_subdomains(ordered_all, wildcard_domains)
+        ordered_optimized = remove_subdomains(ordered_deduped, wildcard_domains)
     else:
-        ordered_optimized = ordered_all
-    total_unique = len(ordered_optimized)
-    duplicates = max(0, total_candidates - total_unique)
-    reduction_pct = (duplicates / total_candidates * 100) if total_candidates else 0.0
+        ordered_optimized = ordered_deduped
+    total_unique_optimized = len(ordered_optimized)
+    duplicates_optimized = max(0, total_candidates - total_unique_optimized)
+    reduction_pct_optimized = (duplicates_optimized / total_candidates * 100) if total_candidates else 0.0
 
     # delta vs previous hosts file (compare against the full dedup-only list)
     out_dir = os.path.dirname(out_path) or "."
@@ -320,7 +320,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
                     continue
                 parts = s.split()
                 prev_domains.add(parts[1].lower() if len(parts) >= 2 else parts[0].lower())
-        new_set = {d.lower() for d in ordered_all}
+        new_set = {d.lower() for d in ordered_deduped}
         delta_added = len(new_set - prev_domains)
         delta_removed = len(prev_domains - new_set)
 
@@ -329,12 +329,12 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
     meta = WriterMeta(
         now_str=now_str,
         total_candidates=total_candidates,
-        total_unique=total_unique,
-        duplicates=duplicates,
-        reduction_pct=reduction_pct,
-        total_unique_all=total_unique_all,
-        duplicates_all=duplicates_all,
-        reduction_pct_all=reduction_pct_all,
+        total_unique_optimized=total_unique_optimized,
+        duplicates_optimized=duplicates_optimized,
+        reduction_pct_optimized=reduction_pct_optimized,
+        total_unique_deduped=total_unique_deduped,
+        duplicates_deduped=duplicates_deduped,
+        reduction_pct_deduped=reduction_pct_deduped,
         delta_added=delta_added,
         delta_removed=delta_removed,
         source_infos=source_infos,
@@ -345,7 +345,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
     for writer in active_writers:
         # hosts/domains writers get the full dedup-only list; DNS resolver writers
         # get the subdomain-optimized list
-        domains_for_writer = ordered_all if not writer.optimize_subdomains else ordered_optimized
+        domains_for_writer = ordered_deduped if not writer.optimize_subdomains else ordered_optimized
         writer.write(domains_for_writer, meta, out_dir)
 
     # ── rejected entries + JSON report → reports/ ─────────────────────────────
@@ -367,14 +367,14 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         "summary": {
             "scanned": total_candidates,
             # dedup-only stats (hosts / plain-domains files)
-            "unique_all": total_unique_all,
-            "duplicates_all": duplicates_all,
-            "reduction_pct_all": round(reduction_pct_all, 4),
+            "unique_deduped": total_unique_deduped,
+            "duplicates_deduped": duplicates_deduped,
+            "reduction_pct_deduped": round(reduction_pct_deduped, 4),
             # subdomain-optimized stats (RPZ / dnsmasq / unbound / adblock)
-            "unique": total_unique,
+            "unique_optimized": total_unique_optimized,
             "wildcards": len(wildcard_domains),
-            "duplicates": duplicates,
-            "reduction_pct": round(reduction_pct, 4),
+            "duplicates_optimized": duplicates_optimized,
+            "reduction_pct_optimized": round(reduction_pct_optimized, 4),
             "delta_added": delta_added,
             "delta_removed": delta_removed,
             "rejected_total": len(rejected_entries),
@@ -387,8 +387,8 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         json.dump(report, rf, indent=2, ensure_ascii=False)
 
     print(f"Processed: scanned={total_candidates} "
-          f"→ deduped={total_unique_all} (-{reduction_pct_all:.2f}%, hosts/domains) "
-          f"→ dns-optimized={total_unique} (-{reduction_pct:.2f}%, adblock/rpz/dnsmasq/unbound) "
+          f"→ deduped={total_unique_deduped} (-{reduction_pct_deduped:.2f}%, hosts/domains) "
+          f"→ dns-optimized={total_unique_optimized} (-{reduction_pct_optimized:.2f}%, adblock/rpz/dnsmasq/unbound) "
           f"| wildcards={len(wildcard_domains)} "
           f"rejected={len(rejected_entries)} matched_allowlisted={matched_allowlisted} "
           f"added_by_blocklist_override={added_by_blocklist_override} "
