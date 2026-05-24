@@ -12,19 +12,26 @@ from abc import ABC, abstractmethod
 class WriterMeta:
     """Shared metadata passed to every writer."""
     __slots__ = (
-        "now_str", "total_candidates", "total_unique", "duplicates",
-        "reduction_pct", "delta_added", "delta_removed", "source_infos",
+        "now_str", "total_candidates",
+        "total_unique", "duplicates", "reduction_pct",          # subdomain-optimized (DNS formats)
+        "total_unique_all", "duplicates_all", "reduction_pct_all",  # dedup-only (hosts/domains)
+        "delta_added", "delta_removed", "source_infos",
         "wildcard_domains",
     )
 
-    def __init__(self, now_str, total_candidates, total_unique, duplicates,
-                 reduction_pct, delta_added, delta_removed, source_infos,
+    def __init__(self, now_str, total_candidates,
+                 total_unique, duplicates, reduction_pct,
+                 total_unique_all, duplicates_all, reduction_pct_all,
+                 delta_added, delta_removed, source_infos,
                  wildcard_domains=frozenset()):
         self.now_str = now_str
         self.total_candidates = total_candidates
         self.total_unique = total_unique
         self.duplicates = duplicates
         self.reduction_pct = reduction_pct
+        self.total_unique_all = total_unique_all
+        self.duplicates_all = duplicates_all
+        self.reduction_pct_all = reduction_pct_all
         self.delta_added = delta_added
         self.delta_removed = delta_removed
         self.source_infos = source_infos
@@ -32,6 +39,11 @@ class WriterMeta:
 
 
 class BaseWriter(ABC):
+    # Subclasses that do NOT support wildcard/parent-domain blocking (e.g. hosts,
+    # plain-domains) should set this to False so they receive the full unique list
+    # rather than the subdomain-optimized one.
+    optimize_subdomains: bool = True
+
     @abstractmethod
     def write(self, domains: list[str], meta: WriterMeta, out_dir: str) -> str:
         """Write output file(s) and return the primary output path."""
@@ -81,10 +93,14 @@ def split_wildcard_domains(domains: list[str], wildcard_domains: frozenset) -> t
     return exact, wildcards
 
 
-def summary_line(meta: WriterMeta, comment_char: str) -> list[str]:
+def summary_line(meta: WriterMeta, comment_char: str, optimized: bool = True) -> list[str]:
+    if optimized:
+        unique, dupes, pct = meta.total_unique, meta.duplicates, meta.reduction_pct
+    else:
+        unique, dupes, pct = meta.total_unique_all, meta.duplicates_all, meta.reduction_pct_all
     lines = [
-        f"{comment_char} Summary: scanned={meta.total_candidates} unique={meta.total_unique}"
-        f" duplicates={meta.duplicates} ({meta.reduction_pct:.2f}% reduction)\n",
+        f"{comment_char} Summary: scanned={meta.total_candidates} unique={unique}"
+        f" duplicates={dupes} ({pct:.2f}% reduction)\n",
     ]
     if meta.delta_added or meta.delta_removed:
         lines.append(

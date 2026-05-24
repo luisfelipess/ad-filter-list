@@ -269,13 +269,15 @@ class TestRemoveSubdomains(unittest.TestCase):
         self.assertIn("ads.example.com", result)
         self.assertIn("track.example.com", result)
 
-    def test_wildcard_removes_covered_exact(self):
-        # *.ads.example.com wildcard → tracker.ads.example.com is redundant
+    def test_wildcard_base_does_not_remove_covered_exact(self):
+        # wildcard base (ads.example.com from *.ads.example.com) must NOT cause
+        # tracker.ads.example.com to be removed — only truly explicit parent entries
+        # (non-wildcard-derived) trigger subdomain removal.
         result = m.remove_subdomains(
             ["ads.example.com", "tracker.ads.example.com"],
             wildcard_domains={"ads.example.com"}
         )
-        self.assertNotIn("tracker.ads.example.com", result)
+        self.assertIn("tracker.ads.example.com", result)
 
 
 # ── end-to-end merge ──────────────────────────────────────────────────────────
@@ -433,21 +435,34 @@ class TestMergeEndToEnd(unittest.TestCase):
         self.assertIn("blocked.com", domains)
         self.assertNotIn("forceblock.com", domains)
 
-    def test_subdomain_optimizer_removes_redundant(self):
+    def test_subdomain_optimizer_removes_redundant_in_dns_formats(self):
+        # Hosts file always keeps every unique entry; DNS formats (dnsmasq/unbound/etc.)
+        # drop subdomains whose parent is already present.
         self._write_source("01_a.txt", "0.0.0.0 example.com\n0.0.0.0 ads.example.com\n")
         m.merge(self.raw_dir, self.map_path, self.out_path,
                 allowlist_path=self._write_allowlist(""), optimize_subdomains=True)
-        domains = self._read_hosts()
-        self.assertIn("example.com", domains)
-        self.assertNotIn("ads.example.com", domains)
+        hosts_domains = self._read_hosts()
+        self.assertIn("example.com", hosts_domains)
+        self.assertIn("ads.example.com", hosts_domains)  # hosts never optimizes
+        dnsmasq_path = os.path.join(self.out_dir, "blocklist-dnsmasq.conf")
+        with open(dnsmasq_path) as f:
+            dnsmasq = f.read()
+        self.assertIn("address=/example.com/#", dnsmasq)
+        self.assertNotIn("address=/ads.example.com/#", dnsmasq)  # removed by optimizer
 
     def test_subdomain_optimizer_disabled(self):
+        # With optimize_subdomains=False, DNS formats also keep every unique entry.
         self._write_source("01_a.txt", "0.0.0.0 example.com\n0.0.0.0 ads.example.com\n")
         m.merge(self.raw_dir, self.map_path, self.out_path,
                 allowlist_path=self._write_allowlist(""), optimize_subdomains=False)
-        domains = self._read_hosts()
-        self.assertIn("example.com", domains)
-        self.assertIn("ads.example.com", domains)
+        hosts_domains = self._read_hosts()
+        self.assertIn("example.com", hosts_domains)
+        self.assertIn("ads.example.com", hosts_domains)
+        dnsmasq_path = os.path.join(self.out_dir, "blocklist-dnsmasq.conf")
+        with open(dnsmasq_path) as f:
+            dnsmasq = f.read()
+        self.assertIn("address=/example.com/#", dnsmasq)
+        self.assertIn("address=/ads.example.com/#", dnsmasq)
 
     def test_adblock_output_written(self):
         self._write_source("01_a.txt", "0.0.0.0 example.com\n")
@@ -483,6 +498,19 @@ class TestMergeEndToEnd(unittest.TestCase):
         self.assertIn("sources", report)
         self.assertIn("matched_allowlisted", report["summary"])
         self.assertIn("added_by_blocklist_override", report["summary"])
+
+    def test_json_report_has_both_reduction_breakdowns(self):
+        # Both dedup-only (hosts/domains) and subdomain-optimized (DNS) stats must be present.
+        self._write_source("01_a.txt", "0.0.0.0 example.com\n0.0.0.0 ads.example.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                allowlist_path=self._write_allowlist(""), optimize_subdomains=True)
+        summary = self._read_report_summary()
+        self.assertIn("unique_all", summary)
+        self.assertIn("reduction_pct_all", summary)
+        self.assertIn("unique", summary)
+        self.assertIn("reduction_pct", summary)
+        # dedup-only count must be >= optimized count
+        self.assertGreaterEqual(summary["unique_all"], summary["unique"])
 
     def test_domain_only_source_format(self):
         self._write_source("01_a.txt", "example.com\nother.org\n")

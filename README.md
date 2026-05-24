@@ -55,6 +55,7 @@ python3 merge.py --raw raw --map raw/sources.map --out processed/blocklist.txt
 | *(default)* | yes | yes | Download sources, then merge |
 | `--skip-download` | yes | yes | Skip network fetch; merge existing files in `raw/` |
 | `--unsorted` | yes | yes | Preserve first-seen domain order instead of sorting |
+| `--no-optimize-subdomains` | yes | yes | Disable subdomain optimization for DNS formats — every unique domain is written to all output files (useful when you want a flat list with no implicit parent-domain coverage) |
 | `--legacy` | yes | — | Use curl-based downloader instead of `update.py` (no `--skip-download`) |
 | `--workers N` | — | yes | Parallel download threads (default 8) |
 | `--retries N` | — | yes | Per-URL retry count (default 3) |
@@ -145,37 +146,59 @@ Wildcard semantics match domain-only sources and the pipeline’s `*.domain` han
 
 | Field | Meaning |
 |---|---|
+| `scanned` | Total domain entries extracted from all sources (before dedup) |
+| `unique_all` | Unique domains after exact deduplication — what `blocklist.txt` and `blocklist-domains.txt` contain |
+| `reduction_pct_all` | Reduction percentage for hosts/domains files (exact dedup only) |
+| `unique` | Unique domains after subdomain optimization — what DNS resolver formats (RPZ, dnsmasq, unbound, adblock) contain |
+| `reduction_pct` | Reduction percentage for DNS formats (exact dedup + subdomain optimization) |
+| `wildcards` | Number of wildcard base entries (`*.domain`) in the optimized set |
 | `matched_allowlisted` | Unique source domains removed because they matched the allowlist |
 | `added_by_blocklist_override` | Domains (or wildcard bases) forced into the output solely from `blocklist.txt` |
 
-Example `Processed:` tail: `… matched_allowlisted=12 added_by_blocklist_override=3 …`
+`unique_all` ≥ `unique` — the gap is the count of entries that DNS formats omit because a parent domain already covers them. When `--no-optimize-subdomains` is passed, both values are equal.
+
+Example `Processed:` line:
+```
+Processed: scanned=992201 unique_all=503338(hosts/domains,0.00%reduction) unique=311274(dns,68.6%reduction) wildcards=92799 …
+```
 
 ---
 
 ## Wildcard handling and deduplication
 
-Some sources publish wildcard entries (`*.domain`) meaning "block this domain and all subdomains". The pipeline handles these with format-aware logic:
+Some sources publish wildcard entries (`*.domain`) meaning "block this domain and all subdomains". The pipeline handles these with format-aware logic across two stages.
 
-**Detection** — `DomainReader` recognises `*.domain` lines and flags them as wildcards. `HostsReader` always produces exact entries (`is_wildcard=False`) — a hosts file entry is never promoted to a wildcard.
+**Stage 1 — Detection and collection**
 
-**Deduplication** — after collection, the subdomain optimizer runs two passes:
-1. Drop any exact domain whose parent is already in the exact-match set (e.g. `ads.example.com` is redundant if `example.com` is blocked).
-2. Drop any exact domain covered by a wildcard ancestor (e.g. `tracker.ads.example.com` is redundant if `*.ads.example.com` is in the wildcard set).
+`DomainReader` recognises `*.domain` lines and flags them as wildcards (stripping the `*.` prefix so the base domain enters the collected set). `HostsReader` always produces exact entries — a hosts-file line is never promoted to a wildcard.
+
+**Stage 2 — Format-aware deduplication**
+
+The pipeline produces two domain lists with different deduplication levels:
+
+| List | Used by | What's removed |
+|---|---|---|
+| **Dedup-only** (`unique_all`) | `hosts`, `domains` | Exact duplicates only — every unique domain is kept |
+| **Optimized** (`unique`) | `adblock`, `rpz`, `dnsmasq`, `unbound` | Exact duplicates **+** subdomains whose non-wildcard-derived parent is already in the list |
+
+The subdomain optimizer drops `ads.example.com` when `example.com` is an explicit blocking entry — because DNS resolvers that handle `example.com` also cover all its subdomains. It does **not** remove entries solely because they are under a wildcard base (a wildcard base like `ads.example.com` from `*.ads.example.com` does not count as an explicit parent).
+
+To disable subdomain optimization for DNS formats (both lists become identical), pass `--no-optimize-subdomains`.
 
 **Per-format output:**
 
-| Format | Wildcard handling |
-|---|---|
-| `hosts` | Wildcards degrade to exact match (`0.0.0.0 domain`) — best effort, no wildcard syntax exists |
-| `adblock` | Wildcard entries emit `\|\|*.domain^`; covered exact entries are dropped |
-| `rpz` | Wildcard entries emit both `domain IN CNAME .` and `*.domain IN CNAME .`; covered exact entries still get both records |
-| `dnsmasq` | `address=/domain/#` natively matches all subdomains; covered exact entries are dropped |
-| `unbound` | `local-zone: "domain." always_nxdomain` natively matches all subdomains; covered exact entries are dropped |
-| `domains` | Same as hosts — exact match only |
+| Format | Entry list | Wildcard handling |
+|---|---|---|
+| `hosts` | Dedup-only — all unique entries | No wildcard syntax; `*.domain` sources contribute only the base exact match (`0.0.0.0 domain`) |
+| `domains` | Dedup-only — all unique entries | Same as hosts |
+| `adblock` | Optimized | Wildcard entries emit `\|\|*.domain^`; exact entries covered by a wildcard ancestor are dropped |
+| `rpz` | Optimized | Wildcard entries emit both `domain IN CNAME .` and `*.domain IN CNAME .` |
+| `dnsmasq` | Optimized | `address=/domain/#` natively covers all subdomains; exact entries covered by a wildcard ancestor are dropped |
+| `unbound` | Optimized | `local-zone: "domain." always_nxdomain` natively covers all subdomains; covered exact entries are dropped |
 
-The direction is strictly one-way: wildcards degrade to exact for formats that don't support them, but exact entries from hosts sources are never promoted to wildcards. If a domain appears as both an exact entry (from a hosts source) and a wildcard entry (from a wildcard source), wildcard-capable writers drop the redundant exact entry while the hosts writer keeps it — harmless duplication, best effort.
+The direction is strictly one-way: wildcards degrade to exact for formats that don't support them, but exact entries from hosts sources are never promoted to wildcards.
 
-The `wildcards=N` field in the pipeline summary shows how many wildcard entries were collected, giving a sense of how much coverage relies on wildcard semantics vs exact matching.
+The `wildcards=N` field in the pipeline summary shows how many wildcard entries were collected. The gap between `unique_all` and `unique` in the JSON report shows how many entries are suppressed in DNS formats due to parent-domain coverage.
 
 Allowlist and blocklist wildcards follow the same `*.domain` rules; see [Allowlist and blocklist](#allowlist-and-blocklist).
 
@@ -198,15 +221,20 @@ raw/  (gitignored)
 merge.py  ──── format detection per source  (readers/)
     │           domain extraction & normalisation
     │           allowlist filter + blocklist override
-    │           deduplication + subdomain optimizer
+    │           exact deduplication
+    │           │
+    │           ├── dedup-only list  (hosts / domains — all unique entries)
+    │           └── optimized list   (subdomain optimizer applied)
+    │                                 (skipped with --no-optimize-subdomains)
     │           delta vs previous run
     │
     ├── writers/ (controlled by writers.conf)
-    │     hosts.py      → processed/blocklist.txt
-    │     adblock.py    → processed/blocklist-adblock.txt
-    │     rpz.py        → processed/blocklist-bind9.zone.gz
-    │     dnsmasq.py    → processed/blocklist-dnsmasq.conf
-    │     unbound.py    → processed/blocklist-unbound.conf
+    │     hosts.py      → processed/blocklist.txt          (dedup-only)
+    │     domains.py    → processed/blocklist-domains.txt  (dedup-only)
+    │     adblock.py    → processed/blocklist-adblock.txt  (optimized)
+    │     rpz.py        → processed/blocklist-bind9.zone.gz (optimized)
+    │     dnsmasq.py    → processed/blocklist-dnsmasq.conf (optimized)
+    │     unbound.py    → processed/blocklist-unbound.conf (optimized)
     │
     └── reports/
           blocklist-report.json
@@ -292,11 +320,12 @@ readers/                         pluggable source format readers
   adblock.py                     ||domain^ sources
 writers/                         pluggable output format writers
   __init__.py                    BaseWriter, WriterMeta, shared helpers
-  hosts.py                       0.0.0.0 domain (MikroTik, Pi-hole)
-  adblock.py                     ||domain^ (uBlock Origin, AdGuard)
-  rpz.py                         BIND9 RPZ gzip zone file
-  dnsmasq.py                     address=/domain/# (OpenWrt, DD-WRT)
-  unbound.py                     local-zone: always_nxdomain
+  hosts.py                       0.0.0.0 domain (MikroTik, Pi-hole)  [dedup-only]
+  domains.py                     plain domain-per-line               [dedup-only]
+  adblock.py                     ||domain^ (uBlock Origin, AdGuard)  [optimized]
+  rpz.py                         BIND9 RPZ gzip zone file            [optimized]
+  dnsmasq.py                     address=/domain/# (OpenWrt, DD-WRT) [optimized]
+  unbound.py                     local-zone: always_nxdomain         [optimized]
 sources.conf                     preferred source URL list
 sources.txt                      legacy source URL list (fallback for compatibility)
 allowlist.txt                    domains that are never blocked (`example.com` exact, `*.example.com` all subdomains)

@@ -1,13 +1,16 @@
 {
-  "generated": "2026-05-24T06:36:40.488011Z",
+  "generated": "2026-05-24T08:41:03.576702Z",
   "summary": {
     "scanned": 982279,
-    "unique": 502543,
+    "unique_all": 815804,
+    "duplicates_all": 166475,
+    "reduction_pct_all": 16.9478,
+    "unique": 589557,
     "wildcards": 90060,
-    "duplicates": 479736,
-    "reduction_pct": 48.8391,
-    "delta_added": 8790,
-    "delta_removed": 9585,
+    "duplicates": 392722,
+    "reduction_pct": 39.9807,
+    "delta_added": 322040,
+    "delta_removed": 9574,
     "rejected_total": 14,
     "matched_allowlisted": 1,
     "added_by_blocklist_override": 0

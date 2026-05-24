@@ -7,12 +7,14 @@ from writers import BaseWriter, WriterMeta, write_source_credits, summary_line
 
 
 class HostsWriter(BaseWriter):
+    optimize_subdomains = False
+
     def write(self, domains: list[str], meta: WriterMeta, out_dir: str) -> str:
         path = os.path.join(out_dir, "blocklist.txt")
         with open(path, "w", encoding="utf-8") as fh:
             fh.write(f"# Processed blocklist - generated: {meta.now_str}\n")
             fh.write("# Format: 0.0.0.0 domain\n")
-            fh.writelines(summary_line(meta, "#"))
+            fh.writelines(summary_line(meta, "#", optimized=False))
             fh.write("# Sources and original headers (credits):\n\n")
             write_source_credits(fh, meta.source_infos, "#")
             fh.write("# ---- merged entries ----\n")
