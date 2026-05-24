@@ -159,7 +159,7 @@ Wildcard semantics match domain-only sources and the pipeline’s `*.domain` han
 
 Example `Processed:` line:
 ```
-Processed: scanned=992201 unique_all=503338(hosts/domains,0.00%reduction) unique=311274(dns,68.6%reduction) wildcards=92799 …
+Processed: scanned=989104 → deduped=815804 (-16.95%, hosts/domains) → dns-optimized=589557 (-39.98%, adblock/rpz/dnsmasq/unbound) | wildcards=90060 …
 ```
 
 ---

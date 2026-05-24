@@ -393,12 +393,12 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         json.dump(report, rf, indent=2, ensure_ascii=False)
 
     print(f"Processed: scanned={total_candidates} "
-          f"unique_all={total_unique_all}(hosts/domains,{reduction_pct_all:.2f}%reduction) "
-          f"unique={total_unique}(dns,{reduction_pct:.2f}%reduction) "
-          f"wildcards={len(wildcard_domains)} "
+          f"→ deduped={total_unique_all} (-{reduction_pct_all:.2f}%, hosts/domains) "
+          f"→ dns-optimized={total_unique} (-{reduction_pct:.2f}%, adblock/rpz/dnsmasq/unbound) "
+          f"| wildcards={len(wildcard_domains)} "
           f"rejected={len(rejected_entries)} matched_allowlisted={matched_allowlisted} "
           f"added_by_blocklist_override={added_by_blocklist_override} "
-          f"sorted={sort_output} -> {rejected_path}")
+          f"sorted={sort_output} → {rejected_path}")
 
 
 def main(argv: list[str] | None = None) -> int:
