@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-24T08:41:03.576702Z",
+  "generated": "2026-05-24T09:02:53.703238Z",
   "summary": {
     "scanned": 982279,
     "unique_all": 815804,
@@ -9,8 +9,8 @@
     "wildcards": 90060,
     "duplicates": 392722,
     "reduction_pct": 39.9807,
-    "delta_added": 322040,
-    "delta_removed": 9574,
+    "delta_added": 0,
+    "delta_removed": 0,
     "rejected_total": 14,
     "matched_allowlisted": 1,
     "added_by_blocklist_override": 0
@@ -27,8 +27,8 @@
     },
     "02_pro.plus.mini.txt": {
       "url": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/pro.plus.mini.txt",
-      "format": "domain-only",
-      "format_reason": "domain-only format detected",
+      "format": "wildcard-domain",
+      "format_reason": "wildcard-domain format detected",
       "scanned": 90060,
       "accepted": 90060,
       "rejected": 0,
