@@ -20,7 +20,7 @@ class DomainReader(BaseReader):
         return False
 
     def classify(self, sample_lines: list[str]) -> str:
-        """Return 'wildcard-domain' if the majority of lines are *.domain, else 'domain-only'."""
+        """Classify sample as 'wildcard-domain', 'domain-only', or 'mixed-domain'."""
         total = wildcard = 0
         for line in sample_lines:
             stripped = line.strip()
@@ -29,9 +29,14 @@ class DomainReader(BaseReader):
             total += 1
             if stripped.startswith("*."):
                 wildcard += 1
-        if total and wildcard / total > 0.5:
+        if not total:
+            return "domain-only"
+        ratio = wildcard / total
+        if ratio > 0.9:
             return "wildcard-domain"
-        return "domain-only"
+        if ratio < 0.1:
+            return "domain-only"
+        return "mixed-domain"
 
     def extract(self, line: str) -> tuple[str, bool] | None:
         is_wildcard = line.startswith("*.")

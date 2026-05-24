@@ -95,13 +95,18 @@ class TestDomainReader(unittest.TestCase):
         sample = ["example.com", "other.org", "third.net"]
         self.assertEqual(self.r.classify(sample), "domain-only")
 
-    def test_classify_wildcard_majority_returns_wildcard_domain(self):
-        sample = ["*.example.com", "*.other.org", "*.third.net", "plain.com"]
-        self.assertEqual(self.r.classify(sample), "wildcard-domain")
-
     def test_classify_all_wildcards_returns_wildcard_domain(self):
         sample = ["*.a.com", "*.b.com", "*.c.com"]
         self.assertEqual(self.r.classify(sample), "wildcard-domain")
+
+    def test_classify_near_pure_wildcard_returns_wildcard_domain(self):
+        # 10/11 wildcards (>90%) → wildcard-domain
+        sample = ["*.a.com"] * 10 + ["plain.com"]
+        self.assertEqual(self.r.classify(sample), "wildcard-domain")
+
+    def test_classify_mixed_returns_mixed_domain(self):
+        sample = ["*.a.com", "*.b.com", "plain.com", "other.org"]  # 50% wildcards
+        self.assertEqual(self.r.classify(sample), "mixed-domain")
 
     def test_classify_ignores_comment_lines(self):
         sample = ["# header", "*.a.com", "*.b.com", "*.c.com"]
