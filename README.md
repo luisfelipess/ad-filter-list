@@ -36,6 +36,27 @@ All files are committed back to the repository automatically after each run.
 
 ---
 
+## Data quality pipeline
+
+Every entry from every source passes through a multi-stage quality pipeline before appearing in any output file:
+
+| Step | What happens |
+|---|---|
+| **Combine** | All sources merged into a single stream |
+| **Normalize** | Lowercase; leading/trailing dots and quotes stripped |
+| **IDN → punycode** | Internationalized domain names converted to ASCII-compatible encoding (e.g. `münchen.de` → `xn--mnchen-3ya.de`) |
+| **Reject IPs** | IPv4 and IPv6 addresses discarded — DNS blocklists operate on names, not addresses |
+| **Syntax filter** | Invalid labels (wrong characters, leading/trailing hyphens, label > 63 chars, total > 253 chars) rejected |
+| **IANA TLD check** | Domains whose TLD is not in the [IANA root zone](https://data.iana.org/TLD/tlds-alpha-by-domain.txt) rejected (e.g. `.invalid`, `.local`, made-up TLDs from malformed sources) |
+| **Exact dedup** | Duplicate domains collapsed to one entry |
+| **Subdomain optimization** | DNS-format outputs made inclusive of subdomains: `ads.example.com` dropped when `example.com` is already an explicit blocking entry — blocking the parent covers all children |
+| **Wildcard handling** | `*.domain` entries handled format-appropriately per writer (emitted as wildcard patterns or degraded to exact, never promoted) |
+| **Allowlist/blocklist** | Override layer applied last — allowlist always wins |
+
+Rejected entries are logged to `reports/rejected-entries.txt` each run with the source file, line number, and rejection reason.
+
+---
+
 ## Quick start
 
 ```bash

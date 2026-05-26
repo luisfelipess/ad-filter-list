@@ -352,6 +352,8 @@ class TestMergeEndToEnd(unittest.TestCase):
         return path
 
     def _read_hosts(self):
+        if not os.path.exists(self.out_path):
+            return []
         with open(self.out_path) as f:
             return [
                 line.split()[1]
@@ -594,6 +596,64 @@ class TestMergeEndToEnd(unittest.TestCase):
         with open(path) as f:
             content = f.read()
         self.assertIn('local-zone: "example.com." always_nxdomain', content)
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmp)
+
+
+class TestIanaTldValidation(unittest.TestCase):
+    """IANA TLD filter tests — use _valid_tlds to avoid network calls."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.raw_dir = os.path.join(self.tmp, "raw")
+        self.out_dir = os.path.join(self.tmp, "processed")
+        os.makedirs(self.raw_dir)
+        os.makedirs(self.out_dir)
+        self.out_path = os.path.join(self.out_dir, "blocklist.txt")
+        self.map_path = os.path.join(self.raw_dir, "sources.map")
+
+    def _write_source(self, fname, content):
+        path = os.path.join(self.raw_dir, fname)
+        with open(path, "w") as f:
+            f.write(content)
+        with open(self.map_path, "a") as mf:
+            mf.write(f"{fname} http://example.com/{fname}\n")
+
+    def _read_hosts(self):
+        with open(self.out_path) as f:
+            return [line.split()[1] for line in f if line.strip() and not line.startswith("#")]
+
+    def _read_report(self):
+        with open(os.path.join(self.tmp, "reports", "blocklist-report.json")) as f:
+            return json.loads(f.read())["summary"]
+
+    def test_valid_tld_accepted(self):
+        self._write_source("01.txt", "0.0.0.0 example.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                _valid_tlds={"com", "org", "net"}, optimize_subdomains=False)
+        self.assertIn("example.com", self._read_hosts())
+
+    def test_invalid_tld_rejected(self):
+        self._write_source("01.txt", "0.0.0.0 example.invalid\n0.0.0.0 keep.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                _valid_tlds={"com", "org", "net"}, optimize_subdomains=False)
+        domains = self._read_hosts()
+        self.assertNotIn("example.invalid", domains)
+        self.assertIn("keep.com", domains)
+
+    def test_tld_rejected_counted_in_report(self):
+        self._write_source("01.txt", "0.0.0.0 example.fake\n0.0.0.0 keep.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                _valid_tlds={"com"}, optimize_subdomains=False)
+        self.assertEqual(self._read_report()["tld_rejected"], 1)
+
+    def test_skip_iana_check_accepts_any_tld(self):
+        self._write_source("01.txt", "0.0.0.0 example.fake\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                skip_iana_check=True, optimize_subdomains=False)
+        self.assertIn("example.fake", self._read_hosts())
 
     def tearDown(self):
         import shutil

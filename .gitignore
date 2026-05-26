@@ -1,5 +1,6 @@
 # Ignore raw downloads and common artifacts
 raw/
+.iana-tlds.cache
 CLAUDE.md
 .internal/
 processed/blocklist.txt.old

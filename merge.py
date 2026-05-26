@@ -10,6 +10,8 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import time
+import urllib.request
 from datetime import datetime, timezone
 
 from writers import WriterMeta
@@ -148,6 +150,25 @@ def remove_subdomains(domains: list[str], wildcard_domains: set[str] | None = No
     return result
 
 
+def _load_iana_tlds(cache_path: str = ".iana-tlds.cache") -> set[str] | None:
+    """Download and cache the IANA root-zone TLD list. Returns lowercase TLD set, or None on failure."""
+    max_age = 7 * 24 * 3600  # refresh weekly
+    if os.path.exists(cache_path) and time.time() - os.path.getmtime(cache_path) < max_age:
+        with open(cache_path, encoding="utf-8") as f:
+            return {ln.strip().lower() for ln in f if ln.strip() and not ln.startswith('#')}
+    try:
+        with urllib.request.urlopen(
+            "https://data.iana.org/TLD/tlds-alpha-by-domain.txt", timeout=10
+        ) as resp:
+            data = resp.read().decode("utf-8")
+        with open(cache_path, "w", encoding="utf-8") as f:
+            f.write(data)
+        return {ln.strip().lower() for ln in data.splitlines() if ln.strip() and not ln.startswith('#')}
+    except Exception as exc:
+        print(f"Warning: could not fetch IANA TLD list ({exc}) — TLD validation skipped")
+        return None
+
+
 def read_map(map_path: str) -> list[tuple[str, str]]:
     pairs = []
     if not os.path.exists(map_path):
@@ -186,14 +207,15 @@ def _pick_reader(path: str, sample_size: int = 50):
     return None, "unsupported", "no recognizable format in sample"
 
 
-def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries):
-    """Scan source files and return (ordered_domains, total_candidates, wildcard_domains, matched_allowlisted)."""
+def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries, valid_tlds=None):
+    """Scan source files and return (ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected)."""
     seen: set[str] = set()
     allowlisted_skipped: set[str] = set()
     ordered: list[str] = []
     wildcard_domains: set[str] = set()
     total_candidates = 0
     matched_allowlisted = 0
+    tld_rejected = 0
 
     sources = pairs if pairs else [
         (fname, "")
@@ -233,6 +255,12 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
                     source_stats[fname]["rejected"] += 1
                     rejected_entries.append((fname, lineno, line.rstrip('\n')))
                     continue
+                tld = dom.rsplit('.', 1)[-1]
+                if valid_tlds is not None and tld not in valid_tlds:
+                    source_stats[fname]["rejected"] += 1
+                    rejected_entries.append((fname, lineno, f"INVALID_TLD({tld}): {line.rstrip()}"))
+                    tld_rejected += 1
+                    continue
                 source_stats[fname]["accepted"] += 1
                 total_candidates += 1
                 if allowlist.matches(dom):
@@ -245,12 +273,13 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
                 if is_wildcard:
                     wildcard_domains.add(dom)
 
-    return ordered, total_candidates, wildcard_domains, matched_allowlisted
+    return ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected
 
 
 def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
           allowlist_path: str = "allowlist.txt", blocklist_path: str = "blocklist.txt",
-          optimize_subdomains: bool = True, writers_config: str = "writers.conf") -> None:
+          optimize_subdomains: bool = True, writers_config: str = "writers.conf",
+          skip_iana_check: bool = False, _valid_tlds: set[str] | None = None) -> None:
     allowlist = load_allowlist(allowlist_path)
     blocklist = load_blocklist(blocklist_path)
     active_writers = load_writers_config(writers_config)
@@ -259,8 +288,15 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
     rejected_entries: list[tuple[str, int, str]] = []
     source_stats: dict[str, dict] = {}
 
-    ordered, total_candidates, wildcard_domains, matched_allowlisted = _collect_domains(
-        raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries
+    if _valid_tlds is not None:
+        valid_tlds = _valid_tlds                 # test/caller-supplied override
+    elif skip_iana_check:
+        valid_tlds = None
+    else:
+        valid_tlds = _load_iana_tlds()
+
+    ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected = _collect_domains(
+        raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries, valid_tlds
     )
 
     added_by_blocklist_override = 0
@@ -346,7 +382,10 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         # hosts/domains writers get the full dedup-only list; DNS resolver writers
         # get the subdomain-optimized list
         domains_for_writer = ordered_deduped if not writer.optimize_subdomains else ordered_optimized
-        writer.write(domains_for_writer, meta, out_dir)
+        written_path = writer.write(domains_for_writer, meta, out_dir)
+        if not domains_for_writer and written_path and os.path.exists(written_path):
+            os.remove(written_path)
+            print(f"Removed empty output: {written_path}")
 
     # ── rejected entries + JSON report → reports/ ─────────────────────────────
     reports_dir = os.path.join(os.path.dirname(out_path) or ".", "..", "reports")
@@ -378,6 +417,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             "delta_added": delta_added,
             "delta_removed": delta_removed,
             "rejected_total": len(rejected_entries),
+            "tld_rejected": tld_rejected,
             "matched_allowlisted": matched_allowlisted,
             "added_by_blocklist_override": added_by_blocklist_override,
         },
@@ -390,7 +430,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
           f"→ deduped={total_unique_deduped} (-{reduction_pct_deduped:.2f}%, hosts/domains) "
           f"→ dns-optimized={total_unique_optimized} (-{reduction_pct_optimized:.2f}%, adblock/rpz/dnsmasq/unbound) "
           f"| wildcards={len(wildcard_domains)} "
-          f"rejected={len(rejected_entries)} matched_allowlisted={matched_allowlisted} "
+          f"rejected={len(rejected_entries)} tld_rejected={tld_rejected} matched_allowlisted={matched_allowlisted} "
           f"added_by_blocklist_override={added_by_blocklist_override} "
           f"sorted={sort_output} → {rejected_path}")
 
@@ -404,6 +444,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--allowlist", default="allowlist.txt")
     p.add_argument("--blocklist", default="blocklist.txt")
     p.add_argument("--no-optimize-subdomains", action="store_true")
+    p.add_argument("--no-iana-tld-check", action="store_true",
+                   help="skip IANA TLD validation (useful when offline)")
     p.add_argument("--writers-config", default="writers.conf")
     args = p.parse_args(argv)
 
@@ -412,6 +454,7 @@ def main(argv: list[str] | None = None) -> int:
           allowlist_path=args.allowlist,
           blocklist_path=args.blocklist,
           optimize_subdomains=not args.no_optimize_subdomains,
+          skip_iana_check=args.no_iana_tld_check,
           writers_config=args.writers_config)
     return 0
 
