@@ -141,6 +141,30 @@ class TestNormalizeDomain(unittest.TestCase):
     def test_rejects_empty(self):
         self.assertIsNone(normalize_domain(""))
 
+    def test_rejects_ipv6(self):
+        self.assertIsNone(normalize_domain("2001:db8::1"))
+
+    def test_rejects_ipv6_loopback(self):
+        self.assertIsNone(normalize_domain("::1"))
+
+    def test_rejects_bare_label(self):
+        self.assertIsNone(normalize_domain("nodot"))
+
+    def test_rejects_long_label(self):
+        self.assertIsNone(normalize_domain("a" * 64 + ".com"))
+
+    def test_rejects_invalid_chars(self):
+        self.assertIsNone(normalize_domain("foo_bar.com"))
+
+    def test_rejects_label_leading_hyphen(self):
+        self.assertIsNone(normalize_domain("-bad.com"))
+
+    def test_rejects_label_trailing_hyphen(self):
+        self.assertIsNone(normalize_domain("bad-.com"))
+
+    def test_idn_to_punycode(self):
+        self.assertEqual(normalize_domain("münchen.de"), "xn--mnchen-3ya.de")
+
 
 # ── load_list_file / allowlist / blocklist ────────────────────────────────────
 

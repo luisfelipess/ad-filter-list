@@ -1,6 +1,6 @@
 # ad-filter-list
 
-Automated blocklist compiler. Fetches DNS/ad-block lists from multiple sources daily, merges and deduplicates them, and publishes five output formats directly to this repository via GitHub Actions.
+Automated blocklist compiler. Fetches DNS/ad-block lists from multiple sources daily, combines and deduplicates entries, makes DNS output inclusive of subdomains by dropping redundant entries when a parent domain already covers them, and publishes five output formats directly to this repository via GitHub Actions.
 
 <!-- stats:start -->
 **Last run:** 2026-05-26 &nbsp;·&nbsp; **Sources:** 6 &nbsp;·&nbsp; **Unique domains:** 901,363 *(hosts/domains)* · 672,388 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 87,384
@@ -192,9 +192,9 @@ The pipeline produces two domain lists with different deduplication levels:
 | List | Used by | What's removed |
 |---|---|---|
 | **Dedup-only** (`unique_all`) | `hosts`, `domains` | Exact duplicates only — every unique domain is kept |
-| **Optimized** (`unique`) | `adblock`, `rpz`, `dnsmasq`, `unbound` | Exact duplicates **+** subdomains whose non-wildcard-derived parent is already in the list |
+| **Optimized** (`unique`) | `adblock`, `rpz`, `dnsmasq`, `unbound` | Exact duplicates **+** redundant subdomains — output is inclusive of subdomains, dropping `sub.example.com` when `example.com` is already an explicit blocking entry |
 
-The subdomain optimizer drops `ads.example.com` when `example.com` is an explicit blocking entry — because DNS resolvers that handle `example.com` also cover all its subdomains. It does **not** remove entries solely because they are under a wildcard base (a wildcard base like `ads.example.com` from `*.ads.example.com` does not count as an explicit parent).
+The subdomain optimizer makes DNS-format output **inclusive of subdomains**: `ads.example.com` is dropped when `example.com` is an explicit blocking entry, because a DNS resolver blocking `example.com` already covers all its subdomains. It does **not** remove entries solely because they are under a wildcard base (a wildcard base like `ads.example.com` from `*.ads.example.com` does not count as an explicit parent apex).
 
 To disable subdomain optimization for DNS formats (both lists become identical), pass `--no-optimize-subdomains`.
 

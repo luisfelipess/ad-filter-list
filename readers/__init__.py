@@ -16,13 +16,25 @@ import re
 from abc import ABC, abstractmethod
 
 IP_RE = re.compile(r"^(?:\d{1,3}\.){3}\d{1,3}$")
+_LABEL_RE = re.compile(r"^[a-z0-9]([a-z0-9-]*[a-z0-9])?$")
 _LOCAL_SKIP = {"localhost", "localhost.localdomain", "local"}
 
 
 def normalize_domain(raw: str) -> str | None:
-    """Lowercase, strip quotes/dots, reject IPs and local names."""
-    d = raw.lower().strip().strip('"\'"').strip('.')
-    if not d or d in _LOCAL_SKIP or IP_RE.match(d):
+    """Lowercase, strip, convert IDN to punycode, reject IPs and invalid syntax."""
+    d = raw.lower().strip().strip('"\'').strip('.')
+    if not d or d in _LOCAL_SKIP:
+        return None
+    if IP_RE.match(d) or ':' in d:          # IPv4 or IPv6
+        return None
+    if not d.isascii():
+        try:
+            d = d.encode('idna').decode('ascii')
+        except (UnicodeError, ValueError):
+            return None
+    if len(d) > 253 or '.' not in d:        # bare label or over length limit
+        return None
+    if not all(_LABEL_RE.match(lbl) and len(lbl) <= 63 for lbl in d.split('.')):
         return None
     return d
 
