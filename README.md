@@ -3,16 +3,16 @@
 Automated blocklist compiler. Fetches DNS/ad-block lists from multiple sources daily, combines and deduplicates entries, makes DNS output inclusive of subdomains by dropping redundant entries when a parent domain already covers them, and publishes five output formats directly to this repository via GitHub Actions.
 
 <!-- stats:start -->
-**Last run:** 2026-05-26 &nbsp;·&nbsp; **Sources:** 6 &nbsp;·&nbsp; **Unique domains:** 901,363 *(hosts/domains)* · 672,388 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 87,384
+**Last run:** 2026-05-26 &nbsp;·&nbsp; **Sources:** 6 &nbsp;·&nbsp; **Unique domains:** 905,946 *(hosts/domains)* · 673,520 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 80,444
 
 | Format | Download | Domains |
 |---|---|---|
-| Hosts (`0.0.0.0 domain`) | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist.txt) | 901,363 |
-| Plain domains | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-domains.txt) | 901,363 |
-| Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-adblock.txt) | 672,388 |
-| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-bind9.zone.gz) | 672,388 |
-| dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-dnsmasq.conf) | 672,388 |
-| Unbound | [blocklist-unbound.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-unbound.conf) | 672,388 |
+| Hosts (`0.0.0.0 domain`) | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist.txt) | 905,946 |
+| Plain domains | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-domains.txt) | 905,946 |
+| Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-adblock.txt) | 673,520 |
+| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-bind9.zone.gz) | 673,520 |
+| dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-dnsmasq.conf) | 673,520 |
+| Unbound | [blocklist-unbound.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-unbound.conf) | 673,520 |
 <!-- stats:end -->
 
 ## Output formats
@@ -406,3 +406,17 @@ tests/
 - Python 3.8+ (stdlib only — no pip installs needed)
 - `curl` only required for `--legacy` mode
 - BIND9 client script additionally requires: `curl`, `gzip`, `named-checkzone`
+
+---
+
+## Terminology
+
+This project uses **blocklist** as the preferred neutral term. The same concept is also commonly referred to as *blacklist*, *denylist*, or *filterlist* in other projects and search engines.
+
+---
+
+## License
+
+The pipeline scripts, automation, and documentation in this project are licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
+
+The compiled blocklists are derived from various upstream sources, each with their own licensing terms. While the transformation and formatting are provided under the MIT license, the original filter data remains subject to its respective source licenses. Users should review individual source licenses if redistribution or commercial use is intended.

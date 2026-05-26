@@ -30,8 +30,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
+          git config user.name "luifelss"
+          git config user.email "146073519+luisfelipess@users.noreply.github.com"
 
           # processed/ — all output formats
           # reports/   — blocklist-report.json, rejected-entries.txt
