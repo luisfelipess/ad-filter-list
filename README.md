@@ -1,5 +1,7 @@
 # ad-filter-list
 
+[![Update blocklists](https://github.com/luisfelipess/ad-filter-list/actions/workflows/update.yml/badge.svg)](https://github.com/luisfelipess/ad-filter-list/actions/workflows/update.yml)
+
 Automated blocklist compiler. Fetches DNS/ad-block lists from multiple sources daily, combines and deduplicates entries, makes DNS output inclusive of subdomains by dropping redundant entries when a parent domain already covers them, and publishes five output formats directly to this repository via GitHub Actions.
 
 <!-- stats:start -->
