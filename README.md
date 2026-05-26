@@ -411,6 +411,22 @@ tests/
 
 ---
 
+## Design tenets
+
+**One combined list, done well.**
+The output of this project is a single merged, quality-filtered blocklist per format — not individual per-source conversions. The value is in the pipeline: cross-source deduplication, subdomain optimization, IANA TLD validation, and syntax filtering that make the combined result better than any individual source on its own.
+
+**Other approaches are equally valid.**
+Some projects convert upstream lists individually to specific formats without merging them. That's a legitimate and useful approach. This project simply takes a different position: if a domain appears in three sources, you should see it once, optimized, and clean — not three times across three files. If you want the individual upstream lists in a specific format, the upstream maintainers often already publish them directly.
+
+**Custom configurations are a first-class local use case.**
+Want only certain sources? Different combinations? A more aggressive or more conservative set? `sources.conf`, `allowlist.txt`, and `blocklist.txt` are designed for exactly that. Clone the repo, edit the config, run `python3 run.py`. The pipeline is self-contained and requires no external dependencies beyond Python 3.8.
+
+**Pre-built flavours are on the radar, not the roadmap.**
+Different pre-built variants (light, standard, aggressive) combining different source subsets are an interesting future direction. We don't have a clean implementation path for them yet and they're not a current priority — see the TODO.
+
+---
+
 ## Terminology
 
 This project uses **blocklist** as the preferred neutral term. The same concept is also commonly referred to as *blacklist*, *denylist*, or *filterlist* in other projects and search engines.
