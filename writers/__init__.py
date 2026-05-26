@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+REPO_URL = "https://github.com/luisfelipess/ad-filter-list"
+
 
 class WriterMeta:
     """Shared metadata passed to every writer."""
@@ -99,6 +101,7 @@ def summary_line(meta: WriterMeta, comment_char: str, optimized: bool = True) ->
     else:
         unique, dupes, pct = meta.total_unique_deduped, meta.duplicates_deduped, meta.reduction_pct_deduped
     lines = [
+        f"{comment_char} Compiled by: {REPO_URL}\n",
         f"{comment_char} Summary: scanned={meta.total_candidates} unique={unique}"
         f" duplicates={dupes} ({pct:.2f}% reduction)\n",
     ]

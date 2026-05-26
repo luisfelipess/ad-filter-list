@@ -77,3 +77,5 @@ Output writers live in `writers/`. Adding a new format = one new file + one line
 - [ ] **Source health dashboard** — flag sources that consistently produce 0 accepted entries or high rejection rates
 - [ ] **Incremental downloads** — `If-Modified-Since` / ETag support to skip unchanged sources
 - [ ] **Per-format delta tracking** — currently delta is computed only against the hosts file
+- [ ] **AdGuard Host Lists Registry** — `https://adguardteam.github.io/HostlistsRegistry/assets/filters.json` is a curated JSON meta-index of trusted filter lists; could be used to discover and pull sources automatically rather than maintaining `sources.conf` by hand; needs a JSON source resolver in `fetch.py` and a way to select which lists to include
+- [ ] **Source version/last-modified propagation** — extract `! Version:` and `! Last modified:` from upstream source headers and surface them in the JSON report and output file credits (raw header text is already propagated but not parsed)
