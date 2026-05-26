@@ -25,8 +25,13 @@ import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
-def read_sources(path: str) -> list[str]:
-    urls = []
+def read_sources(path: str) -> list[tuple[str, str | None]]:
+    """Return list of (primary_url, fallback_url|None).
+
+    Each non-comment line may contain one or two URLs separated by a comma:
+        https://primary.example.com/list.txt , https://fallback.example.com/list.txt
+    """
+    entries: list[tuple[str, str | None]] = []
     if not os.path.exists(path) and path == "sources.conf" and os.path.exists("sources.txt"):
         path = "sources.txt"
     with open(path, "r", encoding="utf-8") as fh:
@@ -34,10 +39,13 @@ def read_sources(path: str) -> list[str]:
             line = line.strip()
             if not line or line[0] in ("#", ";", "!"):
                 continue
-            url = line.split("#", 1)[0].strip()
-            if url:
-                urls.append(url)
-    return urls
+            line = line.split("#", 1)[0].strip()
+            parts = [p.strip() for p in line.split(",", 1)]
+            primary = parts[0]
+            fallback = parts[1] if len(parts) > 1 and parts[1] else None
+            if primary:
+                entries.append((primary, fallback))
+    return entries
 
 
 def fetch(url: str, retries: int, timeout: int) -> bytes:
@@ -64,20 +72,38 @@ def decompress(data: bytes, url: str) -> bytes:
 
 
 def download_one(
-    index: int, url: str, raw_dir: str, retries: int, timeout: int
-) -> tuple[str, str, str | None]:
-    """Return (fname, url, error_or_None)."""
+    index: int, url: str, fallback: str | None, raw_dir: str, retries: int, timeout: int
+) -> tuple[str, str, bool, str | None]:
+    """Return (fname, primary_url, fallback_used, error_or_None)."""
     base = os.path.basename(url.split("?", 1)[0]) or "source"
     fname = f"{index:02d}_{base}"
     dest = os.path.join(raw_dir, fname)
+
+    # Try primary
+    primary_exc: Exception | None = None
     try:
         data = fetch(url, retries, timeout)
         data = decompress(data, url)
         with open(dest, "wb") as fh:
             fh.write(data)
-        return fname, url, None
+        return fname, url, False, None
     except Exception as exc:
-        return fname, url, str(exc)
+        primary_exc = exc
+
+    # Try fallback
+    if fallback:
+        print(f"  WARN   primary failed ({primary_exc}), trying fallback: {fallback}",
+              file=sys.stderr)
+        try:
+            data = fetch(fallback, retries, timeout)
+            data = decompress(data, fallback)
+            with open(dest, "wb") as fh:
+                fh.write(data)
+            return fname, url, True, None
+        except Exception as fb_exc:
+            return fname, url, False, f"primary: {primary_exc}; fallback: {fb_exc}"
+
+    return fname, url, False, str(primary_exc)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -97,25 +123,27 @@ def main(argv: list[str] | None = None) -> int:
         if os.path.isfile(fp):
             os.remove(fp)
 
-    urls = read_sources(args.sources)
-    if not urls:
+    sources = read_sources(args.sources)
+    if not sources:
         print("No sources found.", file=sys.stderr)
         return 1
 
-    results: list[tuple[int, str, str, str | None]] = []
-    print(f"Downloading {len(urls)} source(s) with {args.workers} workers…")
+    results: list[tuple[int, str, str, bool, str | None]] = []
+    print(f"Downloading {len(sources)} source(s) with {args.workers} workers…")
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         futures = {
-            pool.submit(download_one, i + 1, url, args.raw, args.retries, args.timeout): (i + 1, url)
-            for i, url in enumerate(urls)
+            pool.submit(
+                download_one, i + 1, url, fallback, args.raw, args.retries, args.timeout
+            ): (i + 1, url)
+            for i, (url, fallback) in enumerate(sources)
         }
         for future in as_completed(futures):
             i, url = futures[future]
-            fname, _, err = future.result()
-            results.append((i, fname, url, err))
+            fname, _, fb_used, err = future.result()
+            results.append((i, fname, url, fb_used, err))
 
     results.sort(key=lambda r: r[0])
-    failures = [(url, err) for _, _, url, err in results if err]
+    failures = [(url, err) for _, _, url, _, err in results if err]
     if failures:
         for url, err in failures:
             print(f"  FAILED {url}: {err}", file=sys.stderr)
@@ -127,8 +155,9 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     with open(map_path, "w", encoding="utf-8") as mf:
-        for _, fname, url, _ in results:
-            print(f"  OK     {url} -> {args.raw}/{fname}")
+        for _, fname, url, fb_used, _ in results:
+            tag = "FALLBACK" if fb_used else "OK"
+            print(f"  {tag:<8} {url} -> {args.raw}/{fname}")
             mf.write(f"{fname} {url}\n")
 
     return 0
