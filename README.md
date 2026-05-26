@@ -3,16 +3,16 @@
 Automated blocklist compiler. Fetches DNS/ad-block lists from multiple sources daily, merges and deduplicates them, and publishes five output formats directly to this repository via GitHub Actions.
 
 <!-- stats:start -->
-**Last run:** 2026-05-25 &nbsp;·&nbsp; **Sources:** 6 &nbsp;·&nbsp; **Unique domains:** 808,209 *(hosts/domains)* · 581,295 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 86,360
+**Last run:** 2026-05-26 &nbsp;·&nbsp; **Sources:** 6 &nbsp;·&nbsp; **Unique domains:** 901,363 *(hosts/domains)* · 672,388 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 87,384
 
 | Format | Download | Domains |
 |---|---|---|
-| Hosts (`0.0.0.0 domain`) | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist.txt) | 808,209 |
-| Plain domains | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-domains.txt) | 808,209 |
-| Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-adblock.txt) | 581,295 |
-| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-bind9.zone.gz) | 581,295 |
-| dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-dnsmasq.conf) | 581,295 |
-| Unbound | [blocklist-unbound.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-unbound.conf) | 581,295 |
+| Hosts (`0.0.0.0 domain`) | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist.txt) | 901,363 |
+| Plain domains | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-domains.txt) | 901,363 |
+| Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-adblock.txt) | 672,388 |
+| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-bind9.zone.gz) | 672,388 |
+| dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-dnsmasq.conf) | 672,388 |
+| Unbound | [blocklist-unbound.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-unbound.conf) | 672,388 |
 <!-- stats:end -->
 
 ## Output formats
