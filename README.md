@@ -280,37 +280,54 @@ To trigger the same workflow from your machine (uses your existing `gh auth logi
 
 ## BIND9 RPZ integration
 
-See [`client-scripts/`](client-scripts/) for a ready-to-use integration script.
+See [`client-scripts/`](client-scripts/) for the full setup guide and script.
 
 ### named.conf
+
+#### Step 1 — declare the RPZ zone
+
+Add a `zone` block to `named.conf` (or a file it includes):
 
 ```
 zone "rpz.local" {
     type master;
-    file "/etc/bind/db.rpz.local";
+    file "db.rpz.local";   // relative to BIND's directory option — see client-scripts/README.md
     allow-query { none; };
 };
+```
 
+#### Step 2 — enable response-policy
+
+Add `response-policy` inside your existing `options {}` block — **not** alongside the zone block:
+
+```
 options {
+    // ... your existing options ...
     response-policy { zone "rpz.local"; };
 };
 ```
 
 ### Automated daily fetch
 
+On your BIND9 server, download the script directly:
+
 ```bash
-# copy to your BIND9 server
-scp client-scripts/bind9-update-rpz.sh root@your-server:/etc/bind/
-chmod +x /etc/bind/bind9-update-rpz.sh
-
-# bootstrap
-/etc/bind/bind9-update-rpz.sh
-
-# cron — runs at 04:00, after the GitHub Actions job at 03:00 UTC
-echo "0 4 * * * /etc/bind/bind9-update-rpz.sh >> /var/log/rpz-update.log 2>&1" | crontab -
+curl -fsSL https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/client-scripts/bind9-update-rpz.sh \
+    -o /usr/local/sbin/bind9-update-rpz.sh
+chmod +x /usr/local/sbin/bind9-update-rpz.sh
 ```
 
-The script fetches `blocklist-bind9.zone.gz`, validates it with `named-checkzone`, installs it, and runs `rndc reload rpz.local`.
+Bootstrap and schedule. The script reads `named.conf` to discover the zone file path automatically:
+
+```bash
+# run once to bootstrap
+/usr/local/sbin/bind9-update-rpz.sh
+
+# cron — runs at 04:00 UTC, after the GitHub Actions job at 03:00 UTC
+echo "0 4 * * * /usr/local/sbin/bind9-update-rpz.sh >> /var/log/rpz-update.log 2>&1" | crontab -
+```
+
+The script auto-detects the zone file path from `named.conf`, the BIND service name (`named`/`bind9`), and the bind group. Pass the zone file path as an argument if auto-detection fails.
 
 ---
 
@@ -367,4 +384,4 @@ tests/
 
 - Python 3.8+ (stdlib only — no pip installs needed)
 - `curl` only required for `--legacy` mode
-- BIND9 client script additionally requires: `named-checkzone`, `rndc`
+- BIND9 client script additionally requires: `curl`, `gzip`, `named-checkzone`

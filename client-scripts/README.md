@@ -4,40 +4,89 @@ Helper scripts for consuming the compiled blocklists on client machines.
 
 ## bind9-update-rpz.sh
 
-Fetches the latest `blocklist-bind9.zone.gz` from this repo, validates it with
-`named-checkzone`, installs it, and reloads BIND9.
+Fetches the latest `blocklist-bind9.zone.gz`, validates it with `named-checkzone`,
+and installs it to the zone file path configured in your `named.conf`. Then reloads
+BIND9 via `systemctl`.
 
 ### Prerequisites
 
-- `curl`, `gzip`, `named-checkzone`, `rndc`
+- `curl`, `gzip`, `named-checkzone`
 - BIND9 configured with the RPZ zone and `response-policy` stanza (see below)
 
-### named.conf snippet
+### named.conf
+
+#### Step 1 — declare the RPZ zone
+
+Add a `zone` block to `named.conf` (or a file it includes):
 
 ```
 zone "rpz.local" {
     type master;
-    file "/etc/bind/db.rpz.local";
+    file "db.rpz.local";   // relative to BIND's directory option, or use an absolute path
     allow-query { none; };
 };
+```
 
+The zone file path varies by distro:
+
+| Distro family            | BIND `directory` option  | Typical zone file path           |
+|--------------------------|--------------------------|----------------------------------|
+| Debian / Ubuntu          | `/var/cache/bind`        | `/var/cache/bind/db.rpz.local`   |
+| RHEL / Rocky / AlmaLinux | `/var/named`             | `/var/named/db.rpz.local`        |
+| openSUSE / SLES          | `/var/lib/named`         | `/var/lib/named/db.rpz.local`    |
+
+Use the relative filename in the `file` directive and let BIND resolve it against
+its `directory` option — or use an absolute path if you prefer.
+
+#### Step 2 — enable response-policy
+
+Add `response-policy` inside the `options {}` block that already exists in your
+config — **not** alongside the `zone` block:
+
+```
 options {
+    // ... your existing options ...
     response-policy { zone "rpz.local"; };
 };
 ```
 
 ### Setup
 
+**On your BIND9 server**, download the script directly:
+
 ```bash
-# copy script to your server
-scp client-scripts/bind9-update-rpz.sh root@your-server:/etc/bind/
+curl -fsSL https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/client-scripts/bind9-update-rpz.sh \
+    -o /usr/local/sbin/bind9-update-rpz.sh
+chmod +x /usr/local/sbin/bind9-update-rpz.sh
+```
 
-chmod +x /etc/bind/bind9-update-rpz.sh
+**Run once to bootstrap.** The script reads your `named.conf` to discover the
+zone file path automatically:
 
-# run once to bootstrap
-/etc/bind/bind9-update-rpz.sh
+```bash
+/usr/local/sbin/bind9-update-rpz.sh
+```
 
-# add to root crontab for daily updates (runs at 04:00 local time,
-# after the GitHub Actions job at 03:00 UTC)
-echo "0 4 * * * /etc/bind/bind9-update-rpz.sh >> /var/log/rpz-update.log 2>&1" | crontab -
+If auto-detection fails (e.g. your zone is defined in a nested include file),
+pass the path explicitly:
+
+```bash
+/usr/local/sbin/bind9-update-rpz.sh /var/named/db.rpz.local
+```
+
+The script also auto-detects the BIND service name (`named` or `bind9`) and the
+bind group (`bind` or `named`). Override via env vars if needed:
+
+```bash
+BIND_SERVICE=named BIND_GROUP=named /usr/local/sbin/bind9-update-rpz.sh
+```
+
+**Add to root crontab** for daily updates (runs at 04:00 UTC, after the GitHub
+Actions job at 03:00 UTC):
+
+```bash
+crontab -e
+
+# add this line:
+0 4 * * * /usr/local/sbin/bind9-update-rpz.sh >> /var/log/rpz-update.log 2>&1
 ```
