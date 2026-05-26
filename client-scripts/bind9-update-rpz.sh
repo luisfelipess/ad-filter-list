@@ -135,9 +135,6 @@ log "Detected: service=${BIND_SERVICE}  group=${BIND_GROUP}  zone_file=${ZONE_FI
 log "Fetching RPZ zone..."
 curl -fsSL "$RPZ_URL" | gzip -dc > "$TMP_FILE"
 
-log "Validating zone..."
-named-checkzone "$ZONE_NAME" "$TMP_FILE"
-
 # Extract SOA serial from a zone file (first number on the "; Serial" line)
 get_serial() { awk '/;[[:space:]]*[Ss]erial/ { print $1; exit }' "$1"; }
 
@@ -155,6 +152,9 @@ if [[ -f "$ZONE_FILE" ]]; then
         log "Serial OK: $cur_serial → $new_serial"
     fi
 fi
+
+log "Validating zone..."
+named-checkzone "$ZONE_NAME" "$TMP_FILE"
 
 log "Installing zone file..."
 cp "$TMP_FILE" "$ZONE_FILE"
