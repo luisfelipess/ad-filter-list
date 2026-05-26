@@ -145,8 +145,12 @@ if [[ -f "$ZONE_FILE" ]]; then
     new_serial=$(get_serial "$TMP_FILE")
     cur_serial=$(get_serial "$ZONE_FILE")
     if [[ -n "$new_serial" && -n "$cur_serial" ]]; then
-        if [[ "$new_serial" -le "$cur_serial" ]]; then
-            die "Serial regression detected: remote=$new_serial is not newer than installed=$cur_serial — aborting."
+        if [[ "$new_serial" -eq "$cur_serial" ]]; then
+            log "Already up to date (serial=$cur_serial) — nothing to do."
+            exit 0
+        fi
+        if [[ "$new_serial" -lt "$cur_serial" ]]; then
+            die "Serial regression detected: remote=$new_serial < installed=$cur_serial — aborting."
         fi
         log "Serial OK: $cur_serial → $new_serial"
     fi
