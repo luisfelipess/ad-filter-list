@@ -1,8 +1,8 @@
-# Rejected entries - generated: 2026-05-27T07:03:07.028372Z
+# Rejected entries - generated: 2026-05-27T23:39:01.465675Z
 # Format: source_file line_number : original_line
 
-01_pro.txt 289203: INVALID_TLD(scloud): 0.0.0.0 collector.azure.microsoft.scloud
-02_pro.plus.mini.txt 24562: INVALID_TLD(scloud): *.collector.azure.microsoft.scloud
+01_pro.txt 269754: INVALID_TLD(scloud): 0.0.0.0 collector.azure.microsoft.scloud
+02_pro.plus.mini.txt 25023: INVALID_TLD(scloud): *.collector.azure.microsoft.scloud
 05_hosts 15: 127.0.0.1 localhost
 05_hosts 16: 127.0.0.1 localhost.localdomain
 05_hosts 17: 127.0.0.1 local
@@ -35,3 +35,5 @@
 08_hosts 46: 127.0.0.1 localhost
 08_hosts 47: ::1 localhost #[IPv6]
 09_hosts 2502: INVALID_TLD(example0101): 0.0.0.0 pgl.example0101
+11_hosts.txt 22: 127.0.0.1  localhost
+11_hosts.txt 23: ::1  localhost

@@ -2,6 +2,12 @@
 # One domain per line. Lines starting with #, !, or ; are ignored.
 # Inline comments are supported: domain.com  # reason
 
+# ── localhost ────────────────────────────────────────────────────────────────
+localhost
+
+# ── CloudFlare ───────────────────────────────────────────────────────────────
+cdnjs.cloudflare.com
+
 # ── YouTube ──────────────────────────────────────────────────────────────────
 s.youtube.com
 # *.youtube.com
@@ -24,6 +30,11 @@ clients.google.com
 accounts.google.com
 oauth2.googleapis.com
 google.com
+#  analytics.google.com
+# googleadapis.l.google.com
+# clients.l.google.com
+# clients6.google.com
+
 
 # ── Let's Encrypt (OCSP / certificate validation) ────────────────────────────
 ocsp.int-x3.letsencrypt.org

@@ -1,27 +1,27 @@
 {
-  "generated": "2026-05-27T07:03:07.028372Z",
+  "generated": "2026-05-27T23:39:01.465675Z",
   "summary": {
-    "scanned": 1115744,
-    "unique_deduped": 916966,
-    "duplicates_deduped": 198778,
-    "reduction_pct_deduped": 17.8157,
-    "unique_optimized": 682434,
-    "wildcards": 89146,
-    "duplicates_optimized": 433310,
-    "reduction_pct_optimized": 38.836,
-    "delta_added": 10947,
-    "delta_removed": 230,
-    "rejected_total": 34,
+    "scanned": 1131251,
+    "unique_deduped": 917971,
+    "duplicates_deduped": 213280,
+    "reduction_pct_deduped": 18.8535,
+    "unique_optimized": 691469,
+    "wildcards": 99604,
+    "duplicates_optimized": 439782,
+    "reduction_pct_optimized": 38.8757,
+    "delta_added": 0,
+    "delta_removed": 226692,
+    "rejected_total": 36,
     "tld_rejected": 4,
     "matched_allowlisted": 1,
     "added_by_blocklist_override": 0,
     "output_sizes": {
-      "blocklist.txt": 29073049,
-      "blocklist-adblock.txt": 14667652,
-      "blocklist-bind9.zone.gz": 6639898,
-      "blocklist-dnsmasq.conf": 19924282,
-      "blocklist-unbound.conf": 33489692,
-      "blocklist-domains.txt": 21737336
+      "blocklist.txt": 29057090,
+      "blocklist-adblock.txt": 15018392,
+      "blocklist-bind9.zone.gz": 6780896,
+      "blocklist-dnsmasq.conf": 20390750,
+      "blocklist-unbound.conf": 34297020,
+      "blocklist-domains.txt": 21713337
     }
   },
   "sources": {
@@ -29,40 +29,40 @@
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/pro.txt",
       "format": "host",
       "format_reason": "host format detected",
-      "scanned": 495682,
-      "accepted": 495681,
+      "scanned": 482734,
+      "accepted": 482733,
       "rejected": 1,
-      "net_new": 495680,
+      "net_new": 482732,
       "skipped": false
     },
     "02_pro.plus.mini.txt": {
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/pro.plus.mini.txt",
       "format": "wildcard-domain",
       "format_reason": "wildcard-domain format detected",
-      "scanned": 89147,
-      "accepted": 89146,
+      "scanned": 99605,
+      "accepted": 99604,
       "rejected": 1,
-      "net_new": 16496,
+      "net_new": 24552,
       "skipped": false
     },
     "03_tif.medium-onlydomains.txt": {
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/tif.medium-onlydomains.txt",
       "format": "domain-only",
       "format_reason": "domain-only format detected",
-      "scanned": 411935,
-      "accepted": 411935,
+      "scanned": 423364,
+      "accepted": 423364,
       "rejected": 0,
-      "net_new": 351233,
+      "net_new": 357474,
       "skipped": false
     },
     "04_fake-onlydomains.txt": {
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/fake-onlydomains.txt",
       "format": "domain-only",
       "format_reason": "domain-only format detected",
-      "scanned": 15706,
-      "accepted": 15706,
+      "scanned": 15734,
+      "accepted": 15734,
       "rejected": 0,
-      "net_new": 61,
+      "net_new": 62,
       "skipped": false
     },
     "05_hosts": {
@@ -72,7 +72,7 @@
       "scanned": 83081,
       "accepted": 83065,
       "rejected": 16,
-      "net_new": 51140,
+      "net_new": 50784,
       "skipped": false
     },
     "06_hosts": {
@@ -123,6 +123,16 @@
       "accepted": 347,
       "rejected": 0,
       "net_new": 268,
+      "skipped": false
+    },
+    "11_hosts.txt": {
+      "url": "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 6542,
+      "accepted": 6540,
+      "rejected": 2,
+      "net_new": 11,
       "skipped": false
     }
   }
