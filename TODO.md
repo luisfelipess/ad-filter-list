@@ -74,9 +74,44 @@ Output writers live in `writers/`. Adding a new format = one new file + one line
 
 ## 🔭 Ideas / Future
 
-- [ ] **Source health dashboard** — flag sources that consistently produce 0 accepted entries or high rejection rates
-- [ ] **Incremental downloads** — `If-Modified-Since` / ETag support to skip unchanged sources
-- [ ] **Per-format delta tracking** — currently delta is computed only against the hosts file
+### Output & reporting
+
+- [ ] **File size in reports and README** — after each writer finishes, record `os.path.getsize()` in the JSON report (`summary.sizes`) and surface it in the README stats table alongside domain count (e.g. `905,946 domains · 12.4 MB`); gzip size for RPZ, raw size for text formats; helps users pick a tier that fits their router's RAM budget
+
+- [ ] **Per-source contribution stats** — for each source, report how many domains it contributed that no earlier source already had ("net new unique"); surface this as `net_new` in `sources[fname]` of the JSON report; good for identifying sources with high overlap (low value) vs sources that genuinely expand coverage; inspired by StefanKnol/mikrotik-adlist's "diminishing returns" table
+
+- [ ] **Per-format delta tracking** — currently delta is computed only against the hosts file; each writer could compare against its own previous output
+
+- [ ] **Source health dashboard** — flag sources that consistently produce 0 accepted entries or high rejection rates across runs
+
+- [ ] **Incremental downloads** — `If-Modified-Since` / ETag support to skip re-downloading unchanged sources
+
+### Tiered outputs
+
+- [ ] **Source tier tagging in `sources.conf`** — allow each source line to carry a tier label (`small`, `medium`, `large`); sources without a label default to `large`; tag semantics are cumulative: `small` sources go into all tiers, `medium` into medium+large, `large` into large only; syntax sketch (backward-compatible):
+  ```
+  https://hagezi/pro.txt tier=small , https://fallback/pro.txt
+  https://stevenblack/hosts tier=medium
+  https://hagezi/pro-plus.txt  # tier=large (default)
+  ```
+
+- [ ] **Multi-tier merge** — run `_collect_domains` once per tier using the filtered source subset; produces three domain pools (small ⊆ medium ⊆ large); avoids re-downloading; add `--tiers small,medium,large` flag to `merge.py`
+
+- [ ] **Tiered host-format outputs** — emit `processed/blocklist-small.txt`, `processed/blocklist-medium.txt`, `processed/blocklist-large.txt` (hosts `0.0.0.0 domain` format); `processed/blocklist.txt` stays as-is and maps to the large tier (backward-compatible); other formats (RPZ, dnsmasq, adblock, unbound) continue to emit a single merged file from all sources — tiers are primarily motivated by MikroTik / Pi-hole RAM constraints, which don't apply the same way to server-side DNS resolvers
+
+- [ ] **README stats table extended for tiers** — `post_run.py` emits one row per tier for the hosts format, showing domain count and file size; DNS-format rows stay as single entries
+
+  Sketch of what the table would look like:
+  ```
+  | Hosts (small)  | blocklist-small.txt  | ~136K | ~2 MB  | MikroTik low-RAM (<32 MiB cache) |
+  | Hosts (medium) | blocklist-medium.txt | ~400K | ~5 MB  | MikroTik mid-range               |
+  | Hosts (large)  | blocklist.txt        | ~906K | ~12 MB | MikroTik high-end, Pi-hole       |
+  ```
+
+  Tier boundaries depend on which sources are tagged; the current single merged pool becomes the large tier by default.
+
+### Source discovery
+
 - [ ] **AdGuard Host Lists Registry** — `https://adguardteam.github.io/HostlistsRegistry/assets/filters.json` is a curated JSON meta-index of trusted filter lists; could be used to discover and pull sources automatically rather than maintaining `sources.conf` by hand; needs a JSON source resolver in `fetch.py` and a way to select which lists to include
+
 - [ ] **Source version/last-modified propagation** — extract `! Version:` and `! Last modified:` from upstream source headers and surface them in the JSON report and output file credits (raw header text is already propagated but not parsed)
-- [ ] **List flavours** — pre-built variants (e.g. light / standard / aggressive) combining different source subsets into separate named outputs; interesting direction but no clean implementation path yet — not a priority; current recommendation is to clone and configure locally
