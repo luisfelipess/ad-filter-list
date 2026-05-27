@@ -29,16 +29,16 @@ Different pre-built variants (light, standard, aggressive) combining different s
 ---
 
 <!-- stats:start -->
-**Last run:** 2026-05-27 &nbsp;·&nbsp; **Sources:** 10 &nbsp;·&nbsp; **Unique domains:** 906,249 *(hosts/domains)* · 673,795 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 80,444
+**Last run:** 2026-05-27 &nbsp;·&nbsp; **Sources:** 10 &nbsp;·&nbsp; **Unique domains:** 916,966 *(hosts/domains)* · 682,434 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 89,146
 
 | Format | Download | Domains | Size | Use case |
 |---|---|---|---|---|
-| Hosts (`0.0.0.0 domain`) | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist.txt) | 906,249 | 28.8 MB | MikroTik adlists, Pi-hole, generic hosts |
-| Plain domains | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-domains.txt) | 906,249 | 21.5 MB | Generic use, custom DNS resolvers |
-| Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-adblock.txt) | 673,795 | 14.4 MB | uBlock Origin, AdGuard, browser extensions |
-| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-bind9.zone.gz) | 673,795 | 6.5 MB | BIND9 `response-policy` |
-| dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-dnsmasq.conf) | 673,795 | 19.6 MB | OpenWrt, DD-WRT, Pi-hole (dnsmasq mode) |
-| Unbound | [blocklist-unbound.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-unbound.conf) | 673,795 | 33.0 MB | Unbound resolver |
+| Hosts (`0.0.0.0 domain`) | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist.txt) | 916,966 | 29.1 MB | MikroTik adlists, Pi-hole, generic hosts |
+| Plain domains | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-domains.txt) | 916,966 | 21.7 MB | Generic use, custom DNS resolvers |
+| Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-adblock.txt) | 682,434 | 14.7 MB | uBlock Origin, AdGuard, browser extensions |
+| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-bind9.zone.gz) | 682,434 | 6.6 MB | BIND9 `response-policy` |
+| dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-dnsmasq.conf) | 682,434 | 19.9 MB | OpenWrt, DD-WRT, Pi-hole (dnsmasq mode) |
+| Unbound | [blocklist-unbound.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-unbound.conf) | 682,434 | 33.5 MB | Unbound resolver |
 <!-- stats:end -->
 
 Run diagnostics are committed alongside the output on every run:

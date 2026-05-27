@@ -1,27 +1,27 @@
 {
-  "generated": "2026-05-27T01:52:58.317821Z",
+  "generated": "2026-05-27T07:03:07.028372Z",
   "summary": {
-    "scanned": 1083850,
-    "unique_deduped": 906249,
-    "duplicates_deduped": 177601,
-    "reduction_pct_deduped": 16.3861,
-    "unique_optimized": 673795,
-    "wildcards": 80444,
-    "duplicates_optimized": 410055,
-    "reduction_pct_optimized": 37.8332,
-    "delta_added": 0,
-    "delta_removed": 0,
+    "scanned": 1115744,
+    "unique_deduped": 916966,
+    "duplicates_deduped": 198778,
+    "reduction_pct_deduped": 17.8157,
+    "unique_optimized": 682434,
+    "wildcards": 89146,
+    "duplicates_optimized": 433310,
+    "reduction_pct_optimized": 38.836,
+    "delta_added": 10947,
+    "delta_removed": 230,
     "rejected_total": 34,
     "tld_rejected": 4,
     "matched_allowlisted": 1,
     "added_by_blocklist_override": 0,
     "output_sizes": {
-      "blocklist.txt": 28753557,
-      "blocklist-adblock.txt": 14425230,
-      "blocklist-bind9.zone.gz": 6534754,
-      "blocklist-dnsmasq.conf": 19615234,
-      "blocklist-unbound.conf": 32970544,
-      "blocklist-domains.txt": 21503580
+      "blocklist.txt": 29073049,
+      "blocklist-adblock.txt": 14667652,
+      "blocklist-bind9.zone.gz": 6639898,
+      "blocklist-dnsmasq.conf": 19924282,
+      "blocklist-unbound.conf": 33489692,
+      "blocklist-domains.txt": 21737336
     }
   },
   "sources": {
@@ -29,20 +29,20 @@
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/pro.txt",
       "format": "host",
       "format_reason": "host format detected",
-      "scanned": 472490,
-      "accepted": 472489,
+      "scanned": 495682,
+      "accepted": 495681,
       "rejected": 1,
-      "net_new": 472488,
+      "net_new": 495680,
       "skipped": false
     },
     "02_pro.plus.mini.txt": {
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/pro.plus.mini.txt",
       "format": "wildcard-domain",
       "format_reason": "wildcard-domain format detected",
-      "scanned": 80445,
-      "accepted": 80444,
+      "scanned": 89147,
+      "accepted": 89146,
       "rejected": 1,
-      "net_new": 16474,
+      "net_new": 16496,
       "skipped": false
     },
     "03_tif.medium-onlydomains.txt": {
@@ -52,7 +52,7 @@
       "scanned": 411935,
       "accepted": 411935,
       "rejected": 0,
-      "net_new": 362904,
+      "net_new": 351233,
       "skipped": false
     },
     "04_fake-onlydomains.txt": {
@@ -72,7 +72,7 @@
       "scanned": 83081,
       "accepted": 83065,
       "rejected": 16,
-      "net_new": 51966,
+      "net_new": 51140,
       "skipped": false
     },
     "06_hosts": {
