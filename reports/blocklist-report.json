@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-27T01:51:58.816876Z",
+  "generated": "2026-05-27T01:52:58.317821Z",
   "summary": {
     "scanned": 1083850,
     "unique_deduped": 906249,
@@ -18,7 +18,7 @@
     "output_sizes": {
       "blocklist.txt": 28753557,
       "blocklist-adblock.txt": 14425230,
-      "blocklist-bind9.zone.gz": 6534752,
+      "blocklist-bind9.zone.gz": 6534754,
       "blocklist-dnsmasq.conf": 19615234,
       "blocklist-unbound.conf": 32970544,
       "blocklist-domains.txt": 21503580
