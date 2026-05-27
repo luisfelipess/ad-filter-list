@@ -4,6 +4,12 @@
 
 Automated blocklist compiler. Fetches DNS/ad-block lists from multiple sources daily, combines and deduplicates entries, makes DNS output inclusive of subdomains by dropping redundant entries when a parent domain already covers them, and publishes five output formats directly to this repository via GitHub Actions.
 
+- **Daily updates** — rebuilt automatically every day via GitHub Actions
+- **Multi-format** — hosts, adblock, RPZ, dnsmasq, and unbound in one pipeline
+- **Quality filtered** — deduped, subdomain-optimized, IANA TLD validated, IPs and invalid syntax stripped
+- **Resilient fetching** — primary + fallback URLs per source, retries with exponential backoff
+- **Transparent** — per-source stats, rejected entries log, and delta tracking on every run
+
 <!-- stats:start -->
 **Last run:** 2026-05-26 &nbsp;·&nbsp; **Sources:** 6 &nbsp;·&nbsp; **Unique domains:** 905,946 *(hosts/domains)* · 673,520 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 80,444
 
