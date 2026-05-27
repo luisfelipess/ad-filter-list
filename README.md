@@ -51,7 +51,7 @@ Every entry from every source passes through a multi-stage quality pipeline befo
 | **Wildcard handling** | `*.domain` entries handled format-appropriately per writer (emitted as wildcard patterns or degraded to exact, never promoted) |
 | **Allowlist/blocklist** | Override layer applied last — allowlist always wins |
 
-Rejected entries are logged to `reports/rejected-entries.txt` each run with the source file, line number, and rejection reason.
+Rejected entries are logged to [`reports/rejected-entries.txt`](reports/rejected-entries.txt) each run with the source file, line number, and rejection reason.
 
 ---
 
