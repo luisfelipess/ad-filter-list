@@ -57,14 +57,14 @@ def _build_block(report: dict, raw_base: str) -> str:
     if raw_base:
         lines += [
             "",
-            "| Format | Download | Domains |",
-            "|---|---|---|",
-            f"| Hosts (`0.0.0.0 domain`) | [blocklist.txt]({raw_base}/processed/blocklist.txt) | {unique_all:,} |",
-            f"| Plain domains | [blocklist-domains.txt]({raw_base}/processed/blocklist-domains.txt) | {unique_all:,} |",
-            f"| Adblock syntax | [blocklist-adblock.txt]({raw_base}/processed/blocklist-adblock.txt) | {unique_opt:,} |",
-            f"| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz]({raw_base}/processed/blocklist-bind9.zone.gz) | {unique_opt:,} |",
-            f"| dnsmasq | [blocklist-dnsmasq.conf]({raw_base}/processed/blocklist-dnsmasq.conf) | {unique_opt:,} |",
-            f"| Unbound | [blocklist-unbound.conf]({raw_base}/processed/blocklist-unbound.conf) | {unique_opt:,} |",
+            "| Format | Download | Domains | Use case |",
+            "|---|---|---|---|",
+            f"| Hosts (`0.0.0.0 domain`) | [blocklist.txt]({raw_base}/processed/blocklist.txt) | {unique_all:,} | MikroTik adlists, Pi-hole, generic hosts |",
+            f"| Plain domains | [blocklist-domains.txt]({raw_base}/processed/blocklist-domains.txt) | {unique_all:,} | Generic use, custom DNS resolvers |",
+            f"| Adblock syntax | [blocklist-adblock.txt]({raw_base}/processed/blocklist-adblock.txt) | {unique_opt:,} | uBlock Origin, AdGuard, browser extensions |",
+            f"| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz]({raw_base}/processed/blocklist-bind9.zone.gz) | {unique_opt:,} | BIND9 `response-policy` |",
+            f"| dnsmasq | [blocklist-dnsmasq.conf]({raw_base}/processed/blocklist-dnsmasq.conf) | {unique_opt:,} | OpenWrt, DD-WRT, Pi-hole (dnsmasq mode) |",
+            f"| Unbound | [blocklist-unbound.conf]({raw_base}/processed/blocklist-unbound.conf) | {unique_opt:,} | Unbound resolver |",
         ]
 
     return "\n".join(lines)
