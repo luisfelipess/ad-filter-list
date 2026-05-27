@@ -1,4 +1,4 @@
-# Rejected entries - generated: 2026-05-27T00:06:34.994372Z
+# Rejected entries - generated: 2026-05-27T00:12:49.267740Z
 # Format: source_file line_number : original_line
 
 01_pro.txt 270945: INVALID_TLD(scloud): 0.0.0.0 collector.azure.microsoft.scloud
