@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
       - name: Setup Python
         uses: actions/setup-python@v6
@@ -24,14 +26,49 @@ jobs:
       - name: Run pipeline
         run: python3 run.py
 
+      - name: Write step summary
+        if: always()
+        shell: bash
+        run: |
+          REPORT=reports/blocklist-report.json
+          if [[ ! -f "$REPORT" ]]; then
+            echo "No report found — pipeline may have failed." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          DEDUPED=$(jq '.summary.unique_deduped'  "$REPORT")
+          OPTIMIZED=$(jq '.summary.unique_optimized' "$REPORT")
+          WILDCARDS=$(jq '.summary.wildcards'     "$REPORT")
+          SCANNED=$(jq  '.summary.scanned'        "$REPORT")
+          DELTA_A=$(jq  '.summary.delta_added'    "$REPORT")
+          DELTA_R=$(jq  '.summary.delta_removed'  "$REPORT")
+          REJECTED=$(jq '.summary.rejected_total' "$REPORT")
+          SOURCES=$(jq  '.sources | length'       "$REPORT")
+          {
+            echo "## Blocklist pipeline summary"
+            echo ""
+            echo "| Metric | Value |"
+            echo "|---|---|"
+            echo "| Sources | $SOURCES |"
+            echo "| Scanned | $SCANNED |"
+            echo "| Unique domains (hosts/domains) | $DEDUPED |"
+            echo "| Unique domains (DNS-optimized) | $OPTIMIZED |"
+            echo "| Wildcards | $WILDCARDS |"
+            echo "| Delta added | +$DELTA_A |"
+            echo "| Delta removed | -$DELTA_R |"
+            echo "| Rejected entries | $REJECTED |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Commit pipeline output
         id: commit
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
 
           git config user.name "luifelss"
           git config user.email "146073519+luisfelipess@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
 
           # processed/ — all output formats
           # reports/   — blocklist-report.json, rejected-entries.txt
@@ -44,7 +81,17 @@ jobs:
             exit 0
           fi
 
-          git commit -m "Update blocklists [skip ci]"
+          REPORT=reports/blocklist-report.json
+          if [[ -f "$REPORT" ]]; then
+            DEDUPED=$(jq '.summary.unique_deduped'  "$REPORT")
+            DELTA_A=$(jq '.summary.delta_added'    "$REPORT")
+            DELTA_R=$(jq '.summary.delta_removed'  "$REPORT")
+            MSG="Update blocklists: ${DEDUPED} domains (+${DELTA_A}/-${DELTA_R}) [skip ci]"
+          else
+            MSG="Update blocklists [skip ci]"
+          fi
+
+          git commit -m "$MSG"
           git push origin HEAD:${{ github.ref_name }}
           echo "changed=true" >> "$GITHUB_OUTPUT"
 

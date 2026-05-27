@@ -12,7 +12,8 @@ Usage:
                    [--out processed/blocklist.txt]
                    [--allowlist allowlist.txt] [--blocklist blocklist.txt]
                    [--workers 8] [--retries 3] [--timeout 30]
-                   [--no-optimize-subdomains] [--writers-config writers.conf]
+                   [--no-optimize-subdomains] [--no-iana-tld-check]
+                   [--writers-config writers.conf] [--max-drop-pct 50]
 """
 
 from __future__ import annotations
@@ -36,7 +37,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--retries", type=int, default=3)
     p.add_argument("--timeout", type=int, default=30)
     p.add_argument("--no-optimize-subdomains", action="store_true")
+    p.add_argument("--no-iana-tld-check", action="store_true",
+                   help="skip IANA TLD validation (useful when offline)")
     p.add_argument("--writers-config", default="writers.conf")
+    p.add_argument("--max-drop-pct", type=float, default=50.0,
+                   help="abort if domain count drops by more than this %% vs previous run (default: 50)")
     p.add_argument("--no-post-run", action="store_true",
                    help="skip the post_run README stats update")
     args = p.parse_args(argv)
@@ -80,6 +85,9 @@ def main(argv: list[str] | None = None) -> int:
         merge_argv.append("--unsorted")
     if args.no_optimize_subdomains:
         merge_argv.append("--no-optimize-subdomains")
+    if args.no_iana_tld_check:
+        merge_argv.append("--no-iana-tld-check")
+    merge_argv += ["--max-drop-pct", str(args.max_drop_pct)]
     rc = merge.main(merge_argv)
     if rc != 0:
         return rc

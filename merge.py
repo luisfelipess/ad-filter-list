@@ -279,7 +279,8 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
 def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
           allowlist_path: str = "allowlist.txt", blocklist_path: str = "blocklist.txt",
           optimize_subdomains: bool = True, writers_config: str = "writers.conf",
-          skip_iana_check: bool = False, _valid_tlds: set[str] | None = None) -> None:
+          skip_iana_check: bool = False, _valid_tlds: set[str] | None = None,
+          max_drop_pct: float = 50.0) -> None:
     allowlist = load_allowlist(allowlist_path)
     blocklist = load_blocklist(blocklist_path)
     active_writers = load_writers_config(writers_config)
@@ -359,6 +360,17 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         new_set = {d.lower() for d in ordered_deduped}
         delta_added = len(new_set - prev_domains)
         delta_removed = len(prev_domains - new_set)
+
+    if prev_domains and max_drop_pct < 100.0:
+        threshold = len(prev_domains) * (1.0 - max_drop_pct / 100.0)
+        if len(ordered_deduped) < threshold:
+            drop_pct = (1.0 - len(ordered_deduped) / len(prev_domains)) * 100.0
+            raise SystemExit(
+                f"ABORT: domain count dropped {drop_pct:.1f}% "
+                f"({len(prev_domains):,} → {len(ordered_deduped):,}), "
+                f"exceeds --max-drop-pct={max_drop_pct:.0f}%. "
+                f"Possible download failure. processed/ left untouched."
+            )
 
     now_str = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 
@@ -447,6 +459,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--no-iana-tld-check", action="store_true",
                    help="skip IANA TLD validation (useful when offline)")
     p.add_argument("--writers-config", default="writers.conf")
+    p.add_argument("--max-drop-pct", type=float, default=50.0,
+                   help="abort if domain count drops by more than this %% vs previous run (default: 50)")
     args = p.parse_args(argv)
 
     merge(args.raw, args.map, args.out,
@@ -455,7 +469,8 @@ def main(argv: list[str] | None = None) -> int:
           blocklist_path=args.blocklist,
           optimize_subdomains=not args.no_optimize_subdomains,
           skip_iana_check=args.no_iana_tld_check,
-          writers_config=args.writers_config)
+          writers_config=args.writers_config,
+          max_drop_pct=args.max_drop_pct)
     return 0
 
 
