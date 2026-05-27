@@ -1,20 +1,28 @@
 {
-  "generated": "2026-05-27T00:25:50.723361Z",
+  "generated": "2026-05-27T01:51:58.816876Z",
   "summary": {
-    "scanned": 1065826,
-    "unique_deduped": 905946,
-    "duplicates_deduped": 159880,
-    "reduction_pct_deduped": 15.0006,
-    "unique_optimized": 673520,
+    "scanned": 1083850,
+    "unique_deduped": 906249,
+    "duplicates_deduped": 177601,
+    "reduction_pct_deduped": 16.3861,
+    "unique_optimized": 673795,
     "wildcards": 80444,
-    "duplicates_optimized": 392306,
-    "reduction_pct_optimized": 36.8077,
+    "duplicates_optimized": 410055,
+    "reduction_pct_optimized": 37.8332,
     "delta_added": 0,
     "delta_removed": 0,
-    "rejected_total": 18,
-    "tld_rejected": 3,
+    "rejected_total": 34,
+    "tld_rejected": 4,
     "matched_allowlisted": 1,
-    "added_by_blocklist_override": 0
+    "added_by_blocklist_override": 0,
+    "output_sizes": {
+      "blocklist.txt": 28753557,
+      "blocklist-adblock.txt": 14425230,
+      "blocklist-bind9.zone.gz": 6534752,
+      "blocklist-dnsmasq.conf": 19615234,
+      "blocklist-unbound.conf": 32970544,
+      "blocklist-domains.txt": 21503580
+    }
   },
   "sources": {
     "01_pro.txt": {
@@ -24,6 +32,7 @@
       "scanned": 472490,
       "accepted": 472489,
       "rejected": 1,
+      "net_new": 472488,
       "skipped": false
     },
     "02_pro.plus.mini.txt": {
@@ -33,6 +42,7 @@
       "scanned": 80445,
       "accepted": 80444,
       "rejected": 1,
+      "net_new": 16474,
       "skipped": false
     },
     "03_tif.medium-onlydomains.txt": {
@@ -42,6 +52,7 @@
       "scanned": 411935,
       "accepted": 411935,
       "rejected": 0,
+      "net_new": 362904,
       "skipped": false
     },
     "04_fake-onlydomains.txt": {
@@ -51,6 +62,7 @@
       "scanned": 15706,
       "accepted": 15706,
       "rejected": 0,
+      "net_new": 61,
       "skipped": false
     },
     "05_hosts": {
@@ -60,6 +72,7 @@
       "scanned": 83081,
       "accepted": 83065,
       "rejected": 16,
+      "net_new": 51966,
       "skipped": false
     },
     "06_hosts": {
@@ -69,6 +82,47 @@
       "scanned": 2187,
       "accepted": 2187,
       "rejected": 0,
+      "net_new": 2053,
+      "skipped": false
+    },
+    "07_hosts": {
+      "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/data/someonewhocares.org/hosts",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 12798,
+      "accepted": 12785,
+      "rejected": 13,
+      "net_new": 31,
+      "skipped": false
+    },
+    "08_hosts": {
+      "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/data/Badd-Boyz-Hosts/hosts",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 1386,
+      "accepted": 1384,
+      "rejected": 2,
+      "net_new": 4,
+      "skipped": false
+    },
+    "09_hosts": {
+      "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/data/yoyo.org/hosts",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 3509,
+      "accepted": 3508,
+      "rejected": 1,
+      "net_new": 0,
+      "skipped": false
+    },
+    "10_spy.txt": {
+      "url": "https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/spy.txt",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 347,
+      "accepted": 347,
+      "rejected": 0,
+      "net_new": 268,
       "skipped": false
     }
   }

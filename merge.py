@@ -230,7 +230,7 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
         source_infos.append((fname, headers, url, fmt))
         source_stats[fname] = {
             "url": url, "format": fmt, "format_reason": reason,
-            "scanned": 0, "accepted": 0, "rejected": 0,
+            "scanned": 0, "accepted": 0, "rejected": 0, "net_new": 0,
             "skipped": reader is None,
         }
         print(f"{fname}: detected format={fmt} ({reason})")
@@ -270,6 +270,7 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
                 elif dom not in seen:
                     seen.add(dom)
                     ordered.append(dom)
+                    source_stats[fname]["net_new"] += 1
                 if is_wildcard:
                     wildcard_domains.add(dom)
 
@@ -390,6 +391,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
     )
 
     # ── run enabled writers ───────────────────────────────────────────────────
+    output_sizes: dict[str, int] = {}
     for writer in active_writers:
         # hosts/domains writers get the full dedup-only list; DNS resolver writers
         # get the subdomain-optimized list
@@ -398,6 +400,8 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         if not domains_for_writer and written_path and os.path.exists(written_path):
             os.remove(written_path)
             print(f"Removed empty output: {written_path}")
+        elif written_path and os.path.exists(written_path):
+            output_sizes[os.path.basename(written_path)] = os.path.getsize(written_path)
 
     # ── rejected entries + JSON report → reports/ ─────────────────────────────
     reports_dir = os.path.join(os.path.dirname(out_path) or ".", "..", "reports")
@@ -432,6 +436,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             "tld_rejected": tld_rejected,
             "matched_allowlisted": matched_allowlisted,
             "added_by_blocklist_override": added_by_blocklist_override,
+            "output_sizes": output_sizes,
         },
         "sources": source_stats,
     }
