@@ -11,7 +11,7 @@ Automated blocklist compiler. Fetches DNS/ad-block lists from multiple sources d
 - **Transparent** — per-source stats, rejected entries log, and delta tracking on every run
 
 <!-- stats:start -->
-**Last run:** 2026-05-26 &nbsp;·&nbsp; **Sources:** 6 &nbsp;·&nbsp; **Unique domains:** 905,946 *(hosts/domains)* · 673,520 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 80,444
+**Last run:** 2026-05-27 &nbsp;·&nbsp; **Sources:** 6 &nbsp;·&nbsp; **Unique domains:** 905,946 *(hosts/domains)* · 673,520 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 80,444
 
 | Format | Download | Domains | Use case |
 |---|---|---|---|

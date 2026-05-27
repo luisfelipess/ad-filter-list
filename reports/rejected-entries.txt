@@ -1,6 +1,8 @@
-# Rejected entries - generated: 2026-05-26T06:45:50.472443Z
+# Rejected entries - generated: 2026-05-27T00:06:34.994372Z
 # Format: source_file line_number : original_line
 
+01_pro.txt 270945: INVALID_TLD(scloud): 0.0.0.0 collector.azure.microsoft.scloud
+02_pro.plus.mini.txt 24205: INVALID_TLD(scloud): *.collector.azure.microsoft.scloud
 05_hosts 15: 127.0.0.1 localhost
 05_hosts 16: 127.0.0.1 localhost.localdomain
 05_hosts 17: 127.0.0.1 local
@@ -15,3 +17,5 @@
 05_hosts 26: ff02::2 ip6-allrouters
 05_hosts 27: ff02::3 ip6-allhosts
 05_hosts 28: 0.0.0.0 0.0.0.0
+05_hosts 73248: 0.0.0.0 philadelphia_cbslocal.us.intellitxt.com
+05_hosts 89036: INVALID_TLD(example0101): 0.0.0.0 pgl.example0101
