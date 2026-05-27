@@ -2,13 +2,31 @@
 
 [![Update blocklists](https://github.com/luisfelipess/ad-filter-list/actions/workflows/update.yml/badge.svg)](https://github.com/luisfelipess/ad-filter-list/actions/workflows/update.yml)
 
-Automated blocklist compiler. Fetches DNS/ad-block lists from multiple sources daily, combines and deduplicates entries, makes DNS output inclusive of subdomains by dropping redundant entries when a parent domain already covers them, and publishes five output formats directly to this repository via GitHub Actions.
+Automated blocklist compiler. Fetches DNS/ad-block lists from multiple sources daily, combines and deduplicates entries, makes DNS output inclusive of subdomains by dropping redundant entries when a parent domain already covers them, and publishes six output formats directly to this repository via GitHub Actions.
 
 - **Daily updates** — rebuilt automatically every day via GitHub Actions
-- **Multi-format** — hosts, adblock, RPZ, dnsmasq, and unbound in one pipeline
+- **Multi-format** — hosts, plain domains, adblock, RPZ, dnsmasq, and unbound in one pipeline
 - **Quality filtered** — deduped, subdomain-optimized, IANA TLD validated, IPs and invalid syntax stripped
 - **Resilient fetching** — primary + fallback URLs per source, retries with exponential backoff
 - **Transparent** — per-source stats, rejected entries log, and delta tracking on every run
+
+---
+
+## Design tenets
+
+**One combined list, done well.**
+The output of this project is a single merged, quality-filtered blocklist per format — not individual per-source conversions. The value is in the pipeline: cross-source deduplication, subdomain optimization, IANA TLD validation, and syntax filtering that make the combined result better than any individual source on its own.
+
+**Other approaches are equally valid.**
+Some projects convert upstream lists individually to specific formats without merging them. That's a legitimate and useful approach. This project simply takes a different position: if a domain appears in three sources, you should see it once, optimized, and clean — not three times across three files. If you want the individual upstream lists in a specific format, the upstream maintainers often already publish them directly.
+
+**Custom configurations are a first-class local use case.**
+Want only certain sources? Different combinations? A more aggressive or more conservative set? `sources.conf`, `allowlist.txt`, and `blocklist.txt` are designed for exactly that. Clone the repo, edit the config, run `python3 run.py`. The pipeline is self-contained and requires no external dependencies beyond Python 3.8.
+
+**Pre-built flavours are on the radar, not the roadmap.**
+Different pre-built variants (light, standard, aggressive) combining different source subsets are an interesting future direction. We don't have a clean implementation path for them yet and they're not a current priority — see the TODO.
+
+---
 
 <!-- stats:start -->
 **Last run:** 2026-05-27 &nbsp;·&nbsp; **Sources:** 6 &nbsp;·&nbsp; **Unique domains:** 905,946 *(hosts/domains)* · 673,520 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 80,444
@@ -23,35 +41,12 @@ Automated blocklist compiler. Fetches DNS/ad-block lists from multiple sources d
 | Unbound | [blocklist-unbound.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-unbound.conf) | 673,520 | Unbound resolver |
 <!-- stats:end -->
 
-Run diagnostics land in `reports/`:
+Run diagnostics are committed alongside the output on every run:
 
 | File | Contents |
 |---|---|
-| `reports/blocklist-report.json` | Per-source stats plus run summary (`matched_allowlisted`, `added_by_blocklist_override`, deltas, wildcards) |
-| `reports/rejected-entries.txt` | Lines that could not be parsed, for debugging source quality |
-
-All files are committed back to the repository automatically after each run.
-
----
-
-## Data quality pipeline
-
-Every entry from every source passes through a multi-stage quality pipeline before appearing in any output file:
-
-| Step | What happens |
-|---|---|
-| **Combine** | All sources merged into a single stream |
-| **Normalize** | Lowercase; leading/trailing dots and quotes stripped |
-| **IDN → punycode** | Internationalized domain names converted to ASCII-compatible encoding (e.g. `münchen.de` → `xn--mnchen-3ya.de`) |
-| **Reject IPs** | IPv4 and IPv6 addresses discarded — DNS blocklists operate on names, not addresses |
-| **Syntax filter** | Invalid labels (wrong characters, leading/trailing hyphens, label > 63 chars, total > 253 chars) rejected |
-| **IANA TLD check** | Domains whose TLD is not in the [IANA root zone](https://data.iana.org/TLD/tlds-alpha-by-domain.txt) rejected (e.g. `.invalid`, `.local`, made-up TLDs from malformed sources) |
-| **Exact dedup** | Duplicate domains collapsed to one entry |
-| **Subdomain optimization** | DNS-format outputs made inclusive of subdomains: `ads.example.com` dropped when `example.com` is already an explicit blocking entry — blocking the parent covers all children |
-| **Wildcard handling** | `*.domain` entries handled format-appropriately per writer (emitted as wildcard patterns or degraded to exact, never promoted) |
-| **Allowlist/blocklist** | Override layer applied last — allowlist always wins |
-
-Rejected entries are logged to [`reports/rejected-entries.txt`](reports/rejected-entries.txt) each run with the source file, line number, and rejection reason.
+| [`reports/blocklist-report.json`](reports/blocklist-report.json) | Per-source stats plus run summary (`matched_allowlisted`, `added_by_blocklist_override`, deltas, wildcards) |
+| [`reports/rejected-entries.txt`](reports/rejected-entries.txt) | Lines that could not be parsed, with source file, line number, and rejection reason |
 
 ---
 
@@ -73,12 +68,6 @@ When tuning `allowlist.txt` or `blocklist.txt`, avoid re-downloading on every ed
 2. **Iterate fast** — edit allowlist/blocklist, then `python3 run.py --skip-download` (add `--unsorted` to preserve first-seen order).
 3. **Note** — `--skip-download` reuses whatever is in `raw/` from a prior download. An empty `raw/` means only blocklist overrides will appear.
 
-For merge-only experiments (no download):
-
-```bash
-python3 merge.py --raw raw --map raw/sources.map --out processed/blocklist.txt
-```
-
 ### Options
 
 | Flag | Effect |
@@ -86,7 +75,9 @@ python3 merge.py --raw raw --map raw/sources.map --out processed/blocklist.txt
 | *(default)* | Download sources, merge, update README stats |
 | `--skip-download` | Skip fetch stage; merge existing files in `raw/` |
 | `--unsorted` | Preserve first-seen domain order instead of sorting alphabetically |
-| `--no-optimize-subdomains` | Disable subdomain optimization for DNS formats — every unique domain is written to all output files |
+| `--no-optimize-subdomains` | Disable subdomain optimization — every unique domain is written to all output files |
+| `--no-iana-tld-check` | Skip IANA TLD validation (useful when offline) |
+| `--max-drop-pct N` | Abort if domain count drops more than N% vs previous run (default: 50) |
 | `--no-post-run` | Skip the README stats update step |
 | `--workers N` | Parallel download threads (default 8) |
 | `--retries N` | Per-URL retry count (default 3) |
@@ -99,32 +90,48 @@ python3 run.py --skip-download --unsorted
 python3 run.py --no-post-run              # skip README stats update
 ```
 
-Individual stages can also be called directly:
+### Running stages individually
 
 ```bash
 python3 fetch.py [--sources sources.conf] [--raw raw] [--workers 8] [--retries 3] [--timeout 30]
 python3 merge.py [--raw raw] [--map raw/sources.map] [--out processed/blocklist.txt]
                  [--unsorted] [--allowlist allowlist.txt] [--blocklist blocklist.txt]
-                 [--no-optimize-subdomains] [--writers-config writers.conf]
+                 [--no-optimize-subdomains] [--no-iana-tld-check] [--max-drop-pct 50]
+                 [--writers-config writers.conf]
 python3 post_run.py [--report reports/blocklist-report.json] [--readme README.md]
 ```
 
 ---
 
-## Adding or removing sources
+## Requirements
+
+- Python 3.8+ (stdlib only — no pip installs needed)
+- BIND9 client script additionally requires: `curl`, `gzip`, `named-checkzone`
+
+---
+
+## Configuration
+
+### Sources (`sources.conf`)
 
 Edit `sources.conf` — one URL per line. Lines starting with `#`, `;`, or `!` are ignored. Inline comments are supported. For backward compatibility, `sources.txt` is still accepted if `sources.conf` is missing.
 
 ```
-https://example.com/hosts.txt        # optional comment
-# https://disabled-source.com/list   # commented out
+https://example.com/hosts.txt               # optional comment
+# https://disabled-source.com/list          # commented out
 ```
 
-Supported source formats are auto-detected: hosts-style (`0.0.0.0 domain` / `127.0.0.1 domain`), domain-only, and mixed. Gzip (`.gz`) and zip (`.zip`) sources are decompressed automatically.
+To specify a fallback URL for resilient fetching, separate primary and fallback with a comma:
 
----
+```
+https://primary.example.com/list , https://fallback.example.com/list
+```
 
-## Enabling or disabling output formats
+The fallback is tried only if the primary fails after all retries. The primary URL is always used for deduplication and reporting.
+
+Supported source formats are auto-detected: hosts-style (`0.0.0.0 domain` / `127.0.0.1 domain`), domain-only (including `*.domain` wildcard entries), and adblock (`||domain^`). Gzip (`.gz`) and zip (`.zip`) sources are decompressed automatically.
+
+### Output formats (`writers.conf`)
 
 Edit `writers.conf` — one writer name per line. Comment out a line to disable that format. If the file is missing, all formats are produced.
 
@@ -134,13 +141,12 @@ adblock
 rpz
 # dnsmasq    ← disabled
 unbound
+domains
 ```
 
 Override the config path with `--writers-config /path/to/other.conf`.
 
----
-
-## Allowlist and blocklist
+### Allowlist and blocklist
 
 Two optional files at the repository root adjust the merged output without editing upstream source URLs:
 
@@ -154,9 +160,7 @@ One domain per line. Lines starting with `#`, `!`, or `;` are ignored. Inline co
 | Entry | What it matches |
 |---|---|
 | `example.com` | The apex host only |
-| `*.example.com` | All **proper** subdomains (`www.example.com`, `cdn.ads.example.com`) — **not** `example.com` unless you add that name explicitly |
-
-Wildcard semantics match domain-only sources and the pipeline’s `*.domain` handling (see [Wildcard handling](#wildcard-handling-and-deduplication) below).
+| `*.example.com` | All **proper** subdomains (`www.example.com`, `cdn.ads.example.com`) — **not** `example.com` itself unless you add that explicitly |
 
 **Precedence during merge:**
 
@@ -169,70 +173,21 @@ Wildcard semantics match domain-only sources and the pipeline’s `*.domain` han
 | Field | Meaning |
 |---|---|
 | `scanned` | Total domain entries extracted from all sources (before dedup) |
-| `unique_all` | Unique domains after exact deduplication — what `blocklist.txt` and `blocklist-domains.txt` contain |
-| `reduction_pct_all` | Reduction percentage for hosts/domains files (exact dedup only) |
-| `unique` | Unique domains after subdomain optimization — what DNS resolver formats (RPZ, dnsmasq, unbound, adblock) contain |
-| `reduction_pct` | Reduction percentage for DNS formats (exact dedup + subdomain optimization) |
+| `unique_deduped` | Unique domains after exact deduplication — what `blocklist.txt` and `blocklist-domains.txt` contain |
+| `reduction_pct_deduped` | Reduction percentage for hosts/domains files (exact dedup only) |
+| `unique_optimized` | Unique domains after subdomain optimization — what DNS resolver formats (RPZ, dnsmasq, unbound, adblock) contain |
+| `reduction_pct_optimized` | Reduction percentage for DNS formats (exact dedup + subdomain optimization) |
 | `wildcards` | Number of wildcard base entries (`*.domain`) in the optimized set |
+| `tld_rejected` | Domains rejected because their TLD is not in the IANA root zone |
 | `matched_allowlisted` | Unique source domains removed because they matched the allowlist |
 | `added_by_blocklist_override` | Domains (or wildcard bases) forced into the output solely from `blocklist.txt` |
 
-`unique_all` ≥ `unique` — the gap is the count of entries that DNS formats omit because a parent domain already covers them. When `--no-optimize-subdomains` is passed, both values are equal.
+`unique_deduped` ≥ `unique_optimized` — the gap is the count of entries that DNS formats omit because a parent domain already covers them. When `--no-optimize-subdomains` is passed, both values are equal.
 
 Example `Processed:` line:
 ```
 Processed: scanned=989104 → deduped=815804 (-16.95%, hosts/domains) → dns-optimized=589557 (-39.98%, adblock/rpz/dnsmasq/unbound) | wildcards=90060 …
 ```
-
----
-
-## Wildcard handling and deduplication
-
-Some sources publish wildcard entries (`*.domain`) meaning "block this domain and all subdomains". The pipeline handles these with format-aware logic across two stages.
-
-**Stage 1 — Detection and collection**
-
-`DomainReader` recognises `*.domain` lines and flags them as wildcards (stripping the `*.` prefix so the base domain enters the collected set). `HostsReader` always produces exact entries — a hosts-file line is never promoted to a wildcard.
-
-Source files are classified by the proportion of wildcard lines in a 50-line sample:
-
-| `"format"` in report | Condition |
-|---|---|
-| `domain-only` | < 10 % of sample lines are `*.domain` |
-| `wildcard-domain` | > 90 % of sample lines are `*.domain` |
-| `mixed-domain` | 10 – 90 % (genuinely mixed file) |
-| `host` | Lines match `0.0.0.0 domain` / `127.0.0.1 domain` |
-| `adblock` | Lines match `\|\|domain^` |
-
-**Stage 2 — Format-aware deduplication**
-
-The pipeline produces two domain lists with different deduplication levels:
-
-| List | Used by | What's removed |
-|---|---|---|
-| **Dedup-only** (`unique_all`) | `hosts`, `domains` | Exact duplicates only — every unique domain is kept |
-| **Optimized** (`unique`) | `adblock`, `rpz`, `dnsmasq`, `unbound` | Exact duplicates **+** redundant subdomains — output is inclusive of subdomains, dropping `sub.example.com` when `example.com` is already an explicit blocking entry |
-
-The subdomain optimizer makes DNS-format output **inclusive of subdomains**: `ads.example.com` is dropped when `example.com` is an explicit blocking entry, because a DNS resolver blocking `example.com` already covers all its subdomains. It does **not** remove entries solely because they are under a wildcard base (a wildcard base like `ads.example.com` from `*.ads.example.com` does not count as an explicit parent apex).
-
-To disable subdomain optimization for DNS formats (both lists become identical), pass `--no-optimize-subdomains`.
-
-**Per-format output:**
-
-| Format | Entry list | Wildcard handling |
-|---|---|---|
-| `hosts` | Dedup-only — all unique entries | No wildcard syntax; `*.domain` sources contribute only the base exact match (`0.0.0.0 domain`) |
-| `domains` | Dedup-only — all unique entries | Same as hosts |
-| `adblock` | Optimized | Wildcard entries emit `\|\|*.domain^`; exact entries covered by a wildcard ancestor are dropped |
-| `rpz` | Optimized | Wildcard entries emit both `domain IN CNAME .` and `*.domain IN CNAME .` |
-| `dnsmasq` | Optimized | `address=/domain/#` natively covers all subdomains; exact entries covered by a wildcard ancestor are dropped |
-| `unbound` | Optimized | `local-zone: "domain." always_nxdomain` natively covers all subdomains; covered exact entries are dropped |
-
-The direction is strictly one-way: wildcards degrade to exact for formats that don't support them, but exact entries from hosts sources are never promoted to wildcards.
-
-The `wildcards=N` field in the pipeline summary shows how many wildcard entries were collected. The gap between `unique_all` and `unique` in the JSON report shows how many entries are suppressed in DNS formats due to parent-domain coverage.
-
-Allowlist and blocklist wildcards follow the same `*.domain` rules; see [Allowlist and blocklist](#allowlist-and-blocklist).
 
 ---
 
@@ -243,6 +198,7 @@ sources.conf
     │
     ▼
 fetch.py  ───── concurrent downloads (ThreadPoolExecutor)
+    │             primary + fallback URL per source
     │             retry with exponential backoff
     │             transparent gzip/zip decompression
     │
@@ -275,20 +231,84 @@ merge.py  ──── format detection per source  (readers/)
 
 ---
 
+## Data quality pipeline
+
+Every entry from every source passes through a multi-stage quality pipeline before appearing in any output file:
+
+| Step | What happens |
+|---|---|
+| **Combine** | All sources merged into a single stream |
+| **Normalize** | Lowercase; leading/trailing dots and quotes stripped |
+| **IDN → punycode** | Internationalized domain names converted to ASCII-compatible encoding (e.g. `münchen.de` → `xn--mnchen-3ya.de`) |
+| **Reject IPs** | IPv4 and IPv6 addresses discarded — DNS blocklists operate on names, not addresses |
+| **Syntax filter** | Invalid labels (wrong characters, leading/trailing hyphens, label > 63 chars, total > 253 chars) rejected |
+| **IANA TLD check** | Domains whose TLD is not in the [IANA root zone](https://data.iana.org/TLD/tlds-alpha-by-domain.txt) rejected (e.g. `.invalid`, `.local`, made-up TLDs from malformed sources) |
+| **Exact dedup** | Duplicate domains collapsed to one entry |
+| **Subdomain optimization** | DNS-format outputs made inclusive of subdomains: `ads.example.com` dropped when `example.com` is already an explicit blocking entry — blocking the parent covers all children |
+| **Wildcard handling** | `*.domain` entries handled format-appropriately per writer (emitted as wildcard patterns or degraded to exact, never promoted) |
+| **Allowlist/blocklist** | Override layer applied last — allowlist always wins |
+
+Rejected entries are logged to [`reports/rejected-entries.txt`](reports/rejected-entries.txt) each run with the source file, line number, and rejection reason.
+
+### Wildcard handling and deduplication
+
+Some sources publish wildcard entries (`*.domain`) meaning "block this domain and all subdomains". The pipeline handles these with format-aware logic across two stages.
+
+**Stage 1 — Detection and collection**
+
+`DomainReader` recognises `*.domain` lines and flags them as wildcards (stripping the `*.` prefix so the base domain enters the collected set). `HostsReader` always produces exact entries — a hosts-file line is never promoted to a wildcard.
+
+Source files are classified by the proportion of wildcard lines in a 50-line sample:
+
+| `"format"` in report | Condition |
+|---|---|
+| `domain-only` | < 10 % of sample lines are `*.domain` |
+| `wildcard-domain` | > 90 % of sample lines are `*.domain` |
+| `mixed-domain` | 10 – 90 % (genuinely mixed file) |
+| `host` | Lines match `0.0.0.0 domain` / `127.0.0.1 domain` |
+| `adblock` | Lines match `\|\|domain^` |
+
+**Stage 2 — Format-aware deduplication**
+
+The pipeline produces two domain lists with different deduplication levels:
+
+| List | Used by | What's removed |
+|---|---|---|
+| **Dedup-only** (`unique_deduped`) | `hosts`, `domains` | Exact duplicates only — every unique domain is kept |
+| **Optimized** (`unique_optimized`) | `adblock`, `rpz`, `dnsmasq`, `unbound` | Exact duplicates **+** redundant subdomains — `sub.example.com` dropped when `example.com` is already an explicit blocking entry |
+
+The subdomain optimizer makes DNS-format output **inclusive of subdomains**: `ads.example.com` is dropped when `example.com` is an explicit blocking entry, because a DNS resolver blocking `example.com` already covers all its subdomains. It does **not** remove entries solely because they are under a wildcard base (a wildcard base like `ads.example.com` from `*.ads.example.com` does not count as an explicit parent apex).
+
+To disable subdomain optimization for DNS formats (both lists become identical), pass `--no-optimize-subdomains`.
+
+**Per-format wildcard output:**
+
+| Format | Entry list | Wildcard handling |
+|---|---|---|
+| `hosts` | Dedup-only | No wildcard syntax; `*.domain` sources contribute only the base exact match (`0.0.0.0 domain`) |
+| `domains` | Dedup-only | Same as hosts |
+| `adblock` | Optimized | Wildcard entries emit `\|\|*.domain^`; exact entries covered by a wildcard ancestor are dropped |
+| `rpz` | Optimized | Wildcard entries emit both `domain IN CNAME .` and `*.domain IN CNAME .` |
+| `dnsmasq` | Optimized | `address=/domain/#` natively covers all subdomains; exact entries covered by a wildcard ancestor are dropped |
+| `unbound` | Optimized | `local-zone: "domain." always_nxdomain` natively covers all subdomains; covered exact entries are dropped |
+
+The direction is strictly one-way: wildcards degrade to exact for formats that don't support them, but exact entries from hosts sources are never promoted to wildcards.
+
+---
+
 ## GitHub Actions automation
 
-The workflow at `.github/workflows/update.yml` runs daily at **03:00 UTC** and on manual trigger (`workflow_dispatch`).
+The workflow at `.github/workflows/update.yml` runs daily at **03:00 UTC** and on manual trigger (`workflow_dispatch`). No secrets or tokens are required beyond the default `GITHUB_TOKEN` — the workflow uses `permissions: contents: write`.
 
 Steps:
-1. Checkout repository
+1. Check out repository (`persist-credentials: false`)
 2. Set up Python
-3. Run `./update.sh` (which calls `update.py`)
-4. Commit and push `processed/` back with `[skip ci]`
-5. Upload `processed/` as a workflow artifact (only when files changed)
+3. Run `python3 run.py` (full pipeline: fetch → merge → post_run)
+4. Write a step summary table to the Actions UI with per-run stats
+5. Commit `processed/`, `reports/`, and `README.md` back to `main` with `[skip ci]`; commit message includes the domain count and delta (e.g. `Update blocklists: 905,946 domains (+1,204/-87) [skip ci]`)
+6. Upload `processed/` and `reports/` as workflow artifacts (only when files changed)
 
-No secrets or tokens required beyond the default `GITHUB_TOKEN` — the workflow uses `permissions: contents: write`.
-
-To trigger the same workflow from your machine (uses your existing `gh auth login` session, no repo secrets):
+To trigger the workflow from your machine:
 
 ```bash
 ./scripts/trigger-update-workflow.sh          # trigger and print the latest run URL
@@ -297,13 +317,13 @@ To trigger the same workflow from your machine (uses your existing `gh auth logi
 
 ---
 
-## BIND9 RPZ integration
+## Integration guides
+
+### BIND9 RPZ
 
 See [`client-scripts/`](client-scripts/) for the full setup guide and script.
 
-### named.conf
-
-#### Step 1 — declare the RPZ zone
+#### named.conf
 
 Add a `zone` block to `named.conf` (or a file it includes):
 
@@ -315,8 +335,6 @@ zone "rpz.local" {
 };
 ```
 
-#### Step 2 — enable response-policy
-
 Add `response-policy` inside your existing `options {}` block — **not** alongside the zone block:
 
 ```
@@ -326,7 +344,7 @@ options {
 };
 ```
 
-### Automated daily fetch
+#### Automated daily fetch
 
 On your BIND9 server, download the script directly:
 
@@ -348,11 +366,9 @@ echo "0 4 * * * /usr/local/sbin/bind9-update-rpz.sh >> /var/log/rpz-update.log 2
 
 The script auto-detects the zone file path from `named.conf`, the BIND service name (`named`/`bind9`), and the bind group. Pass the zone file path as an argument if auto-detection fails.
 
----
+### MikroTik adlists
 
-## MikroTik
-
-The hosts-format output (`0.0.0.0 domain`) is directly compatible with MikroTik adlists. See `mikrotik-adlist/` for companion import scripts.
+The hosts-format output (`0.0.0.0 domain`) is directly compatible with MikroTik adlists. Point your RouterOS adlist URL at the raw `blocklist.txt` download link from the table above.
 
 ---
 
@@ -381,8 +397,7 @@ writers/                         pluggable output format writers
 scripts/
   compare.sh                     diff current blocklist against last git-committed version
   trigger-update-workflow.sh     trigger the GitHub Actions workflow via gh CLI
-sources.conf                     source URL list (one URL per line)
-sources.txt                      legacy source URL list (fallback if sources.conf missing)
+sources.conf                     source URL list (one URL per line; primary , fallback supported)
 allowlist.txt                    domains that are never blocked
 blocklist.txt                    domains always blocked, even if absent from sources
 writers.conf                     enable/disable output writers
@@ -396,30 +411,6 @@ raw/                             downloaded source files (gitignored)
 tests/
   test_merge.py                  regression test suite
 ```
-
----
-
-## Requirements
-
-- Python 3.8+ (stdlib only — no pip installs needed)
-- `curl` only required for `--legacy` mode
-- BIND9 client script additionally requires: `curl`, `gzip`, `named-checkzone`
-
----
-
-## Design tenets
-
-**One combined list, done well.**
-The output of this project is a single merged, quality-filtered blocklist per format — not individual per-source conversions. The value is in the pipeline: cross-source deduplication, subdomain optimization, IANA TLD validation, and syntax filtering that make the combined result better than any individual source on its own.
-
-**Other approaches are equally valid.**
-Some projects convert upstream lists individually to specific formats without merging them. That's a legitimate and useful approach. This project simply takes a different position: if a domain appears in three sources, you should see it once, optimized, and clean — not three times across three files. If you want the individual upstream lists in a specific format, the upstream maintainers often already publish them directly.
-
-**Custom configurations are a first-class local use case.**
-Want only certain sources? Different combinations? A more aggressive or more conservative set? `sources.conf`, `allowlist.txt`, and `blocklist.txt` are designed for exactly that. Clone the repo, edit the config, run `python3 run.py`. The pipeline is self-contained and requires no external dependencies beyond Python 3.8.
-
-**Pre-built flavours are on the radar, not the roadmap.**
-Different pre-built variants (light, standard, aggressive) combining different source subsets are an interesting future direction. We don't have a clean implementation path for them yet and they're not a current priority — see the TODO.
 
 ---
 
