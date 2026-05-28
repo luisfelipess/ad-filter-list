@@ -660,5 +660,103 @@ class TestIanaTldValidation(unittest.TestCase):
         shutil.rmtree(self.tmp)
 
 
+class TestSourceHealth(unittest.TestCase):
+    """Unit tests for _source_health — no file I/O needed."""
+
+    def _stats(self, scanned=100, accepted=100, rejected=0, net_new=50, skipped=False):
+        return {
+            "scanned": scanned,
+            "accepted": accepted,
+            "rejected": rejected,
+            "net_new": net_new,
+            "skipped": skipped,
+        }
+
+    def test_ok(self):
+        status, _ = m._source_health(self._stats())
+        self.assertEqual(status, "ok")
+
+    def test_failed(self):
+        status, reason = m._source_health(self._stats(skipped=True))
+        self.assertEqual(status, "failed")
+        self.assertIn("failed", reason)
+
+    def test_empty(self):
+        status, reason = m._source_health(self._stats(accepted=0, net_new=0))
+        self.assertEqual(status, "empty")
+        self.assertIn("accepted", reason)
+
+    def test_redundant(self):
+        status, reason = m._source_health(self._stats(net_new=0))
+        self.assertEqual(status, "redundant")
+        self.assertIn("covered", reason)
+
+    def test_high_rejection(self):
+        status, reason = m._source_health(self._stats(scanned=100, accepted=40, rejected=60, net_new=10))
+        self.assertEqual(status, "high_rejection")
+        self.assertIn("rejected", reason)
+
+    def test_low_value(self):
+        # 1 net_new out of 200 accepted = 0.5% < 1% threshold
+        status, reason = m._source_health(self._stats(scanned=200, accepted=200, rejected=0, net_new=1))
+        self.assertEqual(status, "low_value")
+        self.assertIn("net-new", reason)
+
+    def test_ok_boundary_net_new_rate(self):
+        # Exactly 1% net_new rate — should be ok (threshold is strictly less than)
+        status, _ = m._source_health(self._stats(scanned=100, accepted=100, rejected=0, net_new=1))
+        self.assertEqual(status, "ok")
+
+    def test_failed_takes_precedence_over_empty(self):
+        status, _ = m._source_health(self._stats(accepted=0, net_new=0, skipped=True))
+        self.assertEqual(status, "failed")
+
+
+class TestSourceHealthInReport(unittest.TestCase):
+    """Integration: health fields must appear in the JSON report after merge()."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.raw_dir = os.path.join(self.tmp, "raw")
+        self.out_dir = os.path.join(self.tmp, "processed")
+        os.makedirs(self.raw_dir)
+        os.makedirs(self.out_dir)
+        self.out_path = os.path.join(self.out_dir, "blocklist.txt")
+        self.map_path = os.path.join(self.raw_dir, "sources.map")
+
+    def _write_source(self, fname, content):
+        path = os.path.join(self.raw_dir, fname)
+        with open(path, "w") as f:
+            f.write(content)
+        with open(self.map_path, "a") as mf:
+            mf.write(f"{fname} http://example.com/{fname}\n")
+
+    def _read_report(self):
+        with open(os.path.join(self.tmp, "reports", "blocklist-report.json")) as f:
+            return json.loads(f.read())
+
+    def test_ok_source_has_health_ok(self):
+        self._write_source("01_a.txt", "0.0.0.0 unique.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                skip_iana_check=True, optimize_subdomains=False)
+        report = self._read_report()
+        self.assertEqual(report["sources"]["01_a.txt"]["health"], "ok")
+        self.assertNotIn("health_reason", report["sources"]["01_a.txt"])
+
+    def test_redundant_source_has_health_redundant(self):
+        # Source 1 supplies unique.com; source 2 supplies the same domain — fully redundant.
+        self._write_source("01_a.txt", "0.0.0.0 unique.com\n")
+        self._write_source("02_b.txt", "0.0.0.0 unique.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                skip_iana_check=True, optimize_subdomains=False)
+        report = self._read_report()
+        self.assertEqual(report["sources"]["02_b.txt"]["health"], "redundant")
+        self.assertIn("health_reason", report["sources"]["02_b.txt"])
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmp)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -94,9 +94,9 @@ Output writers live in `writers/`. Adding a new format = one new file + one line
 
 - [ ] **Per-format delta tracking** — currently delta is computed only against the hosts file; each writer could compare against its own previous output
 
-- [ ] **Source health dashboard** — flag sources that consistently produce 0 accepted entries or high rejection rates across runs; `09_hosts` currently contributes 0 `net_new` domains (fully redundant) — a health dashboard would surface this automatically
+- [x] **Source health dashboard** — flag sources that consistently produce 0 accepted entries or high rejection rates across runs; `09_hosts` currently contributes 0 `net_new` domains (fully redundant) — a health dashboard would surface this automatically
 
-- [ ] **Incremental downloads** — `If-Modified-Since` / ETag support to skip re-downloading unchanged sources
+- [x] **Incremental downloads** — `If-Modified-Since` / ETag support to skip re-downloading unchanged sources
 
 ### Tiered outputs
 

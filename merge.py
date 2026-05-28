@@ -185,6 +185,33 @@ def read_map(map_path: str) -> list[tuple[str, str]]:
     return pairs
 
 
+_HEALTH_LOW_VALUE_THRESHOLD = 0.01    # net_new / accepted < 1%
+_HEALTH_HIGH_REJECTION_THRESHOLD = 0.50  # rejected / scanned > 50%
+
+
+def _source_health(stats: dict) -> tuple[str, str]:
+    """Return (status, reason) for a source based on its single-run stats.
+
+    Statuses: ok | failed | empty | redundant | high_rejection | low_value
+    """
+    if stats["skipped"]:
+        return "failed", "download failed or unsupported format"
+    if stats["accepted"] == 0:
+        return "empty", "no entries accepted"
+    if stats["net_new"] == 0:
+        return "redundant", "all entries already covered by earlier sources"
+    rejection_rate = stats["rejected"] / stats["scanned"] if stats["scanned"] else 0.0
+    if rejection_rate > _HEALTH_HIGH_REJECTION_THRESHOLD:
+        return "high_rejection", f"{rejection_rate:.0%} of scanned entries rejected"
+    net_new_rate = stats["net_new"] / stats["accepted"]
+    if net_new_rate < _HEALTH_LOW_VALUE_THRESHOLD:
+        return "low_value", (
+            f"{stats['net_new']} net-new of {stats['accepted']} accepted "
+            f"({net_new_rate:.1%})"
+        )
+    return "ok", ""
+
+
 def _pick_reader(path: str, sample_size: int = 50):
     """Return (reader, fmt, reason) for the first reader that claims this file."""
     sample: list[str] = []
@@ -415,6 +442,20 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             rej.write("# Format: source_file line_number : original_line\n\n")
             for fname, lineno, orig in rejected_entries:
                 rej.write(f"{fname} {lineno}: {orig}\n")
+
+    # ── source health ─────────────────────────────────────────────────────────
+    health_issues: list[tuple[str, str, str]] = []
+    for fname, stats in source_stats.items():
+        status, reason = _source_health(stats)
+        stats["health"] = status
+        if reason:
+            stats["health_reason"] = reason
+        if status != "ok":
+            health_issues.append((fname, status, reason))
+    if health_issues:
+        print(f"\nSource health ({len(health_issues)} issue(s)):")
+        for fname, status, reason in health_issues:
+            print(f"  {status.upper():<16} {fname}: {reason}")
 
     # ── JSON report ───────────────────────────────────────────────────────────
     report = {

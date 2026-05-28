@@ -42,6 +42,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--writers-config", default="writers.conf")
     p.add_argument("--max-drop-pct", type=float, default=50.0,
                    help="abort if domain count drops by more than this %% vs previous run (default: 50)")
+    p.add_argument("--incremental", action="store_true",
+                   help="skip re-downloading sources unchanged since last run (ETag / If-Modified-Since)")
     p.add_argument("--no-post-run", action="store_true",
                    help="skip the post_run README stats update")
     args = p.parse_args(argv)
@@ -61,13 +63,16 @@ def main(argv: list[str] | None = None) -> int:
             )
     else:
         import fetch
-        rc = fetch.main([
+        fetch_argv = [
             "--sources", args.sources,
             "--raw", args.raw,
             "--workers", str(args.workers),
             "--retries", str(args.retries),
             "--timeout", str(args.timeout),
-        ])
+        ]
+        if args.incremental:
+            fetch_argv.append("--incremental")
+        rc = fetch.main(fetch_argv)
         if rc != 0:
             return rc
 
