@@ -88,7 +88,7 @@ Output writers live in `writers/`. Adding a new format = one new file + one line
 
 ### Documentation
 
-- [ ] **MikroTik RouterOS integration guide** — expand the thin MikroTik section in README with actual RouterOS 7 commands: `/ip/dns/adlist add url=...`, cache-size guidance keyed to list size (~20 MiB for 400K domains, ~40 MiB for 900K, ~200 MiB for 1.4M), RouterOS 7.15 minimum version requirement, IPv6 bypass warning (clients on IPv6 can skip router DNS — need `dns-static` filtering or outbound DoH/DoT blocking)
+- [x] **MikroTik RouterOS integration guide** — expand the thin MikroTik section in README with actual RouterOS 7 commands: `/ip/dns/adlist add url=...`, cache-size guidance keyed to list size (~20 MiB for 400K domains, ~40 MiB for 900K, ~200 MiB for 1.4M), RouterOS 7.15 minimum version requirement, IPv6 bypass warning (clients on IPv6 can skip router DNS — need `dns-static` filtering or outbound DoH/DoT blocking)
 
 ### Output & reporting
 

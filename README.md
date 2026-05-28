@@ -368,7 +368,59 @@ The script auto-detects the zone file path from `named.conf`, the BIND service n
 
 ### MikroTik adlists
 
-The hosts-format output (`0.0.0.0 domain`) is directly compatible with MikroTik adlists. Point your RouterOS adlist URL at the raw `blocklist.txt` download link from the table above.
+RouterOS 7.15+ natively supports DNS adlists in hosts format (`0.0.0.0 domain`). The hosts-format output from this project loads directly — no conversion needed.
+
+#### Requirements
+
+- **RouterOS 7.15 or later** — adlist support with hosts-format parsing
+- Enough free RAM for the DNS cache (see cache-size guidance below)
+
+#### Add the adlist
+
+In an SSH or Winbox terminal:
+
+```
+/ip/dns/adlist/add url="https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist.txt" name="ad-filter-list"
+```
+
+Verify it loaded:
+
+```
+/ip/dns/adlist/print
+```
+
+RouterOS fetches the list on boot and periodically refreshes it based on the HTTP cache headers from GitHub's CDN.
+
+#### Set DNS cache size
+
+RouterOS defaults to a 2 MiB DNS cache, which is far too small for a list of this size. Set `cache-size` based on the number of domains you intend to load:
+
+| Approximate domains | Recommended cache-size | Command |
+|---|---|---|
+| ~400 K | 20 MiB | `/ip/dns/set cache-size=20480KiB` |
+| ~900 K *(current list)* | 40 MiB | `/ip/dns/set cache-size=40960KiB` |
+| ~1.4 M | 200 MiB | `/ip/dns/set cache-size=204800KiB` |
+
+RouterOS stores adlist entries in the DNS cache, so the cache must be large enough to hold all entries plus headroom for normal query caching. If the list silently fails to load, an undersized cache is the most common cause — check `/ip/dns/adlist/print` for an error status.
+
+#### IPv6 bypass warning
+
+Clients with IPv6 connectivity can resolve DNS directly through their ISP's resolvers, bypassing the router entirely — the adlist has no effect on those queries.
+
+To close the bypass:
+
+1. **Block outbound port-53 on IPv6** — drop forwarded UDP/TCP port 53 from your LAN prefix to the WAN:
+   ```
+   /ipv6/firewall/filter/add chain=forward protocol=udp dst-port=53 \
+       src-address=<LAN-prefix> out-interface=<WAN-interface> action=drop comment="block IPv6 DNS bypass"
+   /ipv6/firewall/filter/add chain=forward protocol=tcp dst-port=53 \
+       src-address=<LAN-prefix> out-interface=<WAN-interface> action=drop comment="block IPv6 DNS bypass"
+   ```
+   Alternatively use `dst-nat` to redirect all outbound port-53 back to the router's DNS.
+
+2. **Block encrypted DNS (DoH/DoT)** — encrypted DNS on port 853 cannot be transparently redirected; block outbound port 853 and consider an IP blocklist for well-known DoH resolver addresses (8.8.8.8, 1.1.1.1, etc.) to prevent clients from bypassing the router's resolver entirely.
+
+> **Note:** IPv6 DNS enforcement is more involved than IPv4 because all addresses are globally routable and clients can contact any resolver directly. A complete lockdown requires both port-53 blocking and DoH/DoT mitigation.
 
 ---
 
