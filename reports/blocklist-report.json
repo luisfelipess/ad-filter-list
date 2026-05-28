@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-28T06:54:15.076707Z",
+  "generated": "2026-05-28T07:50:46.418212Z",
   "summary": {
     "scanned": 1143213,
     "unique_deduped": 930420,
@@ -9,19 +9,19 @@
     "wildcards": 99244,
     "duplicates_optimized": 444828,
     "reduction_pct_optimized": 38.9103,
-    "delta_added": 21210,
-    "delta_removed": 8761,
+    "delta_added": 0,
+    "delta_removed": 0,
     "rejected_total": 36,
     "tld_rejected": 4,
     "matched_allowlisted": 1,
     "added_by_blocklist_override": 0,
     "output_sizes": {
-      "blocklist.txt": 29458491,
-      "blocklist-adblock.txt": 15185660,
-      "blocklist-bind9.zone.gz": 6872500,
-      "blocklist-dnsmasq.conf": 20611694,
-      "blocklist-unbound.conf": 34650364,
-      "blocklist-domains.txt": 22015146
+      "blocklist.txt": 29458445,
+      "blocklist-adblock.txt": 15185614,
+      "blocklist-bind9.zone.gz": 6872464,
+      "blocklist-dnsmasq.conf": 20611648,
+      "blocklist-unbound.conf": 34650318,
+      "blocklist-domains.txt": 22015100
     }
   },
   "sources": {
