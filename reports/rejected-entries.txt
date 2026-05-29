@@ -1,8 +1,8 @@
-# Rejected entries - generated: 2026-05-28T07:50:46.418212Z
+# Rejected entries - generated: 2026-05-29T06:54:25.032296Z
 # Format: source_file line_number : original_line
 
-01_pro.txt 279843: INVALID_TLD(scloud): 0.0.0.0 collector.azure.microsoft.scloud
-02_pro.plus.mini.txt 25022: INVALID_TLD(scloud): *.collector.azure.microsoft.scloud
+01_pro.txt 275903: INVALID_TLD(scloud): 0.0.0.0 collector.azure.microsoft.scloud
+02_pro.plus.mini.txt 25079: INVALID_TLD(scloud): *.collector.azure.microsoft.scloud
 05_hosts 15: 127.0.0.1 localhost
 05_hosts 16: 127.0.0.1 localhost.localdomain
 05_hosts 17: 127.0.0.1 local
@@ -17,8 +17,9 @@
 05_hosts 26: ff02::2 ip6-allrouters
 05_hosts 27: ff02::3 ip6-allhosts
 05_hosts 28: 0.0.0.0 0.0.0.0
-05_hosts 73248: 0.0.0.0 philadelphia_cbslocal.us.intellitxt.com
-05_hosts 89036: INVALID_TLD(example0101): 0.0.0.0 pgl.example0101
+05_hosts 72211: 0.0.0.0 philadelphia_cbslocal.us.intellitxt.com
+05_hosts 85680: INVALID_TLD(0000125): 0.0.0.0 0000153.0000255.0000011.0000125
+05_hosts 88025: INVALID_TLD(example0101): 0.0.0.0 pgl.example0101
 07_hosts 72: 127.0.0.1	localhost
 07_hosts 73: 127.0.0.1	localhost.localdomain
 07_hosts 74: 255.255.255.255	broadcasthost
@@ -31,7 +32,7 @@
 07_hosts 81: ff02::2		ip6-allrouters
 07_hosts 82: ff02::3		ip6-allhosts
 07_hosts 1908: 0.0.0.0 dig
-07_hosts 3269: 0.0.0.0 wpad # For reference: https://www.youtube.com/watch?v=uwsykPWa5Lc
+07_hosts 3270: 0.0.0.0 wpad # For reference: https://www.youtube.com/watch?v=uwsykPWa5Lc
 08_hosts 46: 127.0.0.1 localhost
 08_hosts 47: ::1 localhost #[IPv6]
 09_hosts 2502: INVALID_TLD(example0101): 0.0.0.0 pgl.example0101
