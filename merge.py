@@ -524,15 +524,8 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             domains_for_writer = (tier_domains_deduped if not writer.optimize_subdomains
                                   else tier_domains_optimized)
             written_path = writer.write(domains_for_writer, tier_meta, tier_out_dir)
-            if not domains_for_writer and written_path and os.path.exists(written_path):
-                os.remove(written_path)
-                print(f"Removed empty output: {written_path}")
-            elif written_path and os.path.exists(written_path):
+            if written_path and os.path.exists(written_path):
                 tier_output_sizes[os.path.basename(written_path)] = os.path.getsize(written_path)
-
-        # Clean up empty non-default tier subdirectory.
-        if not is_default and os.path.isdir(tier_out_dir) and not os.listdir(tier_out_dir):
-            os.rmdir(tier_out_dir)
 
         tier_summaries[tier_name] = {
             "unique_deduped": tier_unique_deduped,

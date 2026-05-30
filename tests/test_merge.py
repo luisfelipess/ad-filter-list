@@ -715,16 +715,19 @@ class TestTiers(unittest.TestCase):
         self.assertIn("example.com", self._read_hosts())
         self.assertFalse(os.path.isdir(os.path.join(self.out_dir, "good")))
 
-    def test_empty_tier_dir_not_created(self):
-        # light dir must NOT be created when no light-tagged sources exist
-        # (good sources propagate up to aggressive, not down to light).
+    def test_empty_tier_dir_created_with_empty_files(self):
+        # Non-default tier dirs are always created (even empty) so growth can be tracked.
         self._write_tiers("light\ngood *\naggressive\n")
         self._write_source("01_a.txt", "0.0.0.0 example.com\n", tier="good")
         m.merge(self.raw_dir, self.map_path, self.out_path,
                 skip_iana_check=True, optimize_subdomains=False,
                 tiers_config=self.tiers_conf)
-        self.assertFalse(os.path.isdir(os.path.join(self.out_dir, "light")))
-        # aggressive IS created — good sources propagate up to it
+        # light: no light-tagged sources → dir exists but blocklist.txt has 0 domains
+        light_dir = os.path.join(self.out_dir, "light")
+        self.assertTrue(os.path.isdir(light_dir))
+        light_hosts = self._read_hosts(os.path.join(light_dir, "blocklist.txt"))
+        self.assertEqual(len(light_hosts), 0)
+        # aggressive IS created and has the good-tagged domain
         self.assertTrue(os.path.isdir(os.path.join(self.out_dir, "aggressive")))
 
     def test_tier_filtering_cumulative(self):
@@ -783,8 +786,10 @@ class TestTiers(unittest.TestCase):
                 tiers_config=self.tiers_conf)
         # Appears in root (good tier)
         self.assertIn("example.com", self._read_hosts())
-        # light tier has no sources → no dir
-        self.assertFalse(os.path.isdir(os.path.join(self.out_dir, "light")))
+        # light tier has no sources → dir exists but empty output
+        light_dir = os.path.join(self.out_dir, "light")
+        self.assertTrue(os.path.isdir(light_dir))
+        self.assertEqual(len(self._read_hosts(os.path.join(light_dir, "blocklist.txt"))), 0)
 
     def test_json_report_has_tier_metadata(self):
         self._write_tiers("light\ngood *\naggressive\n")
