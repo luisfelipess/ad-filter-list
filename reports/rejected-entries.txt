@@ -1,4 +1,4 @@
-# Rejected entries - generated: 2026-05-30T23:13:49.965823Z
+# Rejected entries - generated: 2026-05-30T23:38:00.028067Z
 # Format: source_file line_number : original_line
 
 01_pro.txt 279847: INVALID_TLD(scloud): 0.0.0.0 collector.azure.microsoft.scloud
@@ -35,6 +35,10 @@
 08_hosts 46: 127.0.0.1 localhost
 08_hosts 47: ::1 localhost #[IPv6]
 09_hosts 2502: INVALID_TLD(example0101): 0.0.0.0 pgl.example0101
+13_hosts.txt 22: 127.0.0.1  localhost
+13_hosts.txt 23: ::1  localhost
+14_hosts.txt 22: 127.0.0.1  localhost
+14_hosts.txt 23: ::1  localhost
 10_GoodbyeAds.txt 1: ﻿# --------------------------------------------
 10_GoodbyeAds.txt 22: 127.0.0.1 localhost
 10_GoodbyeAds.txt 23: 127.0.0.1 localhost.localdomain
@@ -159,10 +163,6 @@
 10_GoodbyeAds.txt 276540: 0.0.0.0 zh_cn.statcounter.com
 10_GoodbyeAds.txt 276541: 0.0.0.0 zh_tw.statcounter.com
 10_GoodbyeAds.txt 277560: INVALID_TLD(cim): 0.0.0.0 zupee.cim
-13_hosts.txt 22: 127.0.0.1  localhost
-13_hosts.txt 23: ::1  localhost
-14_hosts.txt 22: 127.0.0.1  localhost
-14_hosts.txt 23: ::1  localhost
 15_filter.txt 148: ||direct-specific.com
 15_filter.txt 212: ||ad-host-backup-*.aliyuncs.com^
 15_filter.txt 241: ||107.148.45.21^

@@ -38,9 +38,9 @@ Sources are tagged `light`, `good`, or `aggressive` in `sources.conf`. The pipel
 | Hosts (`0.0.0.0 domain`) | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/light/blocklist.txt) | 0 | 281 B | MikroTik adlists, Pi-hole, generic hosts |
 | Plain domains | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/light/blocklist-domains.txt) | 0 | 296 B | Generic use, custom DNS resolvers |
 | Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/light/blocklist-adblock.txt) | 0 | 325 B | uBlock Origin, AdGuard, browser extensions |
-| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/light/blocklist-bind9.zone.gz) | 0 | 405 B | BIND9 `response-policy` |
+| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/light/blocklist-bind9.zone.gz) | 0 | 401 B | BIND9 `response-policy` |
 | dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/light/blocklist-dnsmasq.conf) | 0 | 325 B | OpenWrt, DD-WRT, Pi-hole (dnsmasq mode) |
-| Unbound (gzip) | [blocklist-unbound.conf.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/light/blocklist-unbound.conf.gz) | 0 | 302 B | Unbound resolver |
+| Unbound (gzip) | [blocklist-unbound.conf.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/light/blocklist-unbound.conf.gz) | 0 | 300 B | Unbound resolver |
 
 ### Good tier *(default)*
 
@@ -57,12 +57,12 @@ Sources are tagged `light`, `good`, or `aggressive` in `sources.conf`. The pipel
 
 | Format | Download | Domains | Size | Use case |
 |---|---|---|---|---|
-| Hosts (`0.0.0.0 domain`) | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist.txt) | 1,440,047 | 45.6 MB | MikroTik adlists, Pi-hole, generic hosts |
-| Plain domains | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-domains.txt) | 1,440,047 | 34.1 MB | Generic use, custom DNS resolvers |
-| Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-adblock.txt) | 1,143,579 | 25.3 MB | uBlock Origin, AdGuard, browser extensions |
-| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-bind9.zone.gz) | 1,143,579 | 11.2 MB | BIND9 `response-policy` |
-| dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-dnsmasq.conf) | 1,143,579 | 34.0 MB | OpenWrt, DD-WRT, Pi-hole (dnsmasq mode) |
-| Unbound (gzip) | [blocklist-unbound.conf.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-unbound.conf.gz) | 1,143,579 | 8.3 MB | Unbound resolver |
+| Hosts (`0.0.0.0 domain`) | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist.txt) | 1,440,017 | 45.6 MB | MikroTik adlists, Pi-hole, generic hosts |
+| Plain domains | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-domains.txt) | 1,440,017 | 34.1 MB | Generic use, custom DNS resolvers |
+| Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-adblock.txt) | 1,143,549 | 25.3 MB | uBlock Origin, AdGuard, browser extensions |
+| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-bind9.zone.gz) | 1,143,549 | 11.2 MB | BIND9 `response-policy` |
+| dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-dnsmasq.conf) | 1,143,549 | 34.0 MB | OpenWrt, DD-WRT, Pi-hole (dnsmasq mode) |
+| Unbound (gzip) | [blocklist-unbound.conf.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-unbound.conf.gz) | 1,143,549 | 8.3 MB | Unbound resolver |
 <!-- stats:end -->
 
 Run diagnostics are committed alongside the output on every run:

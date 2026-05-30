@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-30T23:13:49.965823Z",
+  "generated": "2026-05-30T23:38:00.028067Z",
   "default_tier": "good",
   "tiers": [
     "light",
@@ -7,7 +7,7 @@
     "aggressive"
   ],
   "summary": {
-    "scanned": 2397865,
+    "scanned": 2397268,
     "unique_deduped": 952966,
     "duplicates_deduped": 217226,
     "reduction_pct_deduped": 18.5633,
@@ -15,19 +15,29 @@
     "wildcards": 94461,
     "duplicates_optimized": 449348,
     "reduction_pct_optimized": 38.3995,
-    "delta_added": 6714,
-    "delta_removed": 5714,
+    "delta_added": 0,
+    "delta_removed": 0,
+    "delta_domains_deduped": 0,
+    "delta_domains_optimized": 0,
+    "delta_sizes": {
+      "blocklist.txt": 0,
+      "blocklist-adblock.txt": 0,
+      "blocklist-bind9.zone.gz": 0,
+      "blocklist-dnsmasq.conf": 0,
+      "blocklist-unbound.conf.gz": 0,
+      "blocklist-domains.txt": 0
+    },
     "rejected_total": 2661,
     "tld_rejected": 40,
     "matched_allowlisted": 1,
     "added_by_blocklist_override": 0,
     "output_sizes": {
-      "blocklist.txt": 30087329,
-      "blocklist-adblock.txt": 15444123,
-      "blocklist-bind9.zone.gz": 6983913,
-      "blocklist-dnsmasq.conf": 21027733,
-      "blocklist-unbound.conf.gz": 5182002,
-      "blocklist-domains.txt": 22463616
+      "blocklist.txt": 30087284,
+      "blocklist-adblock.txt": 15444078,
+      "blocklist-bind9.zone.gz": 6983868,
+      "blocklist-dnsmasq.conf": 21027688,
+      "blocklist-unbound.conf.gz": 5181964,
+      "blocklist-domains.txt": 22463571
     },
     "tier_delta": 952966,
     "tier_summaries": {
@@ -39,24 +49,44 @@
         "output_sizes": {
           "blocklist.txt": 281,
           "blocklist-adblock.txt": 325,
-          "blocklist-bind9.zone.gz": 405,
+          "blocklist-bind9.zone.gz": 401,
           "blocklist-dnsmasq.conf": 325,
-          "blocklist-unbound.conf.gz": 302,
+          "blocklist-unbound.conf.gz": 300,
           "blocklist-domains.txt": 296
+        },
+        "delta_domains_deduped": 0,
+        "delta_domains_optimized": 0,
+        "delta_sizes": {
+          "blocklist.txt": 0,
+          "blocklist-adblock.txt": 0,
+          "blocklist-bind9.zone.gz": -2,
+          "blocklist-dnsmasq.conf": 0,
+          "blocklist-unbound.conf.gz": -1,
+          "blocklist-domains.txt": 0
         }
       },
       "aggressive": {
-        "unique_deduped": 1440047,
-        "unique_optimized": 1143579,
+        "unique_deduped": 1440017,
+        "unique_optimized": 1143549,
         "wildcards": 94461,
-        "tier_delta": 487081,
+        "tier_delta": 487051,
         "output_sizes": {
-          "blocklist.txt": 45644286,
-          "blocklist-adblock.txt": 25259529,
-          "blocklist-bind9.zone.gz": 11181830,
-          "blocklist-dnsmasq.conf": 33968803,
-          "blocklist-unbound.conf.gz": 8309105,
-          "blocklist-domains.txt": 34123925
+          "blocklist.txt": 45643422,
+          "blocklist-adblock.txt": 25258839,
+          "blocklist-bind9.zone.gz": 11181465,
+          "blocklist-dnsmasq.conf": 33967881,
+          "blocklist-unbound.conf.gz": 8308907,
+          "blocklist-domains.txt": 34123301
+        },
+        "delta_domains_deduped": -30,
+        "delta_domains_optimized": -30,
+        "delta_sizes": {
+          "blocklist.txt": -864,
+          "blocklist-adblock.txt": -690,
+          "blocklist-bind9.zone.gz": -367,
+          "blocklist-dnsmasq.conf": -922,
+          "blocklist-unbound.conf.gz": -184,
+          "blocklist-domains.txt": -624
         }
       }
     }
@@ -219,6 +249,42 @@
       "health_reason": "all entries already covered by earlier sources",
       "tier": "good"
     },
+    "13_hosts.txt": {
+      "url": "https://adaway.org/hosts.txt",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 6542,
+      "accepted": 6540,
+      "rejected": 2,
+      "net_new": 11,
+      "tier_exclusive": 6540,
+      "skipped": false,
+      "content_sha1": "28f3b2637d3fbb466bf783948051a92ca946b252",
+      "version": null,
+      "last_modified": null,
+      "last_changed": "2026-05-30T23:04:17.466320Z",
+      "health": "low_value",
+      "health_reason": "11 net-new of 6540 accepted (0.2%)",
+      "tier": "good"
+    },
+    "14_hosts.txt": {
+      "url": "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 6542,
+      "accepted": 6540,
+      "rejected": 2,
+      "net_new": 0,
+      "tier_exclusive": 6540,
+      "skipped": false,
+      "content_sha1": "28f3b2637d3fbb466bf783948051a92ca946b252",
+      "version": null,
+      "last_modified": null,
+      "last_changed": "2026-05-30T23:04:17.466320Z",
+      "health": "redundant",
+      "health_reason": "all entries already covered by earlier sources",
+      "tier": "good"
+    },
     "10_GoodbyeAds.txt": {
       "url": "https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Hosts/GoodbyeAds.txt",
       "format": "host",
@@ -269,42 +335,6 @@
       "last_changed": "2026-05-30T23:04:17.466320Z",
       "health": "ok",
       "tier": "aggressive"
-    },
-    "13_hosts.txt": {
-      "url": "https://adaway.org/hosts.txt",
-      "format": "host",
-      "format_reason": "host format detected",
-      "scanned": 6542,
-      "accepted": 6540,
-      "rejected": 2,
-      "net_new": 11,
-      "tier_exclusive": 6540,
-      "skipped": false,
-      "content_sha1": "28f3b2637d3fbb466bf783948051a92ca946b252",
-      "version": null,
-      "last_modified": null,
-      "last_changed": "2026-05-30T23:04:17.466320Z",
-      "health": "low_value",
-      "health_reason": "11 net-new of 6540 accepted (0.2%)",
-      "tier": "good"
-    },
-    "14_hosts.txt": {
-      "url": "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt",
-      "format": "host",
-      "format_reason": "host format detected",
-      "scanned": 6542,
-      "accepted": 6540,
-      "rejected": 2,
-      "net_new": 0,
-      "tier_exclusive": 6540,
-      "skipped": false,
-      "content_sha1": "28f3b2637d3fbb466bf783948051a92ca946b252",
-      "version": null,
-      "last_modified": null,
-      "last_changed": "2026-05-30T23:04:17.466320Z",
-      "health": "redundant",
-      "health_reason": "all entries already covered by earlier sources",
-      "tier": "good"
     },
     "15_filter.txt": {
       "url": "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt",
@@ -415,16 +445,16 @@
       "url": "https://abp.oisd.nl/",
       "format": "adblock",
       "format_reason": "adblock format detected",
-      "scanned": 375677,
-      "accepted": 375676,
+      "scanned": 375080,
+      "accepted": 375079,
       "rejected": 1,
-      "net_new": 161455,
-      "tier_exclusive": 163165,
+      "net_new": 161424,
+      "tier_exclusive": 163131,
       "skipped": false,
-      "content_sha1": "eca1d487933c334f7451ae3ff44d85c642934427",
+      "content_sha1": "81e0da812bf126fab85247d72d2a347ba6aac86e",
       "version": null,
       "last_modified": null,
-      "last_changed": "2026-05-30T23:13:49.965823Z",
+      "last_changed": "2026-05-30T23:38:00.028067Z",
       "health": "ok",
       "tier": "aggressive"
     },
@@ -503,7 +533,7 @@
       "scanned": 16978,
       "accepted": 16978,
       "rejected": 0,
-      "net_new": 14955,
+      "net_new": 14956,
       "tier_exclusive": 15559,
       "skipped": false,
       "content_sha1": "2ae9e47d7be28762ac3ca8116fb6db072912589e",
