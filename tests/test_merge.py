@@ -591,9 +591,10 @@ class TestMergeEndToEnd(unittest.TestCase):
         self._write_source("01_a.txt", "0.0.0.0 example.com\n")
         m.merge(self.raw_dir, self.map_path, self.out_path,
                 allowlist_path=self._write_allowlist(""), optimize_subdomains=False)
-        path = os.path.join(self.out_dir, "blocklist-unbound.conf")
+        path = os.path.join(self.out_dir, "blocklist-unbound.conf.gz")
         self.assertTrue(os.path.exists(path))
-        with open(path) as f:
+        import gzip as gz
+        with gz.open(path, "rt") as f:
             content = f.read()
         self.assertIn('local-zone: "example.com." always_nxdomain', content)
 

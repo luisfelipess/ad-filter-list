@@ -134,6 +134,7 @@ python3 post_run.py [--report reports/blocklist-report.json] [--readme README.md
 
 - Python 3.8+ (stdlib only — no pip installs needed)
 - BIND9 client script additionally requires: `curl`, `gzip`, `named-checkzone`
+- Unbound client script additionally requires: `curl`, `gzip`
 
 ---
 
@@ -260,7 +261,7 @@ merge.py  ──── format detection per source  (readers/)
     │     adblock.py    → processed/blocklist-adblock.txt       (good tier, optimized)
     │     rpz.py        → processed/blocklist-bind9.zone.gz     (good tier, optimized)
     │     dnsmasq.py    → processed/blocklist-dnsmasq.conf      (good tier, optimized)
-    │     unbound.py    → processed/blocklist-unbound.conf      (good tier, optimized)
+    │     unbound.py    → processed/blocklist-unbound.conf.gz   (good tier, optimized)
     │     (same writers) → processed/aggressive/blocklist.txt … (aggressive tier)
     │     (same writers) → processed/light/blocklist.txt …      (light tier)
     │
@@ -465,6 +466,48 @@ To close the bypass:
 2. **Block encrypted DNS (DoH/DoT)** — encrypted DNS on port 853 cannot be transparently redirected; block outbound port 853 and consider an IP blocklist for well-known DoH resolver addresses (8.8.8.8, 1.1.1.1, etc.) to prevent clients from bypassing the router's resolver entirely.
 
 > **Note:** IPv6 DNS enforcement is more involved than IPv4 because all addresses are globally routable and clients can contact any resolver directly. A complete lockdown requires both port-53 blocking and DoH/DoT mitigation.
+
+### Unbound
+
+The Unbound output is a gzip-compressed file of `local-zone: "domain." always_nxdomain` directives. Unbound's `local-zone` natively blocks all subdomains, so the file uses the subdomain-optimized list.
+
+#### unbound.conf
+
+Add an `include` directive inside your `server:` block:
+
+```
+server:
+    # ... your existing options ...
+    include: "/etc/unbound/conf.d/*.conf"
+```
+
+Create the directory if needed:
+
+```bash
+mkdir -p /etc/unbound/conf.d
+```
+
+#### Automated daily fetch
+
+Download the script:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/client-scripts/unbound-update.sh \
+    -o /usr/local/sbin/unbound-update.sh
+chmod +x /usr/local/sbin/unbound-update.sh
+```
+
+Bootstrap and schedule:
+
+```bash
+# run once to bootstrap
+/usr/local/sbin/unbound-update.sh
+
+# cron — runs at 04:00 UTC, after the GitHub Actions job at 03:00 UTC
+echo "0 4 * * * /usr/local/sbin/unbound-update.sh >> /var/log/unbound-update.log 2>&1" | crontab -
+```
+
+The script decompresses the `.conf.gz`, validates the entry count, installs to `/etc/unbound/conf.d/blocklist-unbound.conf`, and reloads Unbound via `unbound-control reload` (or `systemctl reload unbound` as fallback). Pass an explicit path as the first argument if your include directory differs.
 
 ---
 

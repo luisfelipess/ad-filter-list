@@ -58,7 +58,7 @@ def _tier_table_rows(tb: str, t_all: int, t_opt: int, sizes: dict) -> list[str]:
         f"| Adblock syntax | [blocklist-adblock.txt]({tb}/blocklist-adblock.txt) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-adblock.txt')} | uBlock Origin, AdGuard, browser extensions |",
         f"| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz]({tb}/blocklist-bind9.zone.gz) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-bind9.zone.gz')} | BIND9 `response-policy` |",
         f"| dnsmasq | [blocklist-dnsmasq.conf]({tb}/blocklist-dnsmasq.conf) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-dnsmasq.conf')} | OpenWrt, DD-WRT, Pi-hole (dnsmasq mode) |",
-        f"| Unbound | [blocklist-unbound.conf]({tb}/blocklist-unbound.conf) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-unbound.conf')} | Unbound resolver |",
+        f"| Unbound (gzip) | [blocklist-unbound.conf.gz]({tb}/blocklist-unbound.conf.gz) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-unbound.conf.gz')} | Unbound resolver |",
     ]
 
 
