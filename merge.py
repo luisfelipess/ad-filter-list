@@ -282,11 +282,15 @@ def _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats, source_
     ordered: list[str] = []
     wildcard_domains: set[str] = set()
     domain_min_rank: dict[str, int] = {}
+    # domain_source_indices: for each non-allowlisted accepted domain, the list of
+    # source indices (into pairs_with_ranks) that contributed it.  Used post-hoc to
+    # compute per-source tier_exclusive counts without re-reading any file.
+    domain_source_indices: dict[str, list] = {}
     total_candidates = 0
     matched_allowlisted = 0
     tld_rejected = 0
 
-    for fname, url, src_rank in pairs_with_ranks:
+    for src_idx, (fname, url, src_rank) in enumerate(pairs_with_ranks):
         path = os.path.join(raw_dir, fname)
         headers = read_leading_header(path)
         reader, fmt, reason = _pick_reader(path)
@@ -294,6 +298,7 @@ def _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats, source_
         source_stats[fname] = {
             "url": url, "format": fmt, "format_reason": reason,
             "scanned": 0, "accepted": 0, "rejected": 0, "net_new": 0,
+            "tier_exclusive": 0,
             "skipped": reader is None,
             "tier_rank": src_rank,
         }
@@ -336,14 +341,17 @@ def _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats, source_
                     ordered.append(dom)
                     source_stats[fname]["net_new"] += 1
                     domain_min_rank[dom] = src_rank
+                    domain_source_indices[dom] = [src_idx]
                 else:
                     # Domain already collected — update rank if this source is lighter.
                     if src_rank < domain_min_rank.get(dom, src_rank):
                         domain_min_rank[dom] = src_rank
+                    if dom in domain_source_indices:
+                        domain_source_indices[dom].append(src_idx)
                 if is_wildcard:
                     wildcard_domains.add(dom)
 
-    return ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected, domain_min_rank
+    return ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected, domain_min_rank, domain_source_indices
 
 
 def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
@@ -389,13 +397,16 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
     else:
         valid_tlds = _load_iana_tlds()
 
-    ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected, domain_min_rank = (
+    ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected, domain_min_rank, domain_source_indices = (
         _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats,
                          source_infos, rejected_entries, valid_tlds, default_rank)
     )
 
     # source_ranks lets us compute per-tier candidate counts later.
     source_ranks: dict[str, int] = {f: s["tier_rank"] for f, s in source_stats.items()}
+    # Index lookups used when computing tier_exclusive below.
+    _fname_by_idx = [fname for fname, _, _ in pairs_with_ranks]
+    _rank_by_idx  = [rank  for _, _, rank  in pairs_with_ranks]
 
     added_by_blocklist_override = 0
     if blocklist.exact or blocklist.wildcards:
@@ -428,6 +439,15 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
                 f"Blocklist: added {added_by_blocklist_override} forced domain(s) "
                 f"from {blocklist_path}"
             )
+
+    # ── tier_exclusive per source ─────────────────────────────────────────────
+    # After all domain_min_rank values are final (including blocklist overrides),
+    # count how many of each source's domains are NOT covered by any lighter tier.
+    for dom, idx_list in domain_source_indices.items():
+        dom_min_rank = domain_min_rank[dom]
+        for idx in idx_list:
+            if dom_min_rank >= _rank_by_idx[idx]:
+                source_stats[_fname_by_idx[idx]]["tier_exclusive"] += 1
 
     ordered_all = sorted(ordered) if sort_output else list(ordered)
 
@@ -469,6 +489,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
     default_unique_deduped = default_unique_optimized = 0
     default_dupes_deduped = default_dupes_optimized = 0
     default_pct_deduped = default_pct_optimized = 0.0
+    _prev_tier_deduped: int | None = None   # for tier_delta computation
 
     for tier_name in tiers_ordered:
         tier_r = tier_rank[tier_name]
@@ -527,10 +548,15 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             if written_path and os.path.exists(written_path):
                 tier_output_sizes[os.path.basename(written_path)] = os.path.getsize(written_path)
 
+        has_lighter = _prev_tier_deduped is not None
+        tier_delta = (tier_unique_deduped - _prev_tier_deduped) if has_lighter else tier_unique_deduped
+        _prev_tier_deduped = tier_unique_deduped
+
         tier_summaries[tier_name] = {
             "unique_deduped": tier_unique_deduped,
             "unique_optimized": tier_unique_optimized,
             "wildcards": len(tier_wildcard_domains),
+            "tier_delta": tier_delta,
             "output_sizes": tier_output_sizes,
         }
 
@@ -544,8 +570,9 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             default_pct_optimized = tier_pct_optimized
 
         loc = "root" if is_default else tier_out_dir
+        delta_suffix = f" (+{tier_delta:,} vs {tiers_ordered[tiers_ordered.index(tier_name) - 1]})" if has_lighter else ""
         print(f"[{tier_name}{'*' if is_default else ''}] "
-              f"deduped={tier_unique_deduped:,} "
+              f"deduped={tier_unique_deduped:,}{delta_suffix} "
               f"dns-optimized={tier_unique_optimized:,} → {loc}")
 
     # ── reports/ ─────────────────────────────────────────────────────────────
@@ -569,7 +596,8 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             stats["health_reason"] = reason
         if status != "ok":
             health_issues.append((fname, status, reason))
-        stats.pop("tier_rank", None)  # internal field, not for JSON
+        rank = stats.pop("tier_rank", None)
+        stats["tier"] = tiers_ordered[rank] if rank is not None and rank < len(tiers_ordered) else (default_tier or "")
     if health_issues:
         print(f"\nSource health ({len(health_issues)} issue(s)):")
         for fname, status, reason in health_issues:
@@ -597,6 +625,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             "matched_allowlisted": matched_allowlisted,
             "added_by_blocklist_override": added_by_blocklist_override,
             "output_sizes": default_output_sizes,
+            "tier_delta": tier_summaries.get(default_tier, {}).get("tier_delta", default_unique_deduped),
             **({"tier_summaries": non_default_summaries} if non_default_summaries else {}),
         },
         "sources": source_stats,
