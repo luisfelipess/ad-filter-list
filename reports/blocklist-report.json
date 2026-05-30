@@ -1,27 +1,54 @@
 {
-  "generated": "2026-05-30T06:23:30.954364Z",
+  "generated": "2026-05-30T11:41:44.534675Z",
+  "default_tier": "good",
+  "tiers": [
+    "light",
+    "good",
+    "aggressive"
+  ],
   "summary": {
-    "scanned": 1157606,
-    "unique_deduped": 950960,
-    "duplicates_deduped": 206646,
-    "reduction_pct_deduped": 17.8512,
-    "unique_optimized": 715215,
-    "wildcards": 92431,
-    "duplicates_optimized": 442391,
-    "reduction_pct_optimized": 38.216,
-    "delta_added": 24317,
-    "delta_removed": 6437,
+    "scanned": 1163221,
+    "unique_deduped": 953062,
+    "duplicates_deduped": 210159,
+    "reduction_pct_deduped": 18.067,
+    "unique_optimized": 719735,
+    "wildcards": 94185,
+    "duplicates_optimized": 443486,
+    "reduction_pct_optimized": 38.1257,
+    "delta_added": 16728,
+    "delta_removed": 14626,
     "rejected_total": 37,
     "tld_rejected": 5,
     "matched_allowlisted": 1,
     "added_by_blocklist_override": 0,
     "output_sizes": {
-      "blocklist.txt": 30075689,
-      "blocklist-adblock.txt": 15346798,
-      "blocklist-bind9.zone.gz": 6948458,
-      "blocklist-dnsmasq.conf": 20875012,
-      "blocklist-unbound.conf": 35134762,
-      "blocklist-domains.txt": 22468024
+      "blocklist.txt": 30095086,
+      "blocklist-adblock.txt": 15394791,
+      "blocklist-bind9.zone.gz": 6962598,
+      "blocklist-dnsmasq.conf": 20952945,
+      "blocklist-unbound.conf": 35296355,
+      "blocklist-domains.txt": 22470605
+    },
+    "tier_summaries": {
+      "light": {
+        "unique_deduped": 0,
+        "unique_optimized": 0,
+        "wildcards": 0,
+        "output_sizes": {}
+      },
+      "aggressive": {
+        "unique_deduped": 953062,
+        "unique_optimized": 719735,
+        "wildcards": 94185,
+        "output_sizes": {
+          "blocklist.txt": 30095039,
+          "blocklist-adblock.txt": 15394744,
+          "blocklist-bind9.zone.gz": 6962575,
+          "blocklist-dnsmasq.conf": 20952898,
+          "blocklist-unbound.conf": 35296308,
+          "blocklist-domains.txt": 22470558
+        }
+      }
     }
   },
   "sources": {
@@ -29,41 +56,46 @@
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/pro.txt",
       "format": "host",
       "format_reason": "host format detected",
-      "scanned": 496633,
-      "accepted": 496632,
+      "scanned": 493855,
+      "accepted": 493854,
       "rejected": 1,
-      "net_new": 496631,
-      "skipped": false
+      "net_new": 493853,
+      "skipped": false,
+      "health": "ok"
     },
     "02_pro.plus.mini.txt": {
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/pro.plus.mini.txt",
       "format": "wildcard-domain",
       "format_reason": "wildcard-domain format detected",
-      "scanned": 92432,
-      "accepted": 92431,
+      "scanned": 94186,
+      "accepted": 94185,
       "rejected": 1,
-      "net_new": 17126,
-      "skipped": false
+      "net_new": 17106,
+      "skipped": false,
+      "health": "ok"
     },
     "03_tif.medium-onlydomains.txt": {
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/tif.medium-onlydomains.txt",
       "format": "domain-only",
       "format_reason": "domain-only format detected",
-      "scanned": 443914,
-      "accepted": 443914,
+      "scanned": 450547,
+      "accepted": 450547,
       "rejected": 0,
-      "net_new": 384919,
-      "skipped": false
+      "net_new": 389883,
+      "skipped": false,
+      "health": "ok"
     },
     "04_fake-onlydomains.txt": {
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/fake-onlydomains.txt",
       "format": "domain-only",
       "format_reason": "domain-only format detected",
-      "scanned": 15821,
-      "accepted": 15821,
+      "scanned": 15827,
+      "accepted": 15827,
       "rejected": 0,
-      "net_new": 62,
-      "skipped": false
+      "net_new": 61,
+      "skipped": false,
+      "health": "low_value",
+      "health_reason": "61 net-new of 15827 accepted (0.4%)"
     },
     "05_hosts": {
       "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
@@ -72,8 +104,9 @@
       "scanned": 82068,
       "accepted": 82051,
       "rejected": 17,
-      "net_new": 49855,
-      "skipped": false
+      "net_new": 49792,
+      "skipped": false,
+      "health": "ok"
     },
     "06_hosts": {
       "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-only/hosts",
@@ -83,7 +116,8 @@
       "accepted": 2187,
       "rejected": 0,
       "net_new": 2052,
-      "skipped": false
+      "skipped": false,
+      "health": "ok"
     },
     "07_hosts": {
       "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/data/someonewhocares.org/hosts",
@@ -93,7 +127,9 @@
       "accepted": 12791,
       "rejected": 13,
       "net_new": 32,
-      "skipped": false
+      "skipped": false,
+      "health": "low_value",
+      "health_reason": "32 net-new of 12791 accepted (0.3%)"
     },
     "08_hosts": {
       "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/data/Badd-Boyz-Hosts/hosts",
@@ -103,7 +139,9 @@
       "accepted": 1384,
       "rejected": 2,
       "net_new": 4,
-      "skipped": false
+      "skipped": false,
+      "health": "low_value",
+      "health_reason": "4 net-new of 1384 accepted (0.3%)"
     },
     "09_hosts": {
       "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/data/yoyo.org/hosts",
@@ -113,7 +151,9 @@
       "accepted": 3508,
       "rejected": 1,
       "net_new": 0,
-      "skipped": false
+      "skipped": false,
+      "health": "redundant",
+      "health_reason": "all entries already covered by earlier sources"
     },
     "10_spy.txt": {
       "url": "https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/spy.txt",
@@ -123,7 +163,8 @@
       "accepted": 347,
       "rejected": 0,
       "net_new": 268,
-      "skipped": false
+      "skipped": false,
+      "health": "ok"
     },
     "11_hosts.txt": {
       "url": "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt",
@@ -133,7 +174,9 @@
       "accepted": 6540,
       "rejected": 2,
       "net_new": 11,
-      "skipped": false
+      "skipped": false,
+      "health": "low_value",
+      "health_reason": "11 net-new of 6540 accepted (0.2%)"
     }
   }
 }
