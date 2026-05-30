@@ -100,27 +100,12 @@ Output writers live in `writers/`. Adding a new format = one new file + one line
 
 ### Tiered outputs
 
-- [ ] **Source tier tagging in `sources.conf`** — allow each source line to carry a tier label (`small`, `medium`, `large`); sources without a label default to `large`; tag semantics are cumulative: `small` sources go into all tiers, `medium` into medium+large, `large` into large only; syntax sketch (backward-compatible):
-  ```
-  https://hagezi/pro.txt tier=small , https://fallback/pro.txt
-  https://stevenblack/hosts tier=medium
-  https://hagezi/pro-plus.txt  # tier=large (default)
-  ```
+- [x] **Source tier tagging in `sources.conf`** — `tier=<name>` tag syntax on each source line; sources without a tag default to the `*` tier in `tiers.conf` (currently `good`); cumulative: light sources go into light+good+aggressive, good into good+aggressive
+- [x] **Multi-tier merge** — single `_collect_domains` pass tracking `domain_min_rank` per domain; per-tier outputs filtered at write time; `tiers.conf` defines hierarchy and default tier
+- [x] **Tiered outputs** — all six formats written to `processed/<tier>/` for non-default tiers; default tier (`good`) writes to `processed/` root for backward compatibility
+- [x] **README stats table extended for tiers** — `post_run.py` appends per-tier rows when non-default tier output exists; default tier rows labeled with tier name
 
-- [ ] **Multi-tier merge** — run `_collect_domains` once per tier using the filtered source subset; produces three domain pools (small ⊆ medium ⊆ large); avoids re-downloading; add `--tiers small,medium,large` flag to `merge.py`
-
-- [ ] **Tiered host-format outputs** — emit `processed/blocklist-small.txt`, `processed/blocklist-medium.txt`, `processed/blocklist-large.txt` (hosts `0.0.0.0 domain` format); `processed/blocklist.txt` stays as-is and maps to the large tier (backward-compatible); other formats (RPZ, dnsmasq, adblock, unbound) continue to emit a single merged file from all sources — tiers are primarily motivated by MikroTik / Pi-hole RAM constraints, which don't apply the same way to server-side DNS resolvers
-
-- [ ] **README stats table extended for tiers** — `post_run.py` emits one row per tier for the hosts format, showing domain count and file size; DNS-format rows stay as single entries
-
-  Sketch of what the table would look like:
-  ```
-  | Hosts (small)  | blocklist-small.txt  | ~136K | ~2 MB  | MikroTik low-RAM (<32 MiB cache) |
-  | Hosts (medium) | blocklist-medium.txt | ~400K | ~5 MB  | MikroTik mid-range               |
-  | Hosts (large)  | blocklist.txt        | ~906K | ~12 MB | MikroTik high-end, Pi-hole       |
-  ```
-
-  Tier boundaries depend on which sources are tagged; the current single merged pool becomes the large tier by default.
+  Next step: tag each source in `sources.conf` with the appropriate tier (light/good/aggressive).
 
 ### Source discovery
 
