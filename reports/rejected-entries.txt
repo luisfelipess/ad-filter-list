@@ -1,4 +1,4 @@
-# Rejected entries - generated: 2026-05-30T12:07:57.724257Z
+# Rejected entries - generated: 2026-05-30T12:31:49.554466Z
 # Format: source_file line_number : original_line
 
 01_pro.txt 282110: INVALID_TLD(scloud): 0.0.0.0 collector.azure.microsoft.scloud
@@ -36,129 +36,2630 @@
 08_hosts 46: 127.0.0.1 localhost
 08_hosts 47: ::1 localhost #[IPv6]
 09_hosts 2502: INVALID_TLD(example0101): 0.0.0.0 pgl.example0101
-11_GoodbyeAds.txt 1: ﻿# --------------------------------------------
-11_GoodbyeAds.txt 22: 127.0.0.1 localhost
-11_GoodbyeAds.txt 23: 127.0.0.1 localhost.localdomain
-11_GoodbyeAds.txt 24: 127.0.0.1 local
-11_GoodbyeAds.txt 25: 255.255.255.255 broadcasthost
-11_GoodbyeAds.txt 26: ::1 localhost
-11_GoodbyeAds.txt 27: ::1 ip6-localhost
-11_GoodbyeAds.txt 28: ::1 ip6-loopback
-11_GoodbyeAds.txt 29: fe80::1%lo0 localhost
-11_GoodbyeAds.txt 30: ff00::0 ip6-localnet
-11_GoodbyeAds.txt 31: ff00::0 ip6-mcastprefix
-11_GoodbyeAds.txt 32: ff02::1 ip6-allnodes
-11_GoodbyeAds.txt 33: ff02::2 ip6-allrouters
-11_GoodbyeAds.txt 34: ff02::3 ip6-allhosts
-11_GoodbyeAds.txt 35: 0.0.0.0 0.0.0.0
-11_GoodbyeAds.txt 8473: 0.0.0.0 109.123.233.251
-11_GoodbyeAds.txt 8758: 0.0.0.0 10dkim1._domainkey.e-mail.harley-davidson.com
-11_GoodbyeAds.txt 8882: 0.0.0.0 110.93.143.144
-11_GoodbyeAds.txt 9583: 0.0.0.0 11dkim1._domainkey.marketing.kraken.com
-11_GoodbyeAds.txt 10779: 0.0.0.0 12dkim1._domainkey.eg.cheaptickets.com
-11_GoodbyeAds.txt 10780: 0.0.0.0 12dkim1._domainkey.emails.paypal.com
-11_GoodbyeAds.txt 11455: 0.0.0.0 13dkim1._domainkey.email.abbviecare.ca
-11_GoodbyeAds.txt 12351: 0.0.0.0 156.233.32.123
-11_GoodbyeAds.txt 12400: 0.0.0.0 157.90.183.248
-11_GoodbyeAds.txt 13648: 0.0.0.0 180.76.2.18
-11_GoodbyeAds.txt 13823: 0.0.0.0 184.106.248.76
-11_GoodbyeAds.txt 13858: 0.0.0.0 185.149.120.173
-11_GoodbyeAds.txt 13859: 0.0.0.0 185.246.188.124
-11_GoodbyeAds.txt 13860: 0.0.0.0 185.246.188.125
-11_GoodbyeAds.txt 13990: 0.0.0.0 188.72.219.36
-11_GoodbyeAds.txt 14263: 0.0.0.0 192.151.218.66
-11_GoodbyeAds.txt 14334: 0.0.0.0 193.200.64.24
-11_GoodbyeAds.txt 14335: 0.0.0.0 193.200.64.30
-11_GoodbyeAds.txt 14336: 0.0.0.0 193.200.64.31
-11_GoodbyeAds.txt 14337: 0.0.0.0 193.200.65.61
-11_GoodbyeAds.txt 14373: 0.0.0.0 194.63.140.103
-11_GoodbyeAds.txt 14374: 0.0.0.0 194.63.143.61
-11_GoodbyeAds.txt 14375: 0.0.0.0 194.63.143.96
-11_GoodbyeAds.txt 15450: 0.0.0.0 200.72.40.46
-11_GoodbyeAds.txt 15756: 0.0.0.0 206.54.181.250
-11_GoodbyeAds.txt 16008: 0.0.0.0 212.117.190.201
-11_GoodbyeAds.txt 16009: 0.0.0.0 212.117.190.202
-11_GoodbyeAds.txt 16010: 0.0.0.0 212.117.190.210
-11_GoodbyeAds.txt 16011: 0.0.0.0 212.117.190.211
-11_GoodbyeAds.txt 16012: 0.0.0.0 212.117.190.212
-11_GoodbyeAds.txt 16013: 0.0.0.0 212.117.190.213
-11_GoodbyeAds.txt 16063: 0.0.0.0 213.8.137.51
-11_GoodbyeAds.txt 16778: 0.0.0.0 23.224.89.2
-11_GoodbyeAds.txt 20115: 0.0.0.0 31.14.252.148
-11_GoodbyeAds.txt 22394: 0.0.0.0 37.1.213.100
-11_GoodbyeAds.txt 22395: 0.0.0.0 37.220.26.135
-11_GoodbyeAds.txt 22396: 0.0.0.0 37.220.26.136
-11_GoodbyeAds.txt 22397: 0.0.0.0 37.220.26.137
-11_GoodbyeAds.txt 24557: 0.0.0.0 45.82.68.79
-11_GoodbyeAds.txt 24774: INVALID_TLD(vtt): 0.0.0.0 46186911.vtt
-11_GoodbyeAds.txt 26323: 0.0.0.0 5.61.55.143
-11_GoodbyeAds.txt 26551: 0.0.0.0 50dkim1._domainkey.flaticon.com
-11_GoodbyeAds.txt 28254: 0.0.0.0 54.222.186.106
-11_GoodbyeAds.txt 28858: 0.0.0.0 57.128.71.215
-11_GoodbyeAds.txt 30576: 0.0.0.0 62.76.25.27
-11_GoodbyeAds.txt 30577: 0.0.0.0 62.76.25.28
-11_GoodbyeAds.txt 31255: 0.0.0.0 66.228.52.30
-11_GoodbyeAds.txt 31500: 0.0.0.0 67.228.151.70
-11_GoodbyeAds.txt 33575: 0.0.0.0 74.55.82.102
-11_GoodbyeAds.txt 33960: 0.0.0.0 77.247.178.41
-11_GoodbyeAds.txt 34131: 0.0.0.0 78.140.134.198
-11_GoodbyeAds.txt 34132: 0.0.0.0 78.140.149.216
-11_GoodbyeAds.txt 34299: 0.0.0.0 79.125.117.123
-11_GoodbyeAds.txt 34919: INVALID_TLD(vtt): 0.0.0.0 80055404.vtt
-11_GoodbyeAds.txt 35933: 0.0.0.0 88.208.46.222
-11_GoodbyeAds.txt 35934: 0.0.0.0 88.85.75.147
-11_GoodbyeAds.txt 35935: 0.0.0.0 88.85.77.92
-11_GoodbyeAds.txt 36850: 0.0.0.0 91.204.226.224
-11_GoodbyeAds.txt 36851: 0.0.0.0 91.207.192.31
-11_GoodbyeAds.txt 37204: 0.0.0.0 94.130.167.163
-11_GoodbyeAds.txt 37344: 0.0.0.0 95.211.125.226
-11_GoodbyeAds.txt 41564: INVALID_TLD(tl2): 0.0.0.0 a4.tl2
-11_GoodbyeAds.txt 51784: INVALID_TLD(coom): 0.0.0.0 afahivar.coom
-11_GoodbyeAds.txt 53589: INVALID_TLD(nett): 0.0.0.0 aistekso.nett
-11_GoodbyeAds.txt 72545: INVALID_TLD(xy): 0.0.0.0 cbyqzt.xy
-11_GoodbyeAds.txt 73566: INVALID_TLD(xy): 0.0.0.0 cdn1.fhits.xy
-11_GoodbyeAds.txt 74899: 0.0.0.0 chicago_cbslocal.us.intellitxt.com
-11_GoodbyeAds.txt 75406: 0.0.0.0 cio_office_email.truckpad.net.br
-11_GoodbyeAds.txt 78782: 0.0.0.0 client_monitor.isnssdk.com
-11_GoodbyeAds.txt 85587: 0.0.0.0 customer_email.flowjin.com
-11_GoodbyeAds.txt 85620: 0.0.0.0 customerio_email.bigstock.com
-11_GoodbyeAds.txt 85621: 0.0.0.0 customerio_email.referralcandy.com
-11_GoodbyeAds.txt 93348: 0.0.0.0 development-.bloblohub.com
-11_GoodbyeAds.txt 95458: 0.0.0.0 dmol_mn.adk2x.com
-11_GoodbyeAds.txt 99638: 0.0.0.0 ecpm_api.propellerads.com
-11_GoodbyeAds.txt 133396: 0.0.0.0 email_customer_io.happyscribe.co
-11_GoodbyeAds.txt 133397: 0.0.0.0 email_tracking.actforsport.eu
-11_GoodbyeAds.txt 133398: 0.0.0.0 email_tracking.nowlvble.com
-11_GoodbyeAds.txt 134851: 0.0.0.0 es-sunicontent_test.videoplaza.tv
-11_GoodbyeAds.txt 135147: INVALID_TLD(comm): 0.0.0.0 etl.xlmc.sec.miui.comm
-11_GoodbyeAds.txt 138713: INVALID_TLD(xy): 0.0.0.0 fhits.xy
-11_GoodbyeAds.txt 154561: 0.0.0.0 hawaii.-043ns11.net.daraz.com
-11_GoodbyeAds.txt 157342: 0.0.0.0 ht-viral_laughingc.native.andbeyond.media
-11_GoodbyeAds.txt 158343: 0.0.0.0 i_mobistar.tealiumiq.com
-11_GoodbyeAds.txt 178565: 0.0.0.0 losangeles_cbslocal.us.intellitxt.com
-11_GoodbyeAds.txt 185172: 0.0.0.0 mcr_media.adk2x.com
-11_GoodbyeAds.txt 205563: INVALID_TLD(comm): 0.0.0.0 performer.api.naiadsystems.comm
-11_GoodbyeAds.txt 205943: 0.0.0.0 philadelphia_cbslocal.us.intellitxt.com
-11_GoodbyeAds.txt 206156: 0.0.0.0 piano_log.kingsoft.jp
-11_GoodbyeAds.txt 206546: INVALID_TLD(onion): 0.0.0.0 pixel.archivecaslytosk.onion
-11_GoodbyeAds.txt 206547: INVALID_TLD(onion): 0.0.0.0 pixel.archiveiya74codqgiixo33q62qlrqtkgmcitqx5u2oeqnmn5bpcbiyd.onion
-11_GoodbyeAds.txt 209990: 0.0.0.0 production-.bloblohub.com
-11_GoodbyeAds.txt 210817: 0.0.0.0 pt_br.statcounter.com
-11_GoodbyeAds.txt 221128: 0.0.0.0 sanfrancisco_cbslocal.us.intellitxt.com
-11_GoodbyeAds.txt 240737: INVALID_TLD(senal): 0.0.0.0 t.senal
-11_GoodbyeAds.txt 240743: INVALID_TLD(sidekickopen): 0.0.0.0 t.sidekickopen
-11_GoodbyeAds.txt 240746: INVALID_TLD(signaux): 0.0.0.0 t.signaux
-11_GoodbyeAds.txt 240748: INVALID_TLD(sigopn): 0.0.0.0 t.sigopn
-11_GoodbyeAds.txt 243247: 0.0.0.0 test_pages.crittercism.com
-11_GoodbyeAds.txt 262442: INVALID_TLD(goodbyeads): 0.0.0.0 watchdog.goodbyeads
-11_GoodbyeAds.txt 262443: INVALID_TLD(xiaomi): 0.0.0.0 watchdog.goodbyeads.xiaomi
-11_GoodbyeAds.txt 267541: INVALID_TLD(xy): 0.0.0.0 www.fhits.xy
-11_GoodbyeAds.txt 274024: 0.0.0.0 xtl._domainkey.forgetrust.com
-11_GoodbyeAds.txt 274025: 0.0.0.0 xtl._domainkey.skillshare.com
-11_GoodbyeAds.txt 274503: INVALID_TLD(appspot): 0.0.0.0 yamm-track.appspot
-11_GoodbyeAds.txt 275336: INVALID_TLD(local): 0.0.0.0 youtube.local
-11_GoodbyeAds.txt 276540: 0.0.0.0 zh_cn.statcounter.com
-11_GoodbyeAds.txt 276541: 0.0.0.0 zh_tw.statcounter.com
-11_GoodbyeAds.txt 277560: INVALID_TLD(cim): 0.0.0.0 zupee.cim
+10_GoodbyeAds.txt 1: ﻿# --------------------------------------------
+10_GoodbyeAds.txt 22: 127.0.0.1 localhost
+10_GoodbyeAds.txt 23: 127.0.0.1 localhost.localdomain
+10_GoodbyeAds.txt 24: 127.0.0.1 local
+10_GoodbyeAds.txt 25: 255.255.255.255 broadcasthost
+10_GoodbyeAds.txt 26: ::1 localhost
+10_GoodbyeAds.txt 27: ::1 ip6-localhost
+10_GoodbyeAds.txt 28: ::1 ip6-loopback
+10_GoodbyeAds.txt 29: fe80::1%lo0 localhost
+10_GoodbyeAds.txt 30: ff00::0 ip6-localnet
+10_GoodbyeAds.txt 31: ff00::0 ip6-mcastprefix
+10_GoodbyeAds.txt 32: ff02::1 ip6-allnodes
+10_GoodbyeAds.txt 33: ff02::2 ip6-allrouters
+10_GoodbyeAds.txt 34: ff02::3 ip6-allhosts
+10_GoodbyeAds.txt 35: 0.0.0.0 0.0.0.0
+10_GoodbyeAds.txt 8473: 0.0.0.0 109.123.233.251
+10_GoodbyeAds.txt 8758: 0.0.0.0 10dkim1._domainkey.e-mail.harley-davidson.com
+10_GoodbyeAds.txt 8882: 0.0.0.0 110.93.143.144
+10_GoodbyeAds.txt 9583: 0.0.0.0 11dkim1._domainkey.marketing.kraken.com
+10_GoodbyeAds.txt 10779: 0.0.0.0 12dkim1._domainkey.eg.cheaptickets.com
+10_GoodbyeAds.txt 10780: 0.0.0.0 12dkim1._domainkey.emails.paypal.com
+10_GoodbyeAds.txt 11455: 0.0.0.0 13dkim1._domainkey.email.abbviecare.ca
+10_GoodbyeAds.txt 12351: 0.0.0.0 156.233.32.123
+10_GoodbyeAds.txt 12400: 0.0.0.0 157.90.183.248
+10_GoodbyeAds.txt 13648: 0.0.0.0 180.76.2.18
+10_GoodbyeAds.txt 13823: 0.0.0.0 184.106.248.76
+10_GoodbyeAds.txt 13858: 0.0.0.0 185.149.120.173
+10_GoodbyeAds.txt 13859: 0.0.0.0 185.246.188.124
+10_GoodbyeAds.txt 13860: 0.0.0.0 185.246.188.125
+10_GoodbyeAds.txt 13990: 0.0.0.0 188.72.219.36
+10_GoodbyeAds.txt 14263: 0.0.0.0 192.151.218.66
+10_GoodbyeAds.txt 14334: 0.0.0.0 193.200.64.24
+10_GoodbyeAds.txt 14335: 0.0.0.0 193.200.64.30
+10_GoodbyeAds.txt 14336: 0.0.0.0 193.200.64.31
+10_GoodbyeAds.txt 14337: 0.0.0.0 193.200.65.61
+10_GoodbyeAds.txt 14373: 0.0.0.0 194.63.140.103
+10_GoodbyeAds.txt 14374: 0.0.0.0 194.63.143.61
+10_GoodbyeAds.txt 14375: 0.0.0.0 194.63.143.96
+10_GoodbyeAds.txt 15450: 0.0.0.0 200.72.40.46
+10_GoodbyeAds.txt 15756: 0.0.0.0 206.54.181.250
+10_GoodbyeAds.txt 16008: 0.0.0.0 212.117.190.201
+10_GoodbyeAds.txt 16009: 0.0.0.0 212.117.190.202
+10_GoodbyeAds.txt 16010: 0.0.0.0 212.117.190.210
+10_GoodbyeAds.txt 16011: 0.0.0.0 212.117.190.211
+10_GoodbyeAds.txt 16012: 0.0.0.0 212.117.190.212
+10_GoodbyeAds.txt 16013: 0.0.0.0 212.117.190.213
+10_GoodbyeAds.txt 16063: 0.0.0.0 213.8.137.51
+10_GoodbyeAds.txt 16778: 0.0.0.0 23.224.89.2
+10_GoodbyeAds.txt 20115: 0.0.0.0 31.14.252.148
+10_GoodbyeAds.txt 22394: 0.0.0.0 37.1.213.100
+10_GoodbyeAds.txt 22395: 0.0.0.0 37.220.26.135
+10_GoodbyeAds.txt 22396: 0.0.0.0 37.220.26.136
+10_GoodbyeAds.txt 22397: 0.0.0.0 37.220.26.137
+10_GoodbyeAds.txt 24557: 0.0.0.0 45.82.68.79
+10_GoodbyeAds.txt 24774: INVALID_TLD(vtt): 0.0.0.0 46186911.vtt
+10_GoodbyeAds.txt 26323: 0.0.0.0 5.61.55.143
+10_GoodbyeAds.txt 26551: 0.0.0.0 50dkim1._domainkey.flaticon.com
+10_GoodbyeAds.txt 28254: 0.0.0.0 54.222.186.106
+10_GoodbyeAds.txt 28858: 0.0.0.0 57.128.71.215
+10_GoodbyeAds.txt 30576: 0.0.0.0 62.76.25.27
+10_GoodbyeAds.txt 30577: 0.0.0.0 62.76.25.28
+10_GoodbyeAds.txt 31255: 0.0.0.0 66.228.52.30
+10_GoodbyeAds.txt 31500: 0.0.0.0 67.228.151.70
+10_GoodbyeAds.txt 33575: 0.0.0.0 74.55.82.102
+10_GoodbyeAds.txt 33960: 0.0.0.0 77.247.178.41
+10_GoodbyeAds.txt 34131: 0.0.0.0 78.140.134.198
+10_GoodbyeAds.txt 34132: 0.0.0.0 78.140.149.216
+10_GoodbyeAds.txt 34299: 0.0.0.0 79.125.117.123
+10_GoodbyeAds.txt 34919: INVALID_TLD(vtt): 0.0.0.0 80055404.vtt
+10_GoodbyeAds.txt 35933: 0.0.0.0 88.208.46.222
+10_GoodbyeAds.txt 35934: 0.0.0.0 88.85.75.147
+10_GoodbyeAds.txt 35935: 0.0.0.0 88.85.77.92
+10_GoodbyeAds.txt 36850: 0.0.0.0 91.204.226.224
+10_GoodbyeAds.txt 36851: 0.0.0.0 91.207.192.31
+10_GoodbyeAds.txt 37204: 0.0.0.0 94.130.167.163
+10_GoodbyeAds.txt 37344: 0.0.0.0 95.211.125.226
+10_GoodbyeAds.txt 41564: INVALID_TLD(tl2): 0.0.0.0 a4.tl2
+10_GoodbyeAds.txt 51784: INVALID_TLD(coom): 0.0.0.0 afahivar.coom
+10_GoodbyeAds.txt 53589: INVALID_TLD(nett): 0.0.0.0 aistekso.nett
+10_GoodbyeAds.txt 72545: INVALID_TLD(xy): 0.0.0.0 cbyqzt.xy
+10_GoodbyeAds.txt 73566: INVALID_TLD(xy): 0.0.0.0 cdn1.fhits.xy
+10_GoodbyeAds.txt 74899: 0.0.0.0 chicago_cbslocal.us.intellitxt.com
+10_GoodbyeAds.txt 75406: 0.0.0.0 cio_office_email.truckpad.net.br
+10_GoodbyeAds.txt 78782: 0.0.0.0 client_monitor.isnssdk.com
+10_GoodbyeAds.txt 85587: 0.0.0.0 customer_email.flowjin.com
+10_GoodbyeAds.txt 85620: 0.0.0.0 customerio_email.bigstock.com
+10_GoodbyeAds.txt 85621: 0.0.0.0 customerio_email.referralcandy.com
+10_GoodbyeAds.txt 93348: 0.0.0.0 development-.bloblohub.com
+10_GoodbyeAds.txt 95458: 0.0.0.0 dmol_mn.adk2x.com
+10_GoodbyeAds.txt 99638: 0.0.0.0 ecpm_api.propellerads.com
+10_GoodbyeAds.txt 133396: 0.0.0.0 email_customer_io.happyscribe.co
+10_GoodbyeAds.txt 133397: 0.0.0.0 email_tracking.actforsport.eu
+10_GoodbyeAds.txt 133398: 0.0.0.0 email_tracking.nowlvble.com
+10_GoodbyeAds.txt 134851: 0.0.0.0 es-sunicontent_test.videoplaza.tv
+10_GoodbyeAds.txt 135147: INVALID_TLD(comm): 0.0.0.0 etl.xlmc.sec.miui.comm
+10_GoodbyeAds.txt 138713: INVALID_TLD(xy): 0.0.0.0 fhits.xy
+10_GoodbyeAds.txt 154561: 0.0.0.0 hawaii.-043ns11.net.daraz.com
+10_GoodbyeAds.txt 157342: 0.0.0.0 ht-viral_laughingc.native.andbeyond.media
+10_GoodbyeAds.txt 158343: 0.0.0.0 i_mobistar.tealiumiq.com
+10_GoodbyeAds.txt 178565: 0.0.0.0 losangeles_cbslocal.us.intellitxt.com
+10_GoodbyeAds.txt 185172: 0.0.0.0 mcr_media.adk2x.com
+10_GoodbyeAds.txt 205563: INVALID_TLD(comm): 0.0.0.0 performer.api.naiadsystems.comm
+10_GoodbyeAds.txt 205943: 0.0.0.0 philadelphia_cbslocal.us.intellitxt.com
+10_GoodbyeAds.txt 206156: 0.0.0.0 piano_log.kingsoft.jp
+10_GoodbyeAds.txt 206546: INVALID_TLD(onion): 0.0.0.0 pixel.archivecaslytosk.onion
+10_GoodbyeAds.txt 206547: INVALID_TLD(onion): 0.0.0.0 pixel.archiveiya74codqgiixo33q62qlrqtkgmcitqx5u2oeqnmn5bpcbiyd.onion
+10_GoodbyeAds.txt 209990: 0.0.0.0 production-.bloblohub.com
+10_GoodbyeAds.txt 210817: 0.0.0.0 pt_br.statcounter.com
+10_GoodbyeAds.txt 221128: 0.0.0.0 sanfrancisco_cbslocal.us.intellitxt.com
+10_GoodbyeAds.txt 240737: INVALID_TLD(senal): 0.0.0.0 t.senal
+10_GoodbyeAds.txt 240743: INVALID_TLD(sidekickopen): 0.0.0.0 t.sidekickopen
+10_GoodbyeAds.txt 240746: INVALID_TLD(signaux): 0.0.0.0 t.signaux
+10_GoodbyeAds.txt 240748: INVALID_TLD(sigopn): 0.0.0.0 t.sigopn
+10_GoodbyeAds.txt 243247: 0.0.0.0 test_pages.crittercism.com
+10_GoodbyeAds.txt 262442: INVALID_TLD(goodbyeads): 0.0.0.0 watchdog.goodbyeads
+10_GoodbyeAds.txt 262443: INVALID_TLD(xiaomi): 0.0.0.0 watchdog.goodbyeads.xiaomi
+10_GoodbyeAds.txt 267541: INVALID_TLD(xy): 0.0.0.0 www.fhits.xy
+10_GoodbyeAds.txt 274024: 0.0.0.0 xtl._domainkey.forgetrust.com
+10_GoodbyeAds.txt 274025: 0.0.0.0 xtl._domainkey.skillshare.com
+10_GoodbyeAds.txt 274503: INVALID_TLD(appspot): 0.0.0.0 yamm-track.appspot
+10_GoodbyeAds.txt 275336: INVALID_TLD(local): 0.0.0.0 youtube.local
+10_GoodbyeAds.txt 276540: 0.0.0.0 zh_cn.statcounter.com
+10_GoodbyeAds.txt 276541: 0.0.0.0 zh_tw.statcounter.com
+10_GoodbyeAds.txt 277560: INVALID_TLD(cim): 0.0.0.0 zupee.cim
+13_hosts.txt 22: 127.0.0.1  localhost
+13_hosts.txt 23: ::1  localhost
 14_hosts.txt 22: 127.0.0.1  localhost
 14_hosts.txt 23: ::1  localhost
+15_filter.txt 148: ||direct-specific.com
+15_filter.txt 212: ||ad-host-backup-*.aliyuncs.com^
+15_filter.txt 241: ||107.148.45.21^
+15_filter.txt 246: ||198.23.198.110^
+15_filter.txt 247: ||185.216.143.121^
+15_filter.txt 330: ||st-n.ads*-adnow.com^
+15_filter.txt 356: ||reachableads-av.*.amazonaws.com^
+15_filter.txt 383: ||185.149.120.173^
+15_filter.txt 384: /^139\.45\.197\.2(4[0-9]|5[0-4]):/
+15_filter.txt 385: /^139\.45\.197\.2(4[0-9]|5[0-4])/
+15_filter.txt 392: ||157.90.183.248^
+15_filter.txt 414: ||5.61.55.143^
+15_filter.txt 415: ||37.1.213.100^
+15_filter.txt 418: ||ads.livetv*.me^
+15_filter.txt 426: ||counter*.stat.ovh^
+15_filter.txt 479: ||fxhpaoxqyajvmdg.
+15_filter.txt 480: ||rgfftupf.
+15_filter.txt 546: ||clk.rtpdn*.com^
+15_filter.txt 729: ||teleriumads-*.netdna-ssl.com^
+15_filter.txt 769: ||putrr*.com^
+15_filter.txt 772: .bbelements.com^
+15_filter.txt 773: .doublepimp.com^
+15_filter.txt 787: ||block.s*block.com^
+15_filter.txt 810: ||mf*.advantage.as^
+15_filter.txt 826: ||www.fuze-hill*.xyz^
+15_filter.txt 827: ||www.fuze-sea*.xyz^
+15_filter.txt 846: ||154.199.255.184^
+15_filter.txt 853: ||88.208.46.222^
+15_filter.txt 864: ||103.224.182.210^
+15_filter.txt 866: /^94\.242\.247\.(2[0-9]|3[0-2]):/
+15_filter.txt 867: /^94\.242\.247\.(2[0-9]|3[0-2])/
+15_filter.txt 868: /^23\.109\.170\.(18[7-9]|19[0-2])$/
+15_filter.txt 869: /^23\.109\.73\.\d{3}/
+15_filter.txt 870: /^188\.42\.84\.\d{1,3}/
+15_filter.txt 871: /^139\.45\.19[5-7]\.\d{1,3}/
+15_filter.txt 874: ||193.200.64.30^
+15_filter.txt 875: ||193.200.64.31^
+15_filter.txt 876: ||193.200.65.61^
+15_filter.txt 877: ||212.117.190.201^
+15_filter.txt 878: ||212.117.190.202^
+15_filter.txt 879: ||212.117.190.210^
+15_filter.txt 880: ||212.117.190.211^
+15_filter.txt 881: ||212.117.190.212^
+15_filter.txt 882: ||212.117.190.213^
+15_filter.txt 885: ||91.204.226.224^
+15_filter.txt 888: ||57.128.71.215^
+15_filter.txt 892: ||172.240.108.68^
+15_filter.txt 893: ||172.240.108.76^
+15_filter.txt 894: ||172.240.108.84^
+15_filter.txt 895: ||172.240.127.234^
+15_filter.txt 896: ||172.240.253.132^
+15_filter.txt 897: ||185.246.188.124^
+15_filter.txt 898: ||185.246.188.125^
+15_filter.txt 899: ||192.243.59.12^
+15_filter.txt 900: ||192.243.59.13^
+15_filter.txt 901: ||192.243.59.20^
+15_filter.txt 902: ||192.243.61.225^
+15_filter.txt 903: ||192.243.61.227^
+15_filter.txt 904: ||194.63.140.103^
+15_filter.txt 905: ||194.63.143.61^
+15_filter.txt 906: ||194.63.143.96^
+15_filter.txt 909: /^142\.91\.159\.(1[5-9]\d|2[0-4]\d|250):(80|443)$/
+15_filter.txt 912: ||188.72.219.36^
+15_filter.txt 3096: ||*.exaapi.com^
+15_filter.txt 6299: ||advertising.civitai.
+15_filter.txt 6316: ||*two-gun-volley.pages.dev^
+15_filter.txt 6319: ||id-msp.newsbreak.com
+15_filter.txt 6345: ||advert*.livesportmedia.eu^
+15_filter.txt 6447: ||prebid-*.rubiconproject.com^
+15_filter.txt 6621: ||pijama.*.elasticbeanstalk.com^
+15_filter.txt 6660: wykop.pl$badfilter
+15_filter.txt 6710: .n.2.1.js^
+15_filter.txt 6711: .n.2.1.l60.js^
+15_filter.txt 6712: .1.1.1.l80.js^
+15_filter.txt 6713: .3.n.2.1.l50.js
+15_filter.txt 6714: .3.n.2.2.l30.js
+15_filter.txt 6715: ||109.123.233.251^
+15_filter.txt 6724: ://mine.torrent.pw^
+15_filter.txt 6725: ||hostingcloud.*.wasm^
+15_filter.txt 6728: vkcdnservice.appspot.com^
+15_filter.txt 6762: ||freecontent.date
+15_filter.txt 6763: ||freecontent.stream
+15_filter.txt 6764: ||s*.skencituer.com^
+15_filter.txt 17033: ||daleelerah.info
+15_filter.txt 23568: ||get-me-wow.
+15_filter.txt 37494: INVALID_TLD(comi): ||organismdespite.comi^
+15_filter.txt 57614: INVALID_TLD(local): ||youtube.local^
+15_filter.txt 59159: INVALID_TLD(cim): ||zupee.cim^
+15_filter.txt 60907: /(https?:\/\/)213\.32\.115\..{100,}/
+15_filter.txt 60908: /(https?:\/\/)217\.182\.11\..{100,}/
+15_filter.txt 60909: /(https?:\/\/)51\.195\.31\..{100,}/
+15_filter.txt 60998: ||util-*.simply-hentai.com^
+15_filter.txt 61154: ||allsportsflix.
+15_filter.txt 62983: ||*.libaishuo.com^
+15_filter.txt 63021: ||adv0*.msa.cdn.mediaset.net^
+15_filter.txt 63068: /^https:\/\/(a|c)\.[0-9a-f]{56}\.com$/
+15_filter.txt 63070: /^(a|c)\.[0-9a-f]{56}\.com$/
+15_filter.txt 63097: ||54.222.186.106^
+15_filter.txt 63123: ||adapi*.boomplaymusic.com^
+15_filter.txt 63174: ||nelonenmedia-pmd-ads-*.nm-stream.nelonenmedia.fi^
+15_filter.txt 63184: ||23.224.199.96^
+15_filter.txt 63185: ||23.224.199.74^
+15_filter.txt 63201: ||ads*-normal*.zijieapi.com^
+15_filter.txt 63209: ||ad*.zonaplus.tv^
+15_filter.txt 63213: ||api16-access-ttp*.tiktokpangle-b.us^
+15_filter.txt 63219: ||pavoshare.com
+15_filter.txt 63220: ||global-staticplat.cdn.bcebos.com
+15_filter.txt 63239: ||creative*.bidease.com^
+15_filter.txt 63259: ||ads*-normal-*.zijieapi.com^
+15_filter.txt 63279: -adx-*.rayjump.com^
+15_filter.txt 63289: ||ads*.textra.me^
+15_filter.txt 63291: ||ads-*-nfl.yinzcam.com^
+15_filter.txt 63293: ||aan.amazon.*^
+15_filter.txt 63300: ||ads*.production-public.tubi.io^
+15_filter.txt 63301: ||mob*.novanewsapp.com^
+15_filter.txt 63302: ||ad-*.amazonaws.com^
+15_filter.txt 63305: ||ads*-normal-lq.zijieapi.com^
+15_filter.txt 63313: ||v*-ad.video.yximgs.com^
+15_filter.txt 63323: ||ads*.bojijulebu.com^
+15_filter.txt 63326: ||ir-new-cdn-eu-west-*-hb.rayjump.com^
+15_filter.txt 63334: ||adcs-*.myappsget.com^
+15_filter.txt 63353: ||prebid-cache*.ifunny.co^
+15_filter.txt 63355: ||mobiadvert*.livesportmedia.eu^
+15_filter.txt 63358: ||jtbo*.nqxvevk.cn^
+15_filter.txt 63360: ||adx-*.dbankcloud.
+15_filter.txt 63361: ||ad-*.appacc.dbankedge.cn^
+15_filter.txt 63362: ||adx-*.dbankedge.cn^
+15_filter.txt 63363: ||adx-*.op.dbankcloud.com.edgekey.net^
+15_filter.txt 63367: ||api-ad-callback.mobiuspace.net
+15_filter.txt 63413: ||marketplace-*.hyprmx.com^
+15_filter.txt 63416: ||events-*.op.hicloud.com^
+15_filter.txt 63484: ||ms*.applvn.com^
+15_filter.txt 63489: ||api*.bidmachine.io^
+15_filter.txt 63494: ||banner.*.tccapis.com^
+15_filter.txt 63526: ||deliveryengine.adswizz.com
+15_filter.txt 63558: ||api*.batmobi.net^
+15_filter.txt 63560: ||api*.batmobil.net^
+15_filter.txt 63598: ||api.cloudmobi.net
+15_filter.txt 63614: ||adserver.*.yahoodns.net^
+15_filter.txt 63620: ||config.appjolt.com
+15_filter.txt 63624: ://o0e.ru^
+15_filter.txt 63627: ||31.14.252.148^
+15_filter.txt 63629: ||ad*.nexage.com^
+15_filter.txt 63742: ||iad-*.appboy.com^
+15_filter.txt 63771: ||mediate-ios-*.hyprmx.com^
+15_filter.txt 63798: ||production-adserver-*.amazonaws.com^
+15_filter.txt 63802: ||rtbimp-loadbalancer-*.amazonaws.com^
+15_filter.txt 63857: ||deloton.com$important
+15_filter.txt 63859: ||oclasrv.com$important
+15_filter.txt 63986: ||bapi-*.moengage.com^
+15_filter.txt 63998: ||cdn-*.gravityfield.ai^
+15_filter.txt 64041: ||powa-ingest-prod-*.video-player.arcpublishing.com^
+15_filter.txt 64073: ||collector-*.pxchk.net^
+15_filter.txt 64136: ||matomo-demo-*.amazonaws.com^
+15_filter.txt 64141: ||*-default-cn.rum.aliyuncs.com^
+15_filter.txt 64149: ||*-sdk.rum.aliyuncs.com^
+15_filter.txt 64271: ||ecommerce-events*.adscale.com^
+15_filter.txt 64372: ||install*.zonastat.com^
+15_filter.txt 64410: .tvp.tv^
+15_filter.txt 64482: ||log*.zijieapi.com^
+15_filter.txt 64485: ||mssdk*.zijieapi.com^
+15_filter.txt 64489: ||polaris*-normal-*.zijieapi.com^
+15_filter.txt 64493: ||tnc*.zijieapi.com^
+15_filter.txt 64531: ||pixel-*.convertagain.net^
+15_filter.txt 64604: ||collector*.ex.co^
+15_filter.txt 64661: -s2s.sensic.net^
+15_filter.txt 64748: ||collect-v*.51.la^
+15_filter.txt 64753: ||talpa-analytics.
+15_filter.txt 64840: ||px*.mediahills.ru^
+15_filter.txt 64899: ||srmdata-*.com^
+15_filter.txt 65049: ||analytics*.prezly.com^
+15_filter.txt 65079: ||browser-intake-*-datadoghq.com^
+15_filter.txt 65081: ||cl*.k5a.io^
+15_filter.txt 65149: ||livetracker.*.pangea-cms.com^
+15_filter.txt 65246: ||collector-*.tvsquared.com^
+15_filter.txt 65248: ||pixelapi-*.cs.mysamba.tv^
+15_filter.txt 65253: ||logs*.smithsonian.museum^
+15_filter.txt 65267: ||snowplow-collector-*.amazonaws.com^
+15_filter.txt 65270: ||v*.sitecounter.site^
+15_filter.txt 65395: ||tag-based.s3.*.amazonaws.com^
+15_filter.txt 65404: ||suite*.linximpulse.net^
+15_filter.txt 65462: ||eclog*-*.cafe24.com^
+15_filter.txt 65469: ||rum*.cdnvideo.ru^
+15_filter.txt 65470: ||rum*.a.trbcdn.net^
+15_filter.txt 65477: ||110.93.143.144^
+15_filter.txt 65491: ||stat.tiara.
+15_filter.txt 65492: ||track.tiara.
+15_filter.txt 65545: ||stats*.videonow.ru^
+15_filter.txt 65549: ||logs.juspay.in
+15_filter.txt 65597: ||parkdomainreal*.site^
+15_filter.txt 65600: ||i-*.ci360.sas.com^
+15_filter.txt 65715: ||tms-st.cdn.ngenix.net
+15_filter.txt 65733: ||zorosrv.com
+15_filter.txt 65740: ||analytics*.clickdimensions.com^
+15_filter.txt 65758: ||counter*.freecounter.ovh^
+15_filter.txt 65867: ://tru.am^
+15_filter.txt 65875: ||180.76.2.18^
+15_filter.txt 65895: ||66.228.52.30^
+15_filter.txt 65896: ||67.228.151.70^
+15_filter.txt 65898: ||74.55.82.102^
+15_filter.txt 65900: ||79.125.117.123^
+15_filter.txt 66404: ||metrics*.fitanalytics.com^
+15_filter.txt 66536: ||hitcounter.ru
+15_filter.txt 66963: ||query*.petametrics.com^
+15_filter.txt 67122: ||script.opentracker.net
+15_filter.txt 67604: .ay.delivery^
+15_filter.txt 67656: ||sock*-goguardian.pusher.com^
+15_filter.txt 85868: ||tccd.douglas.
+15_filter.txt 107940: .stape.net
+15_filter.txt 107941: |load.gtm.
+15_filter.txt 107942: |load.sgtm.
+15_filter.txt 107943: |load.ss.
+15_filter.txt 107944: |load.sst.
+15_filter.txt 107945: ||thegreatesthits.
+15_filter.txt 141207: ||countly.
+15_filter.txt 141208: ||countly-
+15_filter.txt 141214: |piwik.
+15_filter.txt 141223: ||eflbundles.*.com.tr^
+15_filter.txt 141255: ||log.api-maps.yandex.
+15_filter.txt 141272: ||ja*.apppure.net^
+15_filter.txt 141282: ||ats.gmarket.co.kr
+15_filter.txt 141306: -events-collector.spot.im^
+15_filter.txt 141322: -upaas.ucweb.com^
+15_filter.txt 141330: ||datadog-log.clovergames.io
+15_filter.txt 141359: ||log-v*-boot.capcutapi.com^
+15_filter.txt 141383: ||logs.collector.*.cloud.solarwinds.com^
+15_filter.txt 141386: ||agatha-log-service-*.a.run.app^
+15_filter.txt 141387: ||me9ddf.moebelix.
+15_filter.txt 141412: ||spa-tracker*.spapi.io^
+15_filter.txt 141448: ||tracking.cds.dmm.
+15_filter.txt 141470: ||htm*.hepsiburada.com^
+15_filter.txt 141513: ||touch.yesim.
+15_filter.txt 141516: ||data-track*.yingxiong.com^
+15_filter.txt 141545: ||mon*.tiktokv.us^
+15_filter.txt 141550: ||orderana*.spankbang.com^
+15_filter.txt 141573: ||logstash-*.radio-canada.ca^
+15_filter.txt 141577: ||analytics.vgtimes.
+15_filter.txt 141631: ||beehiiv-adnetwork-production.s*.amazonaws.com^
+15_filter.txt 141640: ||telemetry.*.pvp.net^
+15_filter.txt 141645: ||analyzer*.fc2.com^
+15_filter.txt 141659: ||hba*.hepsiburada.com^
+15_filter.txt 141714: prd.api.bleacherreport.com^
+15_filter.txt 141738: ||apiproxy-log-nlb-1f304af4d3ac01a4.elb.us-east-*.amazonaws.com^
+15_filter.txt 141741: ||customerevents.us-east-*.internal.dradis.netflix.com^
+15_filter.txt 141764: ||sgtm.wimdu.
+15_filter.txt 141825: ||event.*.shoplive.cloud^
+15_filter.txt 141844: ||beacon-*.helpscout.net^
+15_filter.txt 141856: ||client.rum.*.amazonaws.com^
+15_filter.txt 141887: ||staging-*.ispot.tv^
+15_filter.txt 141893: ||stlog*-local.kakao.com^
+15_filter.txt 141904: ||mssdk*.capcutapi.com^
+15_filter.txt 141915: ||mon-*.lemon8-app.com^
+15_filter.txt 141916: ||mon-*.lemon8-app.us^
+15_filter.txt 141917: ||mcs-*.lemon8-app.com^
+15_filter.txt 141918: ||mcs-*.lemon8-app.us^
+15_filter.txt 141939: ||collector-*.px-client.net^
+15_filter.txt 141940: ||collector-*.px-cdn.net^
+15_filter.txt 141944: ||clickstream-*.homedepot.com^
+15_filter.txt 141952: ||acr-*-prd.samsungcloud.tv^
+15_filter.txt 141968: .prod.pr.analytics.console.aws.a2z.com
+15_filter.txt 141971: ||trck.*.prod-na.turntable.sonic.advertising.amazon.dev^
+15_filter.txt 142017: ||cza*.crazygames.com^
+15_filter.txt 142021: ||analytics.ahrefs.
+15_filter.txt 142031: ||servo-report.keepstreams.*^
+15_filter.txt 142117: ||sgtm.fairmont.
+15_filter.txt 142153: ||apple-*.le.com^
+15_filter.txt 142203: ||tracking-v*.a.run.app^
+15_filter.txt 142223: ||backstory.ebay.
+15_filter.txt 142224: ||edgetrksvc.ebay.
+15_filter.txt 142268: ||ubt.tracking.shopee.
+15_filter.txt 142294: ||taplytics-umami.grubhub.com
+15_filter.txt 142317: |c.blue.*.com^|
+15_filter.txt 142330: ||faro-collector-prod-*.grafana.net^
+15_filter.txt 142403: ||*adapt-beacon.awsprodops.movetv.com^
+15_filter.txt 142422: ||hn-ping*.hashnode.com^
+15_filter.txt 142433: ||analytics-v*.eip.telegraph.co.uk^
+15_filter.txt 142474: ||ana*.inews24.com^
+15_filter.txt 142475: ||analytics.streamfab.
+15_filter.txt 142498: ||mcs-*.tiktok.com^
+15_filter.txt 142514: ||adservice.google.
+15_filter.txt 142583: ||a*.smlog.co.kr^
+15_filter.txt 142606: -tracker.biliapi.net^
+15_filter.txt 142607: ||pixel*.production-public.tubi.io^
+15_filter.txt 142636: ||ads-dmp-collect.*.karrotmarket.com^
+15_filter.txt 142646: ||telemetry*.transcend.io^
+15_filter.txt 142648: ||stats.debatdirect.tweedekamer.nl
+15_filter.txt 142666: -telemetry.officeapps.live.com^
+15_filter.txt 142667: -telemetry.officeapps.live.com.mcas.ms^
+15_filter.txt 142672: ||sgtm.fashionunited.
+15_filter.txt 142684: ||pixel-*.rubiconproject.com^
+15_filter.txt 142712: ||pixel.archive.
+15_filter.txt 142728: ||analytics-api.dvdfab.
+15_filter.txt 142729: ||servo-report.dvdfab.
+15_filter.txt 142730: ||collector.xhamster*.
+15_filter.txt 142738: ||sensorsdata*.read.duokan.com^
+15_filter.txt 142747: ||analytics.*.sky.com^
+15_filter.txt 142758: ||uts.auction.co.kr
+15_filter.txt 142763: ||ad*.ettoday.net^
+15_filter.txt 142775: ||stats.zone-telechargement.
+15_filter.txt 142880: ||log*.vietnamplus.vn^
+15_filter.txt 142904: ://r.i.ua^
+15_filter.txt 142921: ||adcounter*.uptolike.ru^
+15_filter.txt 142948: ||analytics-rollout-*.amazonaws.com^
+15_filter.txt 143030: ||analytics*.carambo.la^
+15_filter.txt 143040: ||app-analytics-*.snapchat.com^
+15_filter.txt 143087: ||bi-eventtracker-*.amazonaws.com^
+15_filter.txt 143093: ||button.blogs.yandex.
+15_filter.txt 143096: ||c.bigmir.net
+15_filter.txt 143104: ||c*hit.zerkalo.io^
+15_filter.txt 143117: ||ce-global-track-*.amazonaws.com^
+15_filter.txt 143133: ||clog*.yuanfudao.com^
+15_filter.txt 143140: ||cnt.hd21.
+15_filter.txt 143144: ||cnt.nuvid.
+15_filter.txt 143145: ||cnt.proporn.
+15_filter.txt 143148: ||cnt.tubeon.
+15_filter.txt 143149: ||cnt.vivatube.
+15_filter.txt 143150: ||cnt.winporn.
+15_filter.txt 143152: ||cnt.yeptube.
+15_filter.txt 143154: ||collect-elb-*.amazonaws.com^
+15_filter.txt 143165: ||collector.hamsterix.
+15_filter.txt 143208: ||counter*-yadro*-ru.unblocked.lol^
+15_filter.txt 143214: ||cs*.mp3bars.com^
+15_filter.txt 143278: ||datacollect*.abtasty.com^
+15_filter.txt 143287: ||device-metrics-us*.amazon.com^
+15_filter.txt 143319: ||eum*.instana.io^
+15_filter.txt 143335: ||events-api*.outfit7.com^
+15_filter.txt 143352: ||events*.cre.ma^
+15_filter.txt 143394: ||geoloc*.9cd47096ab1495d8d3b18667f6a52b9c.com^
+15_filter.txt 143395: ||geoloc*.geo20120530.com^
+15_filter.txt 143396: ||geoloc*.geostats.ovh^
+15_filter.txt 143397: ||geoloc*.geovisite.ovh^
+15_filter.txt 143403: ||gscounters.*.gigya.com^
+15_filter.txt 143407: ||gtmdev.jabra.
+15_filter.txt 143426: ||host*.carl-ras.dk^
+15_filter.txt 143427: ||host*.ncoi.nl^
+15_filter.txt 143428: ||host*.nti.nl^
+15_filter.txt 143429: ||host*.polaroid.com^
+15_filter.txt 143430: ||host*.rvshare.com^
+15_filter.txt 143431: ||host*.rigbyandpeller.com^
+15_filter.txt 143432: ||hstats*.hepsiburada.com^
+15_filter.txt 143442: ||img.opentracker.net
+15_filter.txt 143451: ||iptracker-lb-*.amazonaws.com^
+15_filter.txt 143480: ||lively-collect-elb-*.amazonaws.com^
+15_filter.txt 143517: ||log*.aliyuncs.com^
+15_filter.txt 143544: ||lt*.tritondigital.com^
+15_filter.txt 143677: ||pixel*.adswizz.com
+15_filter.txt 143694: ||pxl-*.ozone.ru^
+15_filter.txt 143853: ||ssp*.rtb.beeline.ru^
+15_filter.txt 143854: ||st-*.dynamicyield.com^
+15_filter.txt 143880: ||stat*.1internet.tv^
+15_filter.txt 143978: ||t*.zcvh.net^
+15_filter.txt 144045: ||track.datescan.info
+15_filter.txt 144169: ||trk*.vidible.tv^
+15_filter.txt 144193: ||wa.gmx.
+15_filter.txt 144219: charlestownwyllie.oaklawnnonantum.com^
+15_filter.txt 144287: |a.klaviyo.com^
+15_filter.txt 144290: ||api-*.hismarttv.com^
+15_filter.txt 144291: ||auth-*.hismarttv.com^
+15_filter.txt 144408: ||tracking.*.miui.com^
+15_filter.txt 144426: ||datacollector-*.dt.hicloud.com^
+15_filter.txt 144454: dynamic-report-api.appsflyersdk.com^
+15_filter.txt 144456: -pia.appsflyersdk.com^
+15_filter.txt 144457: -skadsdkless.appsflyersdk.com^
+15_filter.txt 144458: -adrevenue.appsflyersdk.com^
+15_filter.txt 144459: -attr.appsflyersdk.com^
+15_filter.txt 144460: gcdsdk.appsflyersdk.com^
+15_filter.txt 144461: dlsdk.appsflyersdk.com^
+15_filter.txt 144462: ||*cdn-settings.appsflyersdk.com^
+15_filter.txt 144463: ||*launches.appsflyersdk.com^
+15_filter.txt 144464: ||*conversions.appsflyersdk.com^
+15_filter.txt 144465: ||*register.appsflyersdk.com^
+15_filter.txt 144474: dlsdk.appsflyer.com^
+15_filter.txt 144541: ||log*.boomplaymusic.com^
+15_filter.txt 144561: ||log-*.isnssdk.com^
+15_filter.txt 144563: ||ping*.bidease.com^
+15_filter.txt 144575: -datareceiver.aki-game.net^
+15_filter.txt 144599: ||trace-*.free-reels.com^
+15_filter.txt 144633: ||gbxreport-*.wf.com^
+15_filter.txt 144640: ||tracking.geo.*.amazonaws.com^
+15_filter.txt 144644: ||logreport-global-dual.cool*cloud.com^
+15_filter.txt 144645: ||wslog-global-dual.cool*cloud.com^
+15_filter.txt 144646: ||weblogger-wss.cool*cloud.com^
+15_filter.txt 144664: ||track-*.hungrypanda.co^
+15_filter.txt 144665: ||trace-*.hungrypanda.co^
+15_filter.txt 144668: ||collector-*.perimeterx.net^
+15_filter.txt 144677: ||kbox-analytics-prod.s*.amazonaws.com^
+15_filter.txt 144704: ||stats.*.ronghub.com^
+15_filter.txt 144721: ||stats.*.rongnav.com^
+15_filter.txt 144737: ||sdk.fra-*.braze.eu^
+15_filter.txt 144751: ||mssdk.capcutapi.us
+15_filter.txt 144797: ||attr-logs.*.amazonaws.com^
+15_filter.txt 144798: ||event.*.karrotmarket.com^
+15_filter.txt 144822: ||mon*-misc.fqnovel.com^
+15_filter.txt 144837: ||logs-*.rebxgame.com^
+15_filter.txt 144838: -client-report.honkaiimpact3.com^
+15_filter.txt 144839: ||*-datareceiver.aki-game.net^
+15_filter.txt 144841: ||mgbsdk*.matrix.easebar.com^
+15_filter.txt 144842: ||applog*.matrix.easebar.com^
+15_filter.txt 144847: ||tnc16-*.hypic.com^
+15_filter.txt 144855: ||discovery-ios-*.ertelecom.ru^
+15_filter.txt 144877: ||ulog*.gifshow.com^
+15_filter.txt 144886: ||logservice.dbankcloud.cn
+15_filter.txt 144899: ||use-trk*.bluevoox.com^
+15_filter.txt 144902: ||t*.playdigo.live^
+15_filter.txt 144903: ||tnc*.tiktokv.us^
+15_filter.txt 144904: ||tnc*.tiktokv.com^
+15_filter.txt 144905: ||log*-normal-*.tiktokv.com
+15_filter.txt 144918: ||ulog*.kwai-pro.com^
+15_filter.txt 144938: ||mon-v*-boot.capcutapi.com^
+15_filter.txt 144943: ||tnc-va*.capcutapi.com^
+15_filter.txt 144944: ||mon-va*.capcutapi.com^
+15_filter.txt 144945: ||log-va*.capcutapi.com^
+15_filter.txt 144947: -ulogl*.kwai-pro.com^
+15_filter.txt 144948: ||ulog*.kwaipros.com^
+15_filter.txt 144949: ||snowplow-collector.
+15_filter.txt 144956: ||track.*.roku.com^
+15_filter.txt 144962: ||analysis.polarisoffice.com
+15_filter.txt 144967: ||log*-normal-useast1a.lemon8-app.com^
+15_filter.txt 144971: ||hw-sh-pcdn-*.biliapi.net^
+15_filter.txt 144972: ||ali-bj-pcdn-*.biliapi.net^
+15_filter.txt 144974: -rtb.gravite.net^
+15_filter.txt 144975: ||mon*-misc-lf.fqnovel.com^
+15_filter.txt 144978: -applog*.fqnovel.com^
+15_filter.txt 144982: ||sonar*.xy.fbcdn.net^
+15_filter.txt 145003: ||admob-app-id-*.firebaseio.com^
+15_filter.txt 145033: ||analytics-*-nfl.yinzcam.com^
+15_filter.txt 145080: ||report.*.gbqofs.io^
+15_filter.txt 145119: ||logservice-*.platform.dbankcloud.cn^
+15_filter.txt 145120: ||ubacollect-*.cloud.dbankcloud.cn^
+15_filter.txt 145121: ||datacollector-*.dt.dbankcloud.cn^
+15_filter.txt 145131: -spiky.clevertap-prod.com^
+15_filter.txt 145144: ||fp-*it*.fengkongcloud.com^
+15_filter.txt 145153: ||maas-*.phunware.com^
+15_filter.txt 145166: ||imp-*.jampp.com^
+15_filter.txt 145197: ||mapi-log.qoo*.jp^
+15_filter.txt 145211: ||f-log-*.grammarly.io^
+15_filter.txt 145212: ||log*-misc-lf.amemv.com^
+15_filter.txt 145233: ||beacons*.gvt3.com^
+15_filter.txt 145235: ||appanalysis*.banggood.com^
+15_filter.txt 145243: ||liveme-sensors-collect2-*.amazonaws.com^
+15_filter.txt 145251: ||report.*.qq.com^
+15_filter.txt 145263: ||tnc16-*.byteoversea.com^
+15_filter.txt 145266: ||log*.byteoversea.com^
+15_filter.txt 145294: ||log-collector.shopee.
+15_filter.txt 145295: ||seller-log-collector.shopee.
+15_filter.txt 145297: ||api*.amplitude.com^
+15_filter.txt 145336: ||batchlogging*-eu.truecaller.com^
+15_filter.txt 145337: ||batchlogging*-noneu.truecaller.com^
+15_filter.txt 145387: ||tracking-*.trnox.com^
+15_filter.txt 145395: ||report*.appmetrica.webvisor.com^
+15_filter.txt 145398: ||api*.moengage.com^
+15_filter.txt 145399: ||sdk-*.moengage.com^
+15_filter.txt 145405: ||flurry.agentportal-*.yahoodns.net^
+15_filter.txt 145414: ||device-metrics-*.amazon.com^
+15_filter.txt 145415: ||flurry.agentportal.*.yahoodns.net^
+15_filter.txt 145479: /^https:\/\/anon1.gt\d{6}.com/
+15_filter.txt 145481: /^anon1.gt\d{6}.com$/
+15_filter.txt 145484: -logsdk.kwai-pro.com^
+15_filter.txt 145485: -ulog-*.kwai-pro.com^
+15_filter.txt 145486: -ulog-*.kwaipros.com^
+15_filter.txt 145487: -ulog.*.kwai-pro.com^
+15_filter.txt 145488: -ulog.*.kwaipros.com^
+15_filter.txt 145489: -ulog.ksapisrv.com^
+15_filter.txt 145490: -ulog.kwai-pro.com^
+15_filter.txt 145491: -ulog.kwaipros.com^
+15_filter.txt 145492: -ulog.region.kwai-pro.com^
+15_filter.txt 145493: -ulogl2.kwai-pro.com^
+15_filter.txt 145494: -ulogl2.kwaipros.com^
+15_filter.txt 145497: ||ulog-*.ksapisrv.com^
+15_filter.txt 145498: ||ulog.*.ksapisrv.com^
+15_filter.txt 145499: ||ulog.*.kwai-pro.com^
+15_filter.txt 145511: ||mcs.*.tiktok.com^
+15_filter.txt 145513: ||mcs.*.tiktokv.com^
+15_filter.txt 145514: ||log*-normal-*.tiktokv.us^
+15_filter.txt 145516: ||mon*-*.tiktokv.com^
+15_filter.txt 145517: ||rtlog*.tiktokv.us^
+15_filter.txt 145518: ||rtlog*.tiktokv.com^
+15_filter.txt 145522: ||mon*-*.tiktokv.us^
+15_filter.txt 145524: ||mon-*.tiktokv.com^
+15_filter.txt 145528: ||xlog*-*.tiktokv.com^
+15_filter.txt 145530: ||mcs-va-*.tiktokv.com^
+15_filter.txt 145741: ||bc.geocities.
+15_filter.txt 145820: ||collector-*.luigisbox.com^
+15_filter.txt 145941: ||events-proxy.mintlify.com
+15_filter.txt 146058: ||log-*.previewnetworks.com^
+15_filter.txt 146074: ||mcdp-*.outbrain.com^
+15_filter.txt 146408: ||tracker.twenga.
+15_filter.txt 146549: ||d241ujsiy3yht0.cloudfront.net
+15_filter.txt 146553: ||d2fj3s7h83rb61.cloudfront.net
+15_filter.txt 148929: ||tracking*.euroads.fi^
+15_filter.txt 149295: ||aff*.kolektiva.net^
+15_filter.txt 149298: -logging.nextmedia.com^
+15_filter.txt 149418: ||stats2.*.fdnames.com^
+15_filter.txt 149525: ||stats-*.p2pnow.ru^
+15_filter.txt 149560: ||mtm.qdqmedia.com
+15_filter.txt 149655: ||adserver*.euroweeklynews.com^
+15_filter.txt 149673: ||184.106.248.76^
+15_filter.txt 149674: ||200.72.40.46^
+15_filter.txt 149806: ||broredir*s.site^
+15_filter.txt 149861: ||vst.videolink.
+15_filter.txt 149922: ||banner.kiev.ua
+15_filter.txt 149930: ||orbit*.lun.ua^
+15_filter.txt 149946: .infox.sg^
+15_filter.txt 150142: ||yxhstwzjbu.info
+15_filter.txt 150144: .potopy.ru^
+15_filter.txt 150145: .vipko.ru^
+15_filter.txt 150188: ||q*-publick.club^
+15_filter.txt 150203: ||v.tzbox*.xyz^
+15_filter.txt 150283: ||cdn*.swaxis.com^
+15_filter.txt 150321: .adonweb.ru^
+15_filter.txt 150322: .allalla.com^
+15_filter.txt 150323: .cpa1.ru^
+15_filter.txt 150324: .ecommtools.com^
+15_filter.txt 150325: .gameleads.ru^
+15_filter.txt 150326: .is.traff-numerical.info^
+15_filter.txt 150327: .piccash.net^
+15_filter.txt 150328: .sexplaycam.com^
+15_filter.txt 150329: .tovarro.com^
+15_filter.txt 150330: .tpm.pw^
+15_filter.txt 150331: .webhop.net^
+15_filter.txt 150332: ://*.a-akamaihd.com^
+15_filter.txt 150333: ://jhf.ru^
+15_filter.txt 150334: ://kma.biz^
+15_filter.txt 150344: ||37.220.26.135^
+15_filter.txt 150345: ||37.220.26.136^
+15_filter.txt 150346: ||37.220.26.137^
+15_filter.txt 150351: ||77.247.178.41^
+15_filter.txt 150352: ||78.140.134.198^
+15_filter.txt 150353: ||78.140.149.216^
+15_filter.txt 150357: ||88.85.75.147^
+15_filter.txt 150358: ||88.85.77.92^
+15_filter.txt 150359: ||91.207.192.31^
+15_filter.txt 150360: ||95.211.125.226^
+15_filter.txt 150399: ||admulti.
+15_filter.txt 150410: ||adserver1.
+15_filter.txt 150441: ||afdads.com
+15_filter.txt 150451: ||alishop*.ru^
+15_filter.txt 150453: ||allmt.com
+15_filter.txt 150456: ||almosto.com
+15_filter.txt 150491: ||banner-in.net
+15_filter.txt 150524: ||bondzgi*.
+15_filter.txt 150557: ||clickvip.ru
+15_filter.txt 150596: ||dl.qcash.ws
+15_filter.txt 150605: ||eberalofe.pro
+15_filter.txt 150618: ||et-code.ru
+15_filter.txt 150636: ||flipflapflo.
+15_filter.txt 150646: ||gbs.gamingmedia.ru
+15_filter.txt 150662: ||globalteaser.ru
+15_filter.txt 150671: ||gonews*.net^
+15_filter.txt 150672: ||goodadvert.
+15_filter.txt 150699: ||icq-window.
+15_filter.txt 150700: ||icqwindow.
+15_filter.txt 150709: ||imgg.dt00.net
+15_filter.txt 150724: ||iphone-caviar.ru*entranceId
+15_filter.txt 150737: ||js.goods.redtram.com
+15_filter.txt 150778: ||letssex.
+15_filter.txt 150787: ||linkexchange.
+15_filter.txt 150799: ||loneday.com
+15_filter.txt 150828: ||mediacontext.
+15_filter.txt 150829: ||medialand.
+15_filter.txt 150848: ||minitds-*.info^
+15_filter.txt 150850: ||mjavagames.ru
+15_filter.txt 150859: ||moneymaiker.ru
+15_filter.txt 150860: ||moneysyst.biz
+15_filter.txt 150868: ||mptri.net
+15_filter.txt 150903: ||obislame.ru
+15_filter.txt 150944: ||platinumcode.net
+15_filter.txt 150948: ||pop-parad.
+15_filter.txt 150949: ||pop-under.
+15_filter.txt 150951: ||poptraf.
+15_filter.txt 150952: ||popunder.
+15_filter.txt 150953: ||popupclick.
+15_filter.txt 150954: ||popuptraf.
+15_filter.txt 150956: ||poshalim.
+15_filter.txt 150965: ||promoblocks.ru
+15_filter.txt 150968: ||psma01.com
+15_filter.txt 150969: ||psma02.com
+15_filter.txt 150970: ||psma03.com
+15_filter.txt 150989: ||rb*.design.ru^
+15_filter.txt 150997: ||real*traf.ru^
+15_filter.txt 151002: ||rebill.me
+15_filter.txt 151030: ||rotaban.
+15_filter.txt 151031: ||rotabanner.
+15_filter.txt 151032: ||rotator.
+15_filter.txt 151037: ||ruscams.com
+15_filter.txt 151040: ||rusrestbest.
+15_filter.txt 151075: ||smart.allocine.fr
+15_filter.txt 151077: ||sn00.net
+15_filter.txt 151094: ||subnewss*.net^
+15_filter.txt 151095: ||superpcexpert.ru
+15_filter.txt 151101: ||talkfusion.com
+15_filter.txt 151122: ||timedirect.ru
+15_filter.txt 151124: ||tiz.neosmi.ru
+15_filter.txt 151139: ||tmserver-2.net
+15_filter.txt 151174: ||u*.takru.com^
+15_filter.txt 151182: ||under-click.
+15_filter.txt 151183: ||underclick.
+15_filter.txt 151198: ||v.newsportal*.ru^
+15_filter.txt 151216: ||videoclick.
+15_filter.txt 151217: ||videoclik.
+15_filter.txt 151246: ||w*statistics.info^
+15_filter.txt 151247: ||web-rotation.net
+15_filter.txt 151248: ||web-visor.
+15_filter.txt 151294: ||yottos.com
+15_filter.txt 151308: ||193.200.64.20^
+15_filter.txt 151312: /62.76.25.2(7|8)/
+15_filter.txt 151314: /193.200.64.24:/
+15_filter.txt 151315: ||193.200.64.24^
+15_filter.txt 151318: ||206.54.181.250^
+15_filter.txt 151323: ||62.76.25.27^
+15_filter.txt 151324: ||62.76.25.28^
+15_filter.txt 151327: ||45.82.68.79^
+15_filter.txt 151381: ||dw-informer-*.newsru.com^
+15_filter.txt 151414: ||banner*.kinogo.by^
+15_filter.txt 151431: ||an.yandex.
+15_filter.txt 151584: ://sportframe*.co^
+15_filter.txt 151586: ://sportframe*.org^
+15_filter.txt 151593: ://r.reklam*.com^
+15_filter.txt 151594: ://say.ac^
+15_filter.txt 151596: ||ad*.bilgin.pro^
+15_filter.txt 151597: ||ad*.tmgrup.com.tr^
+15_filter.txt 151623: ||basvformu*.xyz^
+15_filter.txt 151656: ||partner.superbahisaffiliates*.com^
+15_filter.txt 152053: *ad.durasite.net^
+15_filter.txt 152071: ||bar*.shinobi.jp^
+15_filter.txt 152087: ||94.130.167.163^
+15_filter.txt 152209: ||tw-726620180914.*.run.app^
+15_filter.txt 152245: ||zbb.bbb.*.pics^
+15_filter.txt 152252: ||fjuga.top
+15_filter.txt 152359: ||192.151.218.66^
+15_filter.txt 152360: ||23.224.89.2^
+15_filter.txt 152368: ||156.233.32.123^
+15_filter.txt 152379: ||207.148.44.179^
+15_filter.txt 152381: /^(mon|tue|wed|thu|fri|sat|sun)\d{1,2}\.\w{2}\d{1,6}\w{4}\.com$/
+15_filter.txt 152400: ||ad*.on.cc^
+15_filter.txt 152442: ||h3v9p8x2q1r7-agckaeh6g2ehcaes.*.azurewebsites.net^
+15_filter.txt 153617: -ad123-
+15_filter.txt 153618: -banner-ads.
+15_filter.txt 153619: -banner728x90.
+15_filter.txt 153620: -iklan-gif-
+15_filter.txt 153621: -iklan1.
+15_filter.txt 153622: -iklan2.
+15_filter.txt 153623: -iklan789-
+15_filter.txt 153624: -ikln.
+15_filter.txt 153625: -720x90-
+15_filter.txt 153626: -728-x-90-
+15_filter.txt 153627: -728x90a.
+15_filter.txt 153628: .1080.x.90.
+15_filter.txt 153629: @@/\.(gif|jpe?g|png|webp)#(\/?.+)?(\/(ad)s?\/|\/ad-)/
+15_filter.txt 153631: -bandarkiu.
+15_filter.txt 153632: -tototix.gif
+15_filter.txt 153655: ||admicro*.vcmedia.vn^
+15_filter.txt 153778: ||log-*.epicdn.me^
+15_filter.txt 153779: ||log-*.zadn.vn^
+15_filter.txt 153801: ||matomo.*.vn^
+15_filter.txt 153802: ||mautic.*.vn^
+15_filter.txt 153842: ||piwik.*.vn^
+15_filter.txt 153860: ||quangcao-*.epicdn.me^
+15_filter.txt 159163: ||ad*.gyaloglo.hu^
+15_filter.txt 159164: ||ad*.mellesleg.hu^
+15_filter.txt 159181: ||advert*.ultraweb.hu^
+15_filter.txt 159182: ||adverticum.*.hu^
+15_filter.txt 159184: ||as*.prog.hu^
+15_filter.txt 159191: ||etargetnet.*.hu^
+15_filter.txt 159202: ||rehs.*.hu^
+15_filter.txt 159204: ||sher.*.hu^
+15_filter.txt 159245: ||asd8900.oss-*.aliyuncs.com^
+15_filter.txt 159246: ||ky891.oss-*.aliyuncs.com^
+15_filter.txt 159247: ||tupian888.*.bcebos.com^
+15_filter.txt 159248: ||vns86.oss-*.aliyuncs.com^
+15_filter.txt 159249: ||zhizhizhizhi.oss-*.aliyuncs.com^
+15_filter.txt 159250: ||107.167.16.*.gif
+15_filter.txt 159251: ||107.167.22.*.gif
+15_filter.txt 159252: ||121.204.246.*.gif
+15_filter.txt 159253: ||38.33.15.*.gif
+15_filter.txt 159256: ||67.21.92.*.gif
+15_filter.txt 164117: ||1024wanzhai.
+15_filter.txt 164169: ||adi*.cnool.net^
+15_filter.txt 164200: ||ax.*.ifeng.com^
+15_filter.txt 164284: ||impservice*.yodao.com^
+15_filter.txt 164285: ||impservice*.youdao.com^
+15_filter.txt 164287: ||itv.hexun.com
+15_filter.txt 164290: ||ja*.gamersky.com^
+15_filter.txt 164291: ||js*.abolezi.com^
+15_filter.txt 164327: ||sam*.baby-kingdom.com^
+15_filter.txt 164328: ||same*.stockstar.com^
+15_filter.txt 164331: ||sax*.sina.
+15_filter.txt 164367: ||ya*.dwstatic.com^
+15_filter.txt 164378: @@||ad.10010.com^
+15_filter.txt 164379: @@||ad.abchina.com^
+15_filter.txt 164380: @@||ad.kazakinfo.com^
+15_filter.txt 164381: @@||ad.ourgame.com^
+15_filter.txt 164382: @@||adcdn.pingan.com^
+15_filter.txt 164383: @@||advert.kf5.com^
+15_filter.txt 164384: @@||api.ads.tvb.com^
+15_filter.txt 164385: @@||app-advertise.zhihuishu.com^
+15_filter.txt 164386: @@||buyad.bi-xenon.cn^
+15_filter.txt 164387: @@||captcha.su.baidu.com^
+15_filter.txt 164388: @@||img.ads.tvb.com^
+15_filter.txt 164503: ||a*.chajiaotong.com^
+15_filter.txt 164590: ||ac*.786ip.com^
+15_filter.txt 164591: ||ac*.faxingchina.com^
+15_filter.txt 164609: ||at*.doubanio.com^
+15_filter.txt 164664: ||bdcpro*.techweb.com.cn^
+15_filter.txt 164674: ||bdlm*.hc360.com^
+15_filter.txt 164736: ||d*.ruiwen.com^
+15_filter.txt 164737: ||d*.xinshipu.com^
+15_filter.txt 164763: ||dm*.yxlady.com^
+15_filter.txt 164787: ||dn*.ixinwei.com^
+15_filter.txt 164808: ||fanpingbi*.gaokao.com^
+15_filter.txt 164816: ||fpb*.51edu.com^
+15_filter.txt 164819: ||fpb1.chinacar.
+15_filter.txt 164829: ||gcw*.2liang.cn^
+15_filter.txt 164989: ||qpb*.sohu.com^
+15_filter.txt 164997: ||res*.pinpai8.cn^
+15_filter.txt 165026: ||static*.365inews.com^
+15_filter.txt 165045: ||uc*.atobo.com^
+15_filter.txt 165052: ||union*.365inews.com^
+15_filter.txt 165105: ||ysdm*.ys137.com.cn^
+15_filter.txt 165160: analytics-*.aasaam.com
+15_filter.txt 165549: ||get*bannerads-6egeg2u34q-du.a.run.app^
+15_filter.txt 165564: ||pangolin*.sgsnssdk.com^
+15_filter.txt 165566: ||ad.*.doubleclick.net^
+15_filter.txt 165567: ||cdn-adn-*.rayjump.com^
+15_filter.txt 165648: ||iad-*.braze.com^
+15_filter.txt 165728: ||adimg*.search.naver.net^
+15_filter.txt 165729: ||ad*.thisisgame.com^
+15_filter.txt 165760: ||ad*.wisenut.co.kr^
+15_filter.txt 165766: ||adservice.google.co.*
+15_filter.txt 165768: ||ads-*.v.ssp.yahoo.com^
+15_filter.txt 165791: ||mobileanalytics.*.amazonaws.com^
+15_filter.txt 165852: ||logger-*.dailymotion.com^
+15_filter.txt 165856: ||metric*.rediff.com^
+15_filter.txt 165907: ||t.delfi.
+15_filter.txt 165915: ||track.zalando.
+15_filter.txt 165927: ||tracking.olx.
+15_filter.txt 165939: ||dualstack.adbert-web-lbs-*.elb.amazonaws.com^
+15_filter.txt 165952: ||s*.adduplex.com^
+15_filter.txt 165974: @@||om-ssl.consorsbank.de^|
+15_filter.txt 165976: @@|cdn.taboola.com^|
+15_filter.txt 165978: @@||unsubscribe.lhinsights.com^|
+15_filter.txt 165981: @@||belgium.wolterskluwer.com^|
+15_filter.txt 165983: @@||ssai.aniview.com^|
+15_filter.txt 165986: @@||sedge.nfl.com^|
+15_filter.txt 165989: @@||data.orders.costco.com^|
+15_filter.txt 165991: @@||link.meet5.net^|
+15_filter.txt 165994: @@||link.nzz.ch^|
+15_filter.txt 165997: @@||content.viralize.tv^|
+15_filter.txt 165999: @@||www.datadoghq-browser-agent.com^|
+15_filter.txt 166001: @@||itoya.ec-optimizer.com^|
+15_filter.txt 166003: @@||go.redirectingat.com^|
+15_filter.txt 166006: @@||ref.rbauction.com^|
+15_filter.txt 166008: @@||puzzles-games-api.gp-prod.conde.digital^|
+15_filter.txt 166011: @@||news.warhammer.com^|
+15_filter.txt 166014: @@||prod.impartner.live^|
+15_filter.txt 166017: @@||cdn.atmedia.hu^|
+15_filter.txt 166020: @@||trk.ecomm.lenovo.com^|
+15_filter.txt 166021: @@||s.bluecore.com^|
+15_filter.txt 166024: @@|affiliate.notion.so^|
+15_filter.txt 166026: @@|www3.doubleclick.net^|
+15_filter.txt 166029: @@||acs-m.daraz.pk^|
+15_filter.txt 166032: @@||taiga.maven.io^|
+15_filter.txt 166035: @@||tlh.gedidigital.it^|
+15_filter.txt 166038: @@||smtp.focusgroupresearch.com^|
+15_filter.txt 166040: @@||ap01.records.in.treasuredata.com^|
+15_filter.txt 166043: @@||click.avs.io^|
+15_filter.txt 166045: @@||link.sylikes.com^|
+15_filter.txt 166046: @@||rd.bizrate.com^|
+15_filter.txt 166048: @@|www.daraz.pk^|
+15_filter.txt 166049: @@|daraz.com^|
+15_filter.txt 166051: @@||sbs.demdex.net^|
+15_filter.txt 166053: @@||cl.link-ag.net^|
+15_filter.txt 166055: @@||action.metaffiliation.com^|
+15_filter.txt 166058: @@||www.dogpile.com^|
+15_filter.txt 166062: @@||acs-m.daraz.com.bd^|
+15_filter.txt 166064: @@||f-gear.ec-optimizer.com^|
+15_filter.txt 166068: @@||get.neofinancial.com^|
+15_filter.txt 166070: @@||hidive.com^|
+15_filter.txt 166072: @@||learn.khanacademy.org^|
+15_filter.txt 166075: @@||res.ads.nicovideo.jp^|
+15_filter.txt 166079: @@||sax.sina.com.cn^|
+15_filter.txt 166082: @@||linka.page^|
+15_filter.txt 166084: @@||track.webgains.com^|
+15_filter.txt 166087: @@||secureimage.securedataimages.com^|
+15_filter.txt 166090: @@||infra-api.newrelic.com^|
+15_filter.txt 166093: @@||tms.capitalone.com^|
+15_filter.txt 166095: @@||redir.ownpage.fr^|
+15_filter.txt 166098: @@||tr.rdrtr.com^|
+15_filter.txt 166102: @@||media-consumer365.desigual.com^|
+15_filter.txt 166104: @@||cdn.us*.exponea.com^|
+15_filter.txt 166105: @@||crm-cdn.peek-cloppenburg.com^|
+15_filter.txt 166107: @@||public-cis.exponea.com^|
+15_filter.txt 166109: @@||cdn.rozetka.com.ua^|
+15_filter.txt 166112: @@||vcentry2.valuecommerce.ne.jp^|
+15_filter.txt 166114: @@||recommender.scarabresearch.com^|
+15_filter.txt 166117: @@||refer.discover.com^|
+15_filter.txt 166119: @@||cmp.inmobi.com^|
+15_filter.txt 166121: @@||data.digital.costco.ca^|
+15_filter.txt 166122: @@||data.digital.costco.com^|
+15_filter.txt 166124: @@||api.karte.io^|
+15_filter.txt 166126: @@||sponsor.nitropay.com^|
+15_filter.txt 166128: @@||click.cptrack.de^|
+15_filter.txt 166131: @@|ezodn.com^|
+15_filter.txt 166133: @@||gate.first-id.fr^|
+15_filter.txt 166136: @@||leechers-paradise.org^|
+15_filter.txt 166139: @@||data-*.herz-fuer-tiere.de^|
+15_filter.txt 166141: @@||go.adjust.com^|
+15_filter.txt 166144: @@||clickattr.wayup.com^|
+15_filter.txt 166149: @@||remembering.ca^|
+15_filter.txt 166150: @@||obituaries.toacorn.com^|
+15_filter.txt 166151: @@||obituaries.thestar.com^|
+15_filter.txt 166152: @@||obituaries.therecord.com^|
+15_filter.txt 166154: @@||catchup.thisisdax.com^|
+15_filter.txt 166156: @@||px.a8.net^|
+15_filter.txt 166159: @@||cdn.duurzaam.greenchoice.nl^|
+15_filter.txt 166162: @@||c.office.com^|
+15_filter.txt 166164: @@||surveymyopinion.researchnow.com^|
+15_filter.txt 166167: @@||e.customeriomail.com^|
+15_filter.txt 166170: @@||partner.everydays.de^|
+15_filter.txt 166172: @@||api.docodoco.jp^|
+15_filter.txt 166174: @@||js.monitor.azure.com^|
+15_filter.txt 166176: @@||link.morningbrew.com^|
+15_filter.txt 166178: @@||click.appcast.io^|
+15_filter.txt 166180: @@||anwb.webpower.eu^|
+15_filter.txt 166182: @@||bcicl.*.evergage.com^|
+15_filter.txt 166184: @@||torimochi.line-apps.com^|
+15_filter.txt 166186: @@|core.crazyegg.com^|
+15_filter.txt 166187: @@|app.crazyegg.com^|
+15_filter.txt 166189: @@||oa.tr.line.me^|
+15_filter.txt 166191: @@||stash.roistat.com^|
+15_filter.txt 166193: @@||static-v*.trbo.com^|
+15_filter.txt 166194: @@||api-v*.trbo.com^|
+15_filter.txt 166196: @@||brm-core-*.brsrvr.com^|
+15_filter.txt 166199: @@||marketing.net.idealo-partner.com^|
+15_filter.txt 166201: @@||netatmo.commander1.com^|
+15_filter.txt 166203: @@||vcentry3.valuecommerce.ne.jp^|
+15_filter.txt 166208: @@-ds.metric.gstatic.com^|
+15_filter.txt 166210: @@||id.i2i.jp^|
+15_filter.txt 166212: @@||thumbnail.thench.net^|
+15_filter.txt 166214: @@||validate.perfdrive.com^|
+15_filter.txt 166216: @@||ia.hit.interia.pl^|
+15_filter.txt 166219: @@||analytics.amplitude.com^|
+15_filter.txt 166221: @@|adsterra.com^|
+15_filter.txt 166222: @@|ads.adsterra.com^|
+15_filter.txt 166223: @@|publishers.adsterra.com^|
+15_filter.txt 166224: @@|beta.publishers.adsterra.com^|
+15_filter.txt 166225: @@|partners.adsterra.com^|
+15_filter.txt 166226: @@|beta.partners.adsterra.com^|
+15_filter.txt 166227: @@|affiliates.adsterra.com^|
+15_filter.txt 166228: @@|beta.affiliates.adsterra.com^|
+15_filter.txt 166229: @@|help-advertisers.adsterra.com^|
+15_filter.txt 166232: @@||goto.target.com^|
+15_filter.txt 166233: @@||goto.walmart.com^|
+15_filter.txt 166235: @@||citiintl.122.2o7.net^|
+15_filter.txt 166237: @@||ma135-r.analytics.edgekey.net^|
+15_filter.txt 166239: @@||79423.analytics.edgekey.net^|
+15_filter.txt 166243: @@||classliving.lpages.co^|
+15_filter.txt 166245: @@||home.focusatwill.com^|
+15_filter.txt 166247: @@||health.halodoc.com^|
+15_filter.txt 166250: @@||promo.gramedia.com^|
+15_filter.txt 166252: @@||support-beacon.nakanohito.jp^|
+15_filter.txt 166253: @@||support-widget.nakanohito.jp^|
+15_filter.txt 166255: @@||afi-b.com^|
+15_filter.txt 166257: @@||daikoku.ebis.ne.jp^|
+15_filter.txt 166259: @@||envato.market^|
+15_filter.txt 166262: @@||ac.ebis.ne.jp^|
+15_filter.txt 166265: @@||email.awscloud.com^|
+15_filter.txt 166268: @@||oneline.nextday.media^|
+15_filter.txt 166270: @@|ftp.bmp.ovh^|
+15_filter.txt 166272: @@||cloud.notification-naviextras.com^|
+15_filter.txt 166274: @@||email.elitedangerous.com^|
+15_filter.txt 166276: @@||links.e.theatlantic.com^|
+15_filter.txt 166278: @@||app.appsflyer.com^|
+15_filter.txt 166280: @@||email.procook.co.uk^|
+15_filter.txt 166282: @@||omsc.kpn.com^|
+15_filter.txt 166284: @@||logentries.com^|
+15_filter.txt 166286: @@||email.*.skyeng.ru^|
+15_filter.txt 166288: @@||go.scorptec.com.au^|
+15_filter.txt 166290: @@||links.getblueshift.com^|
+15_filter.txt 166292: @@||click.trafficguard.ai^|
+15_filter.txt 166294: @@||hb.afl.rakuten.co.jp^|
+15_filter.txt 166295: @@||pt.afl.rakuten.co.jp^|
+15_filter.txt 166297: @@||proto2ad.durasite.net^|
+15_filter.txt 166299: @@||tags.crwdcntrl.net^|
+15_filter.txt 166302: @@||official.paymaya.com^|
+15_filter.txt 166304: @@|statcounter.com^|
+15_filter.txt 166305: @@||www.statcounter.com^|
+15_filter.txt 166306: @@||gs.statcounter.com^|
+15_filter.txt 166309: @@||click.virt.s*.exacttarget.com^|
+15_filter.txt 166310: @@||click.virt.exacttarget.com^|
+15_filter.txt 166313: @@||mc.*.exacttarget.com^|
+15_filter.txt 166315: @@||login.sendpulse.com^|
+15_filter.txt 166317: @@||a.sellpoint.net^|
+15_filter.txt 166319: @@||tlaol.com^|
+15_filter.txt 166321: @@||admin.dable.io^|
+15_filter.txt 166323: @@||log.mmstat.com^|
+15_filter.txt 166326: @@||click.simba.taobao.com^|
+15_filter.txt 166328: @@||cs.silverpop.com^|
+15_filter.txt 166330: @@||grp07.ias.rakuten.co.jp^|
+15_filter.txt 166332: @@||cindyholbrook.lpages.co^|
+15_filter.txt 166336: @@||pagead.l.doubleclick.net^|
+15_filter.txt 166337: @@||www.googleadservices.com^|
+15_filter.txt 166339: @@||my.tealiumiq.com^|
+15_filter.txt 166341: @@||artifactory.appodeal.com^|
+15_filter.txt 166343: @@||www.jdoqocy.com^|
+15_filter.txt 166344: @@||cj.dotomi.com^|
+15_filter.txt 166346: @@||intersport.peerius.com^|
+15_filter.txt 166348: @@||cutcaptcha.com^|
+15_filter.txt 166350: @@||forum.notebookreview.com^|
+15_filter.txt 166352: @@||radiofrance.targetspot.com^|
+15_filter.txt 166354: @@||awin1.com^|
+15_filter.txt 166356: @@||app.adjust.com^|
+15_filter.txt 166358: @@||feed.adrelayer.com^|
+15_filter.txt 166360: @@||redirect.appmetrica.yandex.com^|
+15_filter.txt 166362: @@||guce.advertising.com^|
+15_filter.txt 166364: @@||a.adwolf.ru^|
+15_filter.txt 166367: @@||cm-beacon.nakanohito.jp^|
+15_filter.txt 166368: @@||cm-widget.nakanohito.jp^|
+15_filter.txt 166370: @@||ads.tdbank.com^|
+15_filter.txt 166372: @@||nineto5mac-d.openx.net^|
+15_filter.txt 166374: @@||redir.tradedoubler.com^|
+15_filter.txt 166375: @@||clk*.tradedoubler.com^|
+15_filter.txt 166377: @@||href.li^|
+15_filter.txt 166379: @@||str.hit.gemius.pl^|
+15_filter.txt 166381: @@||track.rutarget.ru^|
+15_filter.txt 166383: @@||5471782.fls.doubleclick.net^|
+15_filter.txt 166385: @@||omniture.walmart.com^|
+16_filter_1.txt 133: ||direct-specific.com
+16_filter_1.txt 197: ||ad-host-backup-*.aliyuncs.com^
+16_filter_1.txt 226: ||107.148.45.21^
+16_filter_1.txt 231: ||198.23.198.110^
+16_filter_1.txt 232: ||185.216.143.121^
+16_filter_1.txt 315: ||st-n.ads*-adnow.com^
+16_filter_1.txt 341: ||reachableads-av.*.amazonaws.com^
+16_filter_1.txt 368: ||185.149.120.173^
+16_filter_1.txt 369: /^139\.45\.197\.2(4[0-9]|5[0-4]):/
+16_filter_1.txt 370: /^139\.45\.197\.2(4[0-9]|5[0-4])/
+16_filter_1.txt 377: ||157.90.183.248^
+16_filter_1.txt 399: ||5.61.55.143^
+16_filter_1.txt 400: ||37.1.213.100^
+16_filter_1.txt 403: ||ads.livetv*.me^
+16_filter_1.txt 411: ||counter*.stat.ovh^
+16_filter_1.txt 464: ||fxhpaoxqyajvmdg.
+16_filter_1.txt 465: ||rgfftupf.
+16_filter_1.txt 531: ||clk.rtpdn*.com^
+16_filter_1.txt 714: ||teleriumads-*.netdna-ssl.com^
+16_filter_1.txt 754: ||putrr*.com^
+16_filter_1.txt 757: .bbelements.com^
+16_filter_1.txt 758: .doublepimp.com^
+16_filter_1.txt 772: ||block.s*block.com^
+16_filter_1.txt 795: ||mf*.advantage.as^
+16_filter_1.txt 811: ||www.fuze-hill*.xyz^
+16_filter_1.txt 812: ||www.fuze-sea*.xyz^
+16_filter_1.txt 821: ||154.199.255.184^
+16_filter_1.txt 823: ||88.208.46.222^
+16_filter_1.txt 830: ||103.224.182.210^
+16_filter_1.txt 831: /^94\.242\.247\.(2[0-9]|3[0-2]):/
+16_filter_1.txt 832: /^94\.242\.247\.(2[0-9]|3[0-2])/
+16_filter_1.txt 833: /^23\.109\.170\.(18[7-9]|19[0-2])$/
+16_filter_1.txt 834: /^23\.109\.73\.\d{3}/
+16_filter_1.txt 835: /^188\.42\.84\.\d{1,3}/
+16_filter_1.txt 836: /^139\.45\.19[5-7]\.\d{1,3}/
+16_filter_1.txt 837: ||193.200.64.30^
+16_filter_1.txt 838: ||193.200.64.31^
+16_filter_1.txt 839: ||193.200.65.61^
+16_filter_1.txt 840: ||212.117.190.201^
+16_filter_1.txt 841: ||212.117.190.202^
+16_filter_1.txt 842: ||212.117.190.210^
+16_filter_1.txt 843: ||212.117.190.211^
+16_filter_1.txt 844: ||212.117.190.212^
+16_filter_1.txt 845: ||212.117.190.213^
+16_filter_1.txt 846: ||91.204.226.224^
+16_filter_1.txt 847: ||57.128.71.215^
+16_filter_1.txt 848: ||172.240.108.68^
+16_filter_1.txt 849: ||172.240.108.76^
+16_filter_1.txt 850: ||172.240.108.84^
+16_filter_1.txt 851: ||172.240.127.234^
+16_filter_1.txt 852: ||172.240.253.132^
+16_filter_1.txt 853: ||185.246.188.124^
+16_filter_1.txt 854: ||185.246.188.125^
+16_filter_1.txt 855: ||192.243.59.12^
+16_filter_1.txt 856: ||192.243.59.13^
+16_filter_1.txt 857: ||192.243.59.20^
+16_filter_1.txt 858: ||192.243.61.225^
+16_filter_1.txt 859: ||192.243.61.227^
+16_filter_1.txt 860: ||194.63.140.103^
+16_filter_1.txt 861: ||194.63.143.61^
+16_filter_1.txt 862: ||194.63.143.96^
+16_filter_1.txt 863: /^142\.91\.159\.(1[5-9]\d|2[0-4]\d|250):(80|443)$/
+16_filter_1.txt 864: ||188.72.219.36^
+16_filter_1.txt 2963: ||*.exaapi.com^
+16_filter_1.txt 6133: ||advertising.civitai.
+16_filter_1.txt 6150: ||*two-gun-volley.pages.dev^
+16_filter_1.txt 6153: ||id-msp.newsbreak.com
+16_filter_1.txt 6179: ||advert*.livesportmedia.eu^
+16_filter_1.txt 6281: ||prebid-*.rubiconproject.com^
+16_filter_1.txt 6437: ||pijama.*.elasticbeanstalk.com^
+16_filter_1.txt 6455: wykop.pl$badfilter
+16_filter_1.txt 6472: .n.2.1.js^
+16_filter_1.txt 6473: .n.2.1.l60.js^
+16_filter_1.txt 6474: .1.1.1.l80.js^
+16_filter_1.txt 6475: .3.n.2.1.l50.js
+16_filter_1.txt 6476: .3.n.2.2.l30.js
+16_filter_1.txt 6477: ||109.123.233.251^
+16_filter_1.txt 6486: ://mine.torrent.pw^
+16_filter_1.txt 6487: ||hostingcloud.*.wasm^
+16_filter_1.txt 6490: vkcdnservice.appspot.com^
+16_filter_1.txt 6523: ||freecontent.date
+16_filter_1.txt 6524: ||freecontent.stream
+16_filter_1.txt 6525: ||s*.skencituer.com^
+16_filter_1.txt 16786: ||daleelerah.info
+16_filter_1.txt 23321: ||get-me-wow.
+16_filter_1.txt 37247: INVALID_TLD(comi): ||organismdespite.comi^
+16_filter_1.txt 57367: INVALID_TLD(local): ||youtube.local^
+16_filter_1.txt 58912: INVALID_TLD(cim): ||zupee.cim^
+16_filter_1.txt 60651: /(https?:\/\/)213\.32\.115\..{100,}/
+16_filter_1.txt 60652: /(https?:\/\/)217\.182\.11\..{100,}/
+16_filter_1.txt 60653: /(https?:\/\/)51\.195\.31\..{100,}/
+16_filter_1.txt 60738: ||util-*.simply-hentai.com^
+16_filter_1.txt 60886: ||allsportsflix.
+16_filter_1.txt 62683: ||*.libaishuo.com^
+16_filter_1.txt 62701: ||adv0*.msa.cdn.mediaset.net^
+16_filter_1.txt 62727: /^https:\/\/(a|c)\.[0-9a-f]{56}\.com$/
+16_filter_1.txt 62728: /^(a|c)\.[0-9a-f]{56}\.com$/
+16_filter_1.txt 62751: ||54.222.186.106^
+16_filter_1.txt 62774: ||adapi*.boomplaymusic.com^
+16_filter_1.txt 62825: ||nelonenmedia-pmd-ads-*.nm-stream.nelonenmedia.fi^
+16_filter_1.txt 62835: ||23.224.199.96^
+16_filter_1.txt 62836: ||23.224.199.74^
+16_filter_1.txt 62852: ||ads*-normal*.zijieapi.com^
+16_filter_1.txt 62860: ||ad*.zonaplus.tv^
+16_filter_1.txt 62864: ||api16-access-ttp*.tiktokpangle-b.us^
+16_filter_1.txt 62870: ||pavoshare.com
+16_filter_1.txt 62871: ||global-staticplat.cdn.bcebos.com
+16_filter_1.txt 62890: ||creative*.bidease.com^
+16_filter_1.txt 62910: ||ads*-normal-*.zijieapi.com^
+16_filter_1.txt 62930: -adx-*.rayjump.com^
+16_filter_1.txt 62940: ||ads*.textra.me^
+16_filter_1.txt 62942: ||ads-*-nfl.yinzcam.com^
+16_filter_1.txt 62944: ||aan.amazon.*^
+16_filter_1.txt 62951: ||ads*.production-public.tubi.io^
+16_filter_1.txt 62952: ||mob*.novanewsapp.com^
+16_filter_1.txt 62953: ||ad-*.amazonaws.com^
+16_filter_1.txt 62956: ||ads*-normal-lq.zijieapi.com^
+16_filter_1.txt 62964: ||v*-ad.video.yximgs.com^
+16_filter_1.txt 62974: ||ads*.bojijulebu.com^
+16_filter_1.txt 62977: ||ir-new-cdn-eu-west-*-hb.rayjump.com^
+16_filter_1.txt 62985: ||adcs-*.myappsget.com^
+16_filter_1.txt 63004: ||prebid-cache*.ifunny.co^
+16_filter_1.txt 63006: ||mobiadvert*.livesportmedia.eu^
+16_filter_1.txt 63009: ||jtbo*.nqxvevk.cn^
+16_filter_1.txt 63011: ||adx-*.dbankcloud.
+16_filter_1.txt 63012: ||ad-*.appacc.dbankedge.cn^
+16_filter_1.txt 63013: ||adx-*.dbankedge.cn^
+16_filter_1.txt 63014: ||adx-*.op.dbankcloud.com.edgekey.net^
+16_filter_1.txt 63018: ||api-ad-callback.mobiuspace.net
+16_filter_1.txt 63064: ||marketplace-*.hyprmx.com^
+16_filter_1.txt 63067: ||events-*.op.hicloud.com^
+16_filter_1.txt 63135: ||ms*.applvn.com^
+16_filter_1.txt 63140: ||api*.bidmachine.io^
+16_filter_1.txt 63145: ||banner.*.tccapis.com^
+16_filter_1.txt 63177: ||deliveryengine.adswizz.com
+16_filter_1.txt 63209: ||api*.batmobi.net^
+16_filter_1.txt 63211: ||api*.batmobil.net^
+16_filter_1.txt 63249: ||api.cloudmobi.net
+16_filter_1.txt 63265: ||adserver.*.yahoodns.net^
+16_filter_1.txt 63271: ||config.appjolt.com
+16_filter_1.txt 63275: ://o0e.ru^
+16_filter_1.txt 63278: ||31.14.252.148^
+16_filter_1.txt 63280: ||ad*.nexage.com^
+16_filter_1.txt 63393: ||iad-*.appboy.com^
+16_filter_1.txt 63422: ||mediate-ios-*.hyprmx.com^
+16_filter_1.txt 63449: ||production-adserver-*.amazonaws.com^
+16_filter_1.txt 63453: ||rtbimp-loadbalancer-*.amazonaws.com^
+16_filter_1.txt 63507: ||deloton.com$important
+16_filter_1.txt 63508: ||oclasrv.com$important
+16_filter_1.txt 63570: ||bapi-*.moengage.com^
+16_filter_1.txt 63582: ||cdn-*.gravityfield.ai^
+16_filter_1.txt 63625: ||powa-ingest-prod-*.video-player.arcpublishing.com^
+16_filter_1.txt 63657: ||collector-*.pxchk.net^
+16_filter_1.txt 63720: ||matomo-demo-*.amazonaws.com^
+16_filter_1.txt 63725: ||*-default-cn.rum.aliyuncs.com^
+16_filter_1.txt 63733: ||*-sdk.rum.aliyuncs.com^
+16_filter_1.txt 63855: ||ecommerce-events*.adscale.com^
+16_filter_1.txt 63956: ||install*.zonastat.com^
+16_filter_1.txt 63994: .tvp.tv^
+16_filter_1.txt 64066: ||log*.zijieapi.com^
+16_filter_1.txt 64069: ||mssdk*.zijieapi.com^
+16_filter_1.txt 64073: ||polaris*-normal-*.zijieapi.com^
+16_filter_1.txt 64077: ||tnc*.zijieapi.com^
+16_filter_1.txt 64115: ||pixel-*.convertagain.net^
+16_filter_1.txt 64188: ||collector*.ex.co^
+16_filter_1.txt 64245: -s2s.sensic.net^
+16_filter_1.txt 64332: ||collect-v*.51.la^
+16_filter_1.txt 64337: ||talpa-analytics.
+16_filter_1.txt 64424: ||px*.mediahills.ru^
+16_filter_1.txt 64483: ||srmdata-*.com^
+16_filter_1.txt 64633: ||analytics*.prezly.com^
+16_filter_1.txt 64663: ||browser-intake-*-datadoghq.com^
+16_filter_1.txt 64665: ||cl*.k5a.io^
+16_filter_1.txt 64733: ||livetracker.*.pangea-cms.com^
+16_filter_1.txt 64830: ||collector-*.tvsquared.com^
+16_filter_1.txt 64832: ||pixelapi-*.cs.mysamba.tv^
+16_filter_1.txt 64837: ||logs*.smithsonian.museum^
+16_filter_1.txt 64851: ||snowplow-collector-*.amazonaws.com^
+16_filter_1.txt 64854: ||v*.sitecounter.site^
+16_filter_1.txt 64979: ||tag-based.s3.*.amazonaws.com^
+16_filter_1.txt 64988: ||suite*.linximpulse.net^
+16_filter_1.txt 65046: ||eclog*-*.cafe24.com^
+16_filter_1.txt 65053: ||rum*.cdnvideo.ru^
+16_filter_1.txt 65054: ||rum*.a.trbcdn.net^
+16_filter_1.txt 65061: ||110.93.143.144^
+16_filter_1.txt 65075: ||stat.tiara.
+16_filter_1.txt 65076: ||track.tiara.
+16_filter_1.txt 65129: ||stats*.videonow.ru^
+16_filter_1.txt 65133: ||logs.juspay.in
+16_filter_1.txt 65181: ||parkdomainreal*.site^
+16_filter_1.txt 65184: ||i-*.ci360.sas.com^
+16_filter_1.txt 65299: ||tms-st.cdn.ngenix.net
+16_filter_1.txt 65317: ||zorosrv.com
+16_filter_1.txt 65324: ||analytics*.clickdimensions.com^
+16_filter_1.txt 65342: ||counter*.freecounter.ovh^
+16_filter_1.txt 65451: ://tru.am^
+16_filter_1.txt 65459: ||180.76.2.18^
+16_filter_1.txt 65479: ||66.228.52.30^
+16_filter_1.txt 65480: ||67.228.151.70^
+16_filter_1.txt 65482: ||74.55.82.102^
+16_filter_1.txt 65484: ||79.125.117.123^
+16_filter_1.txt 65988: ||metrics*.fitanalytics.com^
+16_filter_1.txt 66120: ||hitcounter.ru
+16_filter_1.txt 66547: ||query*.petametrics.com^
+16_filter_1.txt 66706: ||script.opentracker.net
+16_filter_1.txt 67179: .ay.delivery^
+16_filter_1.txt 67227: ||sock*-goguardian.pusher.com^
+16_filter_1.txt 85368: ||tccd.douglas.
+16_filter_1.txt 107322: .stape.net
+16_filter_1.txt 107323: |load.gtm.
+16_filter_1.txt 107324: |load.sgtm.
+16_filter_1.txt 107325: |load.ss.
+16_filter_1.txt 107326: |load.sst.
+16_filter_1.txt 107327: ||thegreatesthits.
+16_filter_1.txt 140539: ||countly.
+16_filter_1.txt 140540: ||countly-
+16_filter_1.txt 140542: |piwik.
+16_filter_1.txt 140550: ||eflbundles.*.com.tr^
+16_filter_1.txt 140582: ||log.api-maps.yandex.
+16_filter_1.txt 140599: ||ja*.apppure.net^
+16_filter_1.txt 140609: ||ats.gmarket.co.kr
+16_filter_1.txt 140633: -events-collector.spot.im^
+16_filter_1.txt 140649: -upaas.ucweb.com^
+16_filter_1.txt 140657: ||datadog-log.clovergames.io
+16_filter_1.txt 140686: ||log-v*-boot.capcutapi.com^
+16_filter_1.txt 140710: ||logs.collector.*.cloud.solarwinds.com^
+16_filter_1.txt 140713: ||agatha-log-service-*.a.run.app^
+16_filter_1.txt 140714: ||me9ddf.moebelix.
+16_filter_1.txt 140739: ||spa-tracker*.spapi.io^
+16_filter_1.txt 140775: ||tracking.cds.dmm.
+16_filter_1.txt 140797: ||htm*.hepsiburada.com^
+16_filter_1.txt 140840: ||touch.yesim.
+16_filter_1.txt 140843: ||data-track*.yingxiong.com^
+16_filter_1.txt 140872: ||mon*.tiktokv.us^
+16_filter_1.txt 140877: ||orderana*.spankbang.com^
+16_filter_1.txt 140900: ||logstash-*.radio-canada.ca^
+16_filter_1.txt 140904: ||analytics.vgtimes.
+16_filter_1.txt 140958: ||beehiiv-adnetwork-production.s*.amazonaws.com^
+16_filter_1.txt 140967: ||telemetry.*.pvp.net^
+16_filter_1.txt 140972: ||analyzer*.fc2.com^
+16_filter_1.txt 140986: ||hba*.hepsiburada.com^
+16_filter_1.txt 141041: prd.api.bleacherreport.com^
+16_filter_1.txt 141065: ||apiproxy-log-nlb-1f304af4d3ac01a4.elb.us-east-*.amazonaws.com^
+16_filter_1.txt 141068: ||customerevents.us-east-*.internal.dradis.netflix.com^
+16_filter_1.txt 141091: ||sgtm.wimdu.
+16_filter_1.txt 141152: ||event.*.shoplive.cloud^
+16_filter_1.txt 141171: ||beacon-*.helpscout.net^
+16_filter_1.txt 141183: ||client.rum.*.amazonaws.com^
+16_filter_1.txt 141214: ||staging-*.ispot.tv^
+16_filter_1.txt 141220: ||stlog*-local.kakao.com^
+16_filter_1.txt 141231: ||mssdk*.capcutapi.com^
+16_filter_1.txt 141242: ||mon-*.lemon8-app.com^
+16_filter_1.txt 141243: ||mon-*.lemon8-app.us^
+16_filter_1.txt 141244: ||mcs-*.lemon8-app.com^
+16_filter_1.txt 141245: ||mcs-*.lemon8-app.us^
+16_filter_1.txt 141266: ||collector-*.px-client.net^
+16_filter_1.txt 141267: ||collector-*.px-cdn.net^
+16_filter_1.txt 141271: ||clickstream-*.homedepot.com^
+16_filter_1.txt 141279: ||acr-*-prd.samsungcloud.tv^
+16_filter_1.txt 141295: .prod.pr.analytics.console.aws.a2z.com
+16_filter_1.txt 141298: ||trck.*.prod-na.turntable.sonic.advertising.amazon.dev^
+16_filter_1.txt 141344: ||cza*.crazygames.com^
+16_filter_1.txt 141348: ||analytics.ahrefs.
+16_filter_1.txt 141358: ||servo-report.keepstreams.*^
+16_filter_1.txt 141444: ||sgtm.fairmont.
+16_filter_1.txt 141480: ||apple-*.le.com^
+16_filter_1.txt 141530: ||tracking-v*.a.run.app^
+16_filter_1.txt 141550: ||backstory.ebay.
+16_filter_1.txt 141551: ||edgetrksvc.ebay.
+16_filter_1.txt 141595: ||ubt.tracking.shopee.
+16_filter_1.txt 141621: ||taplytics-umami.grubhub.com
+16_filter_1.txt 141644: |c.blue.*.com^|
+16_filter_1.txt 141657: ||faro-collector-prod-*.grafana.net^
+16_filter_1.txt 141730: ||*adapt-beacon.awsprodops.movetv.com^
+16_filter_1.txt 141749: ||hn-ping*.hashnode.com^
+16_filter_1.txt 141760: ||analytics-v*.eip.telegraph.co.uk^
+16_filter_1.txt 141801: ||ana*.inews24.com^
+16_filter_1.txt 141802: ||analytics.streamfab.
+16_filter_1.txt 141825: ||mcs-*.tiktok.com^
+16_filter_1.txt 141841: ||adservice.google.
+16_filter_1.txt 141910: ||a*.smlog.co.kr^
+16_filter_1.txt 141933: -tracker.biliapi.net^
+16_filter_1.txt 141934: ||pixel*.production-public.tubi.io^
+16_filter_1.txt 141963: ||ads-dmp-collect.*.karrotmarket.com^
+16_filter_1.txt 141973: ||telemetry*.transcend.io^
+16_filter_1.txt 141975: ||stats.debatdirect.tweedekamer.nl
+16_filter_1.txt 141993: -telemetry.officeapps.live.com^
+16_filter_1.txt 141994: -telemetry.officeapps.live.com.mcas.ms^
+16_filter_1.txt 141999: ||sgtm.fashionunited.
+16_filter_1.txt 142011: ||pixel-*.rubiconproject.com^
+16_filter_1.txt 142039: ||pixel.archive.
+16_filter_1.txt 142055: ||analytics-api.dvdfab.
+16_filter_1.txt 142056: ||servo-report.dvdfab.
+16_filter_1.txt 142057: ||collector.xhamster*.
+16_filter_1.txt 142065: ||sensorsdata*.read.duokan.com^
+16_filter_1.txt 142074: ||analytics.*.sky.com^
+16_filter_1.txt 142085: ||uts.auction.co.kr
+16_filter_1.txt 142090: ||ad*.ettoday.net^
+16_filter_1.txt 142102: ||stats.zone-telechargement.
+16_filter_1.txt 142207: ||log*.vietnamplus.vn^
+16_filter_1.txt 142231: ://r.i.ua^
+16_filter_1.txt 142248: ||adcounter*.uptolike.ru^
+16_filter_1.txt 142275: ||analytics-rollout-*.amazonaws.com^
+16_filter_1.txt 142357: ||analytics*.carambo.la^
+16_filter_1.txt 142367: ||app-analytics-*.snapchat.com^
+16_filter_1.txt 142414: ||bi-eventtracker-*.amazonaws.com^
+16_filter_1.txt 142420: ||button.blogs.yandex.
+16_filter_1.txt 142423: ||c.bigmir.net
+16_filter_1.txt 142431: ||c*hit.zerkalo.io^
+16_filter_1.txt 142444: ||ce-global-track-*.amazonaws.com^
+16_filter_1.txt 142460: ||clog*.yuanfudao.com^
+16_filter_1.txt 142467: ||cnt.hd21.
+16_filter_1.txt 142471: ||cnt.nuvid.
+16_filter_1.txt 142472: ||cnt.proporn.
+16_filter_1.txt 142475: ||cnt.tubeon.
+16_filter_1.txt 142476: ||cnt.vivatube.
+16_filter_1.txt 142477: ||cnt.winporn.
+16_filter_1.txt 142479: ||cnt.yeptube.
+16_filter_1.txt 142481: ||collect-elb-*.amazonaws.com^
+16_filter_1.txt 142492: ||collector.hamsterix.
+16_filter_1.txt 142535: ||counter*-yadro*-ru.unblocked.lol^
+16_filter_1.txt 142541: ||cs*.mp3bars.com^
+16_filter_1.txt 142605: ||datacollect*.abtasty.com^
+16_filter_1.txt 142614: ||device-metrics-us*.amazon.com^
+16_filter_1.txt 142646: ||eum*.instana.io^
+16_filter_1.txt 142662: ||events-api*.outfit7.com^
+16_filter_1.txt 142679: ||events*.cre.ma^
+16_filter_1.txt 142721: ||geoloc*.9cd47096ab1495d8d3b18667f6a52b9c.com^
+16_filter_1.txt 142722: ||geoloc*.geo20120530.com^
+16_filter_1.txt 142723: ||geoloc*.geostats.ovh^
+16_filter_1.txt 142724: ||geoloc*.geovisite.ovh^
+16_filter_1.txt 142730: ||gscounters.*.gigya.com^
+16_filter_1.txt 142734: ||gtmdev.jabra.
+16_filter_1.txt 142753: ||host*.carl-ras.dk^
+16_filter_1.txt 142754: ||host*.ncoi.nl^
+16_filter_1.txt 142755: ||host*.nti.nl^
+16_filter_1.txt 142756: ||host*.polaroid.com^
+16_filter_1.txt 142757: ||host*.rvshare.com^
+16_filter_1.txt 142758: ||host*.rigbyandpeller.com^
+16_filter_1.txt 142759: ||hstats*.hepsiburada.com^
+16_filter_1.txt 142769: ||img.opentracker.net
+16_filter_1.txt 142778: ||iptracker-lb-*.amazonaws.com^
+16_filter_1.txt 142807: ||lively-collect-elb-*.amazonaws.com^
+16_filter_1.txt 142844: ||log*.aliyuncs.com^
+16_filter_1.txt 142871: ||lt*.tritondigital.com^
+16_filter_1.txt 143004: ||pixel*.adswizz.com
+16_filter_1.txt 143021: ||pxl-*.ozone.ru^
+16_filter_1.txt 143180: ||ssp*.rtb.beeline.ru^
+16_filter_1.txt 143181: ||st-*.dynamicyield.com^
+16_filter_1.txt 143207: ||stat*.1internet.tv^
+16_filter_1.txt 143305: ||t*.zcvh.net^
+16_filter_1.txt 143372: ||track.datescan.info
+16_filter_1.txt 143496: ||trk*.vidible.tv^
+16_filter_1.txt 143520: ||wa.gmx.
+16_filter_1.txt 143546: charlestownwyllie.oaklawnnonantum.com^
+16_filter_1.txt 143609: |a.klaviyo.com^
+16_filter_1.txt 143610: ||api-*.hismarttv.com^
+16_filter_1.txt 143611: ||auth-*.hismarttv.com^
+16_filter_1.txt 143708: ||tracking.*.miui.com^
+16_filter_1.txt 143725: ||datacollector-*.dt.hicloud.com^
+16_filter_1.txt 143741: dynamic-report-api.appsflyersdk.com^
+16_filter_1.txt 143743: -pia.appsflyersdk.com^
+16_filter_1.txt 143744: -skadsdkless.appsflyersdk.com^
+16_filter_1.txt 143745: -adrevenue.appsflyersdk.com^
+16_filter_1.txt 143746: -attr.appsflyersdk.com^
+16_filter_1.txt 143747: gcdsdk.appsflyersdk.com^
+16_filter_1.txt 143748: dlsdk.appsflyersdk.com^
+16_filter_1.txt 143749: ||*cdn-settings.appsflyersdk.com^
+16_filter_1.txt 143750: ||*launches.appsflyersdk.com^
+16_filter_1.txt 143751: ||*conversions.appsflyersdk.com^
+16_filter_1.txt 143752: ||*register.appsflyersdk.com^
+16_filter_1.txt 143761: dlsdk.appsflyer.com^
+16_filter_1.txt 143818: ||log*.boomplaymusic.com^
+16_filter_1.txt 143838: ||log-*.isnssdk.com^
+16_filter_1.txt 143840: ||ping*.bidease.com^
+16_filter_1.txt 143852: -datareceiver.aki-game.net^
+16_filter_1.txt 143876: ||trace-*.free-reels.com^
+16_filter_1.txt 143910: ||gbxreport-*.wf.com^
+16_filter_1.txt 143917: ||tracking.geo.*.amazonaws.com^
+16_filter_1.txt 143921: ||logreport-global-dual.cool*cloud.com^
+16_filter_1.txt 143922: ||wslog-global-dual.cool*cloud.com^
+16_filter_1.txt 143923: ||weblogger-wss.cool*cloud.com^
+16_filter_1.txt 143941: ||track-*.hungrypanda.co^
+16_filter_1.txt 143942: ||trace-*.hungrypanda.co^
+16_filter_1.txt 143945: ||collector-*.perimeterx.net^
+16_filter_1.txt 143954: ||kbox-analytics-prod.s*.amazonaws.com^
+16_filter_1.txt 143981: ||stats.*.ronghub.com^
+16_filter_1.txt 143998: ||stats.*.rongnav.com^
+16_filter_1.txt 144014: ||sdk.fra-*.braze.eu^
+16_filter_1.txt 144028: ||mssdk.capcutapi.us
+16_filter_1.txt 144074: ||attr-logs.*.amazonaws.com^
+16_filter_1.txt 144075: ||event.*.karrotmarket.com^
+16_filter_1.txt 144099: ||mon*-misc.fqnovel.com^
+16_filter_1.txt 144114: ||logs-*.rebxgame.com^
+16_filter_1.txt 144115: -client-report.honkaiimpact3.com^
+16_filter_1.txt 144116: ||*-datareceiver.aki-game.net^
+16_filter_1.txt 144118: ||mgbsdk*.matrix.easebar.com^
+16_filter_1.txt 144119: ||applog*.matrix.easebar.com^
+16_filter_1.txt 144124: ||tnc16-*.hypic.com^
+16_filter_1.txt 144132: ||discovery-ios-*.ertelecom.ru^
+16_filter_1.txt 144154: ||ulog*.gifshow.com^
+16_filter_1.txt 144163: ||logservice.dbankcloud.cn
+16_filter_1.txt 144176: ||use-trk*.bluevoox.com^
+16_filter_1.txt 144179: ||t*.playdigo.live^
+16_filter_1.txt 144180: ||tnc*.tiktokv.us^
+16_filter_1.txt 144181: ||tnc*.tiktokv.com^
+16_filter_1.txt 144182: ||log*-normal-*.tiktokv.com
+16_filter_1.txt 144195: ||ulog*.kwai-pro.com^
+16_filter_1.txt 144215: ||mon-v*-boot.capcutapi.com^
+16_filter_1.txt 144220: ||tnc-va*.capcutapi.com^
+16_filter_1.txt 144221: ||mon-va*.capcutapi.com^
+16_filter_1.txt 144222: ||log-va*.capcutapi.com^
+16_filter_1.txt 144224: -ulogl*.kwai-pro.com^
+16_filter_1.txt 144225: ||ulog*.kwaipros.com^
+16_filter_1.txt 144226: ||snowplow-collector.
+16_filter_1.txt 144233: ||track.*.roku.com^
+16_filter_1.txt 144239: ||analysis.polarisoffice.com
+16_filter_1.txt 144244: ||log*-normal-useast1a.lemon8-app.com^
+16_filter_1.txt 144248: ||hw-sh-pcdn-*.biliapi.net^
+16_filter_1.txt 144249: ||ali-bj-pcdn-*.biliapi.net^
+16_filter_1.txt 144251: -rtb.gravite.net^
+16_filter_1.txt 144252: ||mon*-misc-lf.fqnovel.com^
+16_filter_1.txt 144255: -applog*.fqnovel.com^
+16_filter_1.txt 144259: ||sonar*.xy.fbcdn.net^
+16_filter_1.txt 144280: ||admob-app-id-*.firebaseio.com^
+16_filter_1.txt 144310: ||analytics-*-nfl.yinzcam.com^
+16_filter_1.txt 144357: ||report.*.gbqofs.io^
+16_filter_1.txt 144396: ||logservice-*.platform.dbankcloud.cn^
+16_filter_1.txt 144397: ||ubacollect-*.cloud.dbankcloud.cn^
+16_filter_1.txt 144398: ||datacollector-*.dt.dbankcloud.cn^
+16_filter_1.txt 144408: -spiky.clevertap-prod.com^
+16_filter_1.txt 144421: ||fp-*it*.fengkongcloud.com^
+16_filter_1.txt 144430: ||maas-*.phunware.com^
+16_filter_1.txt 144443: ||imp-*.jampp.com^
+16_filter_1.txt 144474: ||mapi-log.qoo*.jp^
+16_filter_1.txt 144488: ||f-log-*.grammarly.io^
+16_filter_1.txt 144489: ||log*-misc-lf.amemv.com^
+16_filter_1.txt 144510: ||beacons*.gvt3.com^
+16_filter_1.txt 144512: ||appanalysis*.banggood.com^
+16_filter_1.txt 144520: ||liveme-sensors-collect2-*.amazonaws.com^
+16_filter_1.txt 144528: ||report.*.qq.com^
+16_filter_1.txt 144540: ||tnc16-*.byteoversea.com^
+16_filter_1.txt 144543: ||log*.byteoversea.com^
+16_filter_1.txt 144571: ||log-collector.shopee.
+16_filter_1.txt 144572: ||seller-log-collector.shopee.
+16_filter_1.txt 144574: ||api*.amplitude.com^
+16_filter_1.txt 144613: ||batchlogging*-eu.truecaller.com^
+16_filter_1.txt 144614: ||batchlogging*-noneu.truecaller.com^
+16_filter_1.txt 144664: ||tracking-*.trnox.com^
+16_filter_1.txt 144672: ||report*.appmetrica.webvisor.com^
+16_filter_1.txt 144675: ||api*.moengage.com^
+16_filter_1.txt 144676: ||sdk-*.moengage.com^
+16_filter_1.txt 144682: ||flurry.agentportal-*.yahoodns.net^
+16_filter_1.txt 144691: ||device-metrics-*.amazon.com^
+16_filter_1.txt 144692: ||flurry.agentportal.*.yahoodns.net^
+16_filter_1.txt 144754: /^https:\/\/anon1.gt\d{6}.com/
+16_filter_1.txt 144755: /^anon1.gt\d{6}.com$/
+16_filter_1.txt 144756: -logsdk.kwai-pro.com^
+16_filter_1.txt 144757: -ulog-*.kwai-pro.com^
+16_filter_1.txt 144758: -ulog-*.kwaipros.com^
+16_filter_1.txt 144759: -ulog.*.kwai-pro.com^
+16_filter_1.txt 144760: -ulog.*.kwaipros.com^
+16_filter_1.txt 144761: -ulog.ksapisrv.com^
+16_filter_1.txt 144762: -ulog.kwai-pro.com^
+16_filter_1.txt 144763: -ulog.kwaipros.com^
+16_filter_1.txt 144764: -ulog.region.kwai-pro.com^
+16_filter_1.txt 144765: -ulogl2.kwai-pro.com^
+16_filter_1.txt 144766: -ulogl2.kwaipros.com^
+16_filter_1.txt 144769: ||ulog-*.ksapisrv.com^
+16_filter_1.txt 144770: ||ulog.*.ksapisrv.com^
+16_filter_1.txt 144771: ||ulog.*.kwai-pro.com^
+16_filter_1.txt 144781: ||mcs.*.tiktok.com^
+16_filter_1.txt 144783: ||mcs.*.tiktokv.com^
+16_filter_1.txt 144784: ||log*-normal-*.tiktokv.us^
+16_filter_1.txt 144786: ||mon*-*.tiktokv.com^
+16_filter_1.txt 144787: ||rtlog*.tiktokv.us^
+16_filter_1.txt 144788: ||rtlog*.tiktokv.com^
+16_filter_1.txt 144792: ||mon*-*.tiktokv.us^
+16_filter_1.txt 144794: ||mon-*.tiktokv.com^
+16_filter_1.txt 144798: ||xlog*-*.tiktokv.com^
+16_filter_1.txt 144800: ||mcs-va-*.tiktokv.com^
+16_filter_1.txt 144992: ||bc.geocities.
+16_filter_1.txt 145071: ||collector-*.luigisbox.com^
+16_filter_1.txt 145192: ||events-proxy.mintlify.com
+16_filter_1.txt 145309: ||log-*.previewnetworks.com^
+16_filter_1.txt 145325: ||mcdp-*.outbrain.com^
+16_filter_1.txt 145659: ||tracker.twenga.
+16_filter_1.txt 145797: ||d241ujsiy3yht0.cloudfront.net
+16_filter_1.txt 145801: ||d2fj3s7h83rb61.cloudfront.net
+16_filter_1.txt 148151: ||tracking*.euroads.fi^
+16_filter_1.txt 148489: ||aff*.kolektiva.net^
+16_filter_1.txt 148491: -logging.nextmedia.com^
+16_filter_1.txt 148606: ||stats2.*.fdnames.com^
+16_filter_1.txt 148708: ||stats-*.p2pnow.ru^
+16_filter_1.txt 148741: ||mtm.qdqmedia.com
+16_filter_1.txt 148803: ||adserver*.euroweeklynews.com^
+16_filter_1.txt 148821: ||184.106.248.76^
+16_filter_1.txt 148822: ||200.72.40.46^
+16_filter_1.txt 148941: ||broredir*s.site^
+16_filter_1.txt 148996: ||vst.videolink.
+16_filter_1.txt 149057: ||banner.kiev.ua
+16_filter_1.txt 149065: ||orbit*.lun.ua^
+16_filter_1.txt 149081: .infox.sg^
+16_filter_1.txt 149277: ||yxhstwzjbu.info
+16_filter_1.txt 149279: .potopy.ru^
+16_filter_1.txt 149280: .vipko.ru^
+16_filter_1.txt 149323: ||q*-publick.club^
+16_filter_1.txt 149338: ||v.tzbox*.xyz^
+16_filter_1.txt 149418: ||cdn*.swaxis.com^
+16_filter_1.txt 149456: .adonweb.ru^
+16_filter_1.txt 149457: .allalla.com^
+16_filter_1.txt 149458: .cpa1.ru^
+16_filter_1.txt 149459: .ecommtools.com^
+16_filter_1.txt 149460: .gameleads.ru^
+16_filter_1.txt 149461: .is.traff-numerical.info^
+16_filter_1.txt 149462: .piccash.net^
+16_filter_1.txt 149463: .sexplaycam.com^
+16_filter_1.txt 149464: .tovarro.com^
+16_filter_1.txt 149465: .tpm.pw^
+16_filter_1.txt 149466: .webhop.net^
+16_filter_1.txt 149467: ://*.a-akamaihd.com^
+16_filter_1.txt 149468: ://jhf.ru^
+16_filter_1.txt 149469: ://kma.biz^
+16_filter_1.txt 149479: ||37.220.26.135^
+16_filter_1.txt 149480: ||37.220.26.136^
+16_filter_1.txt 149481: ||37.220.26.137^
+16_filter_1.txt 149486: ||77.247.178.41^
+16_filter_1.txt 149487: ||78.140.134.198^
+16_filter_1.txt 149488: ||78.140.149.216^
+16_filter_1.txt 149492: ||88.85.75.147^
+16_filter_1.txt 149493: ||88.85.77.92^
+16_filter_1.txt 149494: ||91.207.192.31^
+16_filter_1.txt 149495: ||95.211.125.226^
+16_filter_1.txt 149534: ||admulti.
+16_filter_1.txt 149545: ||adserver1.
+16_filter_1.txt 149576: ||afdads.com
+16_filter_1.txt 149586: ||alishop*.ru^
+16_filter_1.txt 149588: ||allmt.com
+16_filter_1.txt 149591: ||almosto.com
+16_filter_1.txt 149626: ||banner-in.net
+16_filter_1.txt 149659: ||bondzgi*.
+16_filter_1.txt 149692: ||clickvip.ru
+16_filter_1.txt 149731: ||dl.qcash.ws
+16_filter_1.txt 149740: ||eberalofe.pro
+16_filter_1.txt 149753: ||et-code.ru
+16_filter_1.txt 149771: ||flipflapflo.
+16_filter_1.txt 149781: ||gbs.gamingmedia.ru
+16_filter_1.txt 149797: ||globalteaser.ru
+16_filter_1.txt 149806: ||gonews*.net^
+16_filter_1.txt 149807: ||goodadvert.
+16_filter_1.txt 149834: ||icq-window.
+16_filter_1.txt 149835: ||icqwindow.
+16_filter_1.txt 149844: ||imgg.dt00.net
+16_filter_1.txt 149859: ||iphone-caviar.ru*entranceId
+16_filter_1.txt 149872: ||js.goods.redtram.com
+16_filter_1.txt 149913: ||letssex.
+16_filter_1.txt 149922: ||linkexchange.
+16_filter_1.txt 149934: ||loneday.com
+16_filter_1.txt 149963: ||mediacontext.
+16_filter_1.txt 149964: ||medialand.
+16_filter_1.txt 149983: ||minitds-*.info^
+16_filter_1.txt 149985: ||mjavagames.ru
+16_filter_1.txt 149994: ||moneymaiker.ru
+16_filter_1.txt 149995: ||moneysyst.biz
+16_filter_1.txt 150003: ||mptri.net
+16_filter_1.txt 150038: ||obislame.ru
+16_filter_1.txt 150079: ||platinumcode.net
+16_filter_1.txt 150083: ||pop-parad.
+16_filter_1.txt 150084: ||pop-under.
+16_filter_1.txt 150086: ||poptraf.
+16_filter_1.txt 150087: ||popunder.
+16_filter_1.txt 150088: ||popupclick.
+16_filter_1.txt 150089: ||popuptraf.
+16_filter_1.txt 150091: ||poshalim.
+16_filter_1.txt 150100: ||promoblocks.ru
+16_filter_1.txt 150103: ||psma01.com
+16_filter_1.txt 150104: ||psma02.com
+16_filter_1.txt 150105: ||psma03.com
+16_filter_1.txt 150124: ||rb*.design.ru^
+16_filter_1.txt 150132: ||real*traf.ru^
+16_filter_1.txt 150137: ||rebill.me
+16_filter_1.txt 150165: ||rotaban.
+16_filter_1.txt 150166: ||rotabanner.
+16_filter_1.txt 150167: ||rotator.
+16_filter_1.txt 150172: ||ruscams.com
+16_filter_1.txt 150175: ||rusrestbest.
+16_filter_1.txt 150210: ||smart.allocine.fr
+16_filter_1.txt 150212: ||sn00.net
+16_filter_1.txt 150229: ||subnewss*.net^
+16_filter_1.txt 150230: ||superpcexpert.ru
+16_filter_1.txt 150236: ||talkfusion.com
+16_filter_1.txt 150257: ||timedirect.ru
+16_filter_1.txt 150259: ||tiz.neosmi.ru
+16_filter_1.txt 150274: ||tmserver-2.net
+16_filter_1.txt 150309: ||u*.takru.com^
+16_filter_1.txt 150317: ||under-click.
+16_filter_1.txt 150318: ||underclick.
+16_filter_1.txt 150333: ||v.newsportal*.ru^
+16_filter_1.txt 150351: ||videoclick.
+16_filter_1.txt 150352: ||videoclik.
+16_filter_1.txt 150381: ||w*statistics.info^
+16_filter_1.txt 150382: ||web-rotation.net
+16_filter_1.txt 150383: ||web-visor.
+16_filter_1.txt 150429: ||yottos.com
+16_filter_1.txt 150441: ||193.200.64.20^
+16_filter_1.txt 150442: /62.76.25.2(7|8)/
+16_filter_1.txt 150443: /193.200.64.24:/
+16_filter_1.txt 150444: ||193.200.64.24^
+16_filter_1.txt 150445: ||206.54.181.250^
+16_filter_1.txt 150448: ||62.76.25.27^
+16_filter_1.txt 150449: ||62.76.25.28^
+16_filter_1.txt 150450: ||45.82.68.79^
+16_filter_1.txt 150472: ||dw-informer-*.newsru.com^
+16_filter_1.txt 150505: ||banner*.kinogo.by^
+16_filter_1.txt 150522: ||an.yandex.
+16_filter_1.txt 150628: ://sportframe*.co^
+16_filter_1.txt 150630: ://sportframe*.org^
+16_filter_1.txt 150637: ://r.reklam*.com^
+16_filter_1.txt 150638: ://say.ac^
+16_filter_1.txt 150640: ||ad*.bilgin.pro^
+16_filter_1.txt 150641: ||ad*.tmgrup.com.tr^
+16_filter_1.txt 150667: ||basvformu*.xyz^
+16_filter_1.txt 150700: ||partner.superbahisaffiliates*.com^
+16_filter_1.txt 151053: *ad.durasite.net^
+16_filter_1.txt 151071: ||bar*.shinobi.jp^
+16_filter_1.txt 151079: ||94.130.167.163^
+16_filter_1.txt 151164: ||tw-726620180914.*.run.app^
+16_filter_1.txt 151200: ||zbb.bbb.*.pics^
+16_filter_1.txt 151207: ||fjuga.top
+16_filter_1.txt 151314: ||192.151.218.66^
+16_filter_1.txt 151315: ||23.224.89.2^
+16_filter_1.txt 151323: ||156.233.32.123^
+16_filter_1.txt 151332: ||207.148.44.179^
+16_filter_1.txt 151333: /^(mon|tue|wed|thu|fri|sat|sun)\d{1,2}\.\w{2}\d{1,6}\w{4}\.com$/
+16_filter_1.txt 151339: ||ad*.on.cc^
+16_filter_1.txt 151355: ||h3v9p8x2q1r7-agckaeh6g2ehcaes.*.azurewebsites.net^
+16_filter_1.txt 152484: -ad123-
+16_filter_1.txt 152485: -banner-ads.
+16_filter_1.txt 152486: -banner728x90.
+16_filter_1.txt 152487: -iklan-gif-
+16_filter_1.txt 152488: -iklan1.
+16_filter_1.txt 152489: -iklan2.
+16_filter_1.txt 152490: -iklan789-
+16_filter_1.txt 152491: -ikln.
+16_filter_1.txt 152492: -720x90-
+16_filter_1.txt 152493: -728-x-90-
+16_filter_1.txt 152494: -728x90a.
+16_filter_1.txt 152495: .1080.x.90.
+16_filter_1.txt 152496: @@/\.(gif|jpe?g|png|webp)#(\/?.+)?(\/(ad)s?\/|\/ad-)/
+16_filter_1.txt 152498: -bandarkiu.
+16_filter_1.txt 152499: -tototix.gif
+16_filter_1.txt 152510: ||admicro*.vcmedia.vn^
+16_filter_1.txt 152633: ||log-*.epicdn.me^
+16_filter_1.txt 152634: ||log-*.zadn.vn^
+16_filter_1.txt 152656: ||matomo.*.vn^
+16_filter_1.txt 152657: ||mautic.*.vn^
+16_filter_1.txt 152697: ||piwik.*.vn^
+16_filter_1.txt 152715: ||quangcao-*.epicdn.me^
+16_filter_1.txt 158002: ||ad*.gyaloglo.hu^
+16_filter_1.txt 158003: ||ad*.mellesleg.hu^
+16_filter_1.txt 158020: ||advert*.ultraweb.hu^
+16_filter_1.txt 158021: ||adverticum.*.hu^
+16_filter_1.txt 158023: ||as*.prog.hu^
+16_filter_1.txt 158030: ||etargetnet.*.hu^
+16_filter_1.txt 158041: ||rehs.*.hu^
+16_filter_1.txt 158043: ||sher.*.hu^
+16_filter_1.txt 158080: ||asd8900.oss-*.aliyuncs.com^
+16_filter_1.txt 158081: ||ky891.oss-*.aliyuncs.com^
+16_filter_1.txt 158082: ||tupian888.*.bcebos.com^
+16_filter_1.txt 158083: ||vns86.oss-*.aliyuncs.com^
+16_filter_1.txt 158084: ||zhizhizhizhi.oss-*.aliyuncs.com^
+16_filter_1.txt 158085: ||107.167.16.*.gif
+16_filter_1.txt 158086: ||107.167.22.*.gif
+16_filter_1.txt 158087: ||121.204.246.*.gif
+16_filter_1.txt 158088: ||38.33.15.*.gif
+16_filter_1.txt 158091: ||67.21.92.*.gif
+16_filter_1.txt 162952: ||1024wanzhai.
+16_filter_1.txt 163004: ||adi*.cnool.net^
+16_filter_1.txt 163035: ||ax.*.ifeng.com^
+16_filter_1.txt 163119: ||impservice*.yodao.com^
+16_filter_1.txt 163120: ||impservice*.youdao.com^
+16_filter_1.txt 163122: ||itv.hexun.com
+16_filter_1.txt 163125: ||ja*.gamersky.com^
+16_filter_1.txt 163126: ||js*.abolezi.com^
+16_filter_1.txt 163162: ||sam*.baby-kingdom.com^
+16_filter_1.txt 163163: ||same*.stockstar.com^
+16_filter_1.txt 163166: ||sax*.sina.
+16_filter_1.txt 163202: ||ya*.dwstatic.com^
+16_filter_1.txt 163213: @@||ad.10010.com^
+16_filter_1.txt 163214: @@||ad.abchina.com^
+16_filter_1.txt 163215: @@||ad.kazakinfo.com^
+16_filter_1.txt 163216: @@||ad.ourgame.com^
+16_filter_1.txt 163217: @@||adcdn.pingan.com^
+16_filter_1.txt 163218: @@||advert.kf5.com^
+16_filter_1.txt 163219: @@||api.ads.tvb.com^
+16_filter_1.txt 163220: @@||app-advertise.zhihuishu.com^
+16_filter_1.txt 163221: @@||buyad.bi-xenon.cn^
+16_filter_1.txt 163222: @@||captcha.su.baidu.com^
+16_filter_1.txt 163223: @@||img.ads.tvb.com^
+16_filter_1.txt 163338: ||a*.chajiaotong.com^
+16_filter_1.txt 163425: ||ac*.786ip.com^
+16_filter_1.txt 163426: ||ac*.faxingchina.com^
+16_filter_1.txt 163444: ||at*.doubanio.com^
+16_filter_1.txt 163499: ||bdcpro*.techweb.com.cn^
+16_filter_1.txt 163509: ||bdlm*.hc360.com^
+16_filter_1.txt 163571: ||d*.ruiwen.com^
+16_filter_1.txt 163572: ||d*.xinshipu.com^
+16_filter_1.txt 163598: ||dm*.yxlady.com^
+16_filter_1.txt 163622: ||dn*.ixinwei.com^
+16_filter_1.txt 163643: ||fanpingbi*.gaokao.com^
+16_filter_1.txt 163651: ||fpb*.51edu.com^
+16_filter_1.txt 163654: ||fpb1.chinacar.
+16_filter_1.txt 163664: ||gcw*.2liang.cn^
+16_filter_1.txt 163824: ||qpb*.sohu.com^
+16_filter_1.txt 163832: ||res*.pinpai8.cn^
+16_filter_1.txt 163861: ||static*.365inews.com^
+16_filter_1.txt 163880: ||uc*.atobo.com^
+16_filter_1.txt 163887: ||union*.365inews.com^
+16_filter_1.txt 163940: ||ysdm*.ys137.com.cn^
+16_filter_1.txt 163990: analytics-*.aasaam.com
+16_filter_1.txt 164229: ||get*bannerads-6egeg2u34q-du.a.run.app^
+16_filter_1.txt 164244: ||pangolin*.sgsnssdk.com^
+16_filter_1.txt 164246: ||ad.*.doubleclick.net^
+16_filter_1.txt 164247: ||cdn-adn-*.rayjump.com^
+16_filter_1.txt 164324: ||iad-*.braze.com^
+16_filter_1.txt 164404: ||adimg*.search.naver.net^
+16_filter_1.txt 164405: ||ad*.thisisgame.com^
+16_filter_1.txt 164436: ||ad*.wisenut.co.kr^
+16_filter_1.txt 164442: ||adservice.google.co.*
+16_filter_1.txt 164444: ||ads-*.v.ssp.yahoo.com^
+16_filter_1.txt 164453: ||mobileanalytics.*.amazonaws.com^
+16_filter_1.txt 164514: ||logger-*.dailymotion.com^
+16_filter_1.txt 164518: ||metric*.rediff.com^
+16_filter_1.txt 164569: ||t.delfi.
+16_filter_1.txt 164577: ||track.zalando.
+16_filter_1.txt 164589: ||tracking.olx.
+16_filter_1.txt 164598: ||dualstack.adbert-web-lbs-*.elb.amazonaws.com^
+16_filter_1.txt 164611: ||s*.adduplex.com^
+16_filter_1.txt 164625: @@||om-ssl.consorsbank.de^|
+16_filter_1.txt 164626: @@|cdn.taboola.com^|
+16_filter_1.txt 164627: @@||unsubscribe.lhinsights.com^|
+16_filter_1.txt 164628: @@||belgium.wolterskluwer.com^|
+16_filter_1.txt 164629: @@||ssai.aniview.com^|
+16_filter_1.txt 164630: @@||sedge.nfl.com^|
+16_filter_1.txt 164631: @@||data.orders.costco.com^|
+16_filter_1.txt 164632: @@||link.meet5.net^|
+16_filter_1.txt 164633: @@||link.nzz.ch^|
+16_filter_1.txt 164634: @@||content.viralize.tv^|
+16_filter_1.txt 164635: @@||www.datadoghq-browser-agent.com^|
+16_filter_1.txt 164636: @@||itoya.ec-optimizer.com^|
+16_filter_1.txt 164637: @@||go.redirectingat.com^|
+16_filter_1.txt 164638: @@||ref.rbauction.com^|
+16_filter_1.txt 164639: @@||puzzles-games-api.gp-prod.conde.digital^|
+16_filter_1.txt 164640: @@||news.warhammer.com^|
+16_filter_1.txt 164641: @@||prod.impartner.live^|
+16_filter_1.txt 164642: @@||cdn.atmedia.hu^|
+16_filter_1.txt 164643: @@||trk.ecomm.lenovo.com^|
+16_filter_1.txt 164644: @@||s.bluecore.com^|
+16_filter_1.txt 164645: @@|affiliate.notion.so^|
+16_filter_1.txt 164646: @@|www3.doubleclick.net^|
+16_filter_1.txt 164647: @@||acs-m.daraz.pk^|
+16_filter_1.txt 164648: @@||taiga.maven.io^|
+16_filter_1.txt 164649: @@||tlh.gedidigital.it^|
+16_filter_1.txt 164650: @@||smtp.focusgroupresearch.com^|
+16_filter_1.txt 164651: @@||ap01.records.in.treasuredata.com^|
+16_filter_1.txt 164652: @@||click.avs.io^|
+16_filter_1.txt 164653: @@||link.sylikes.com^|
+16_filter_1.txt 164654: @@||rd.bizrate.com^|
+16_filter_1.txt 164655: @@|www.daraz.pk^|
+16_filter_1.txt 164656: @@|daraz.com^|
+16_filter_1.txt 164657: @@||sbs.demdex.net^|
+16_filter_1.txt 164658: @@||cl.link-ag.net^|
+16_filter_1.txt 164659: @@||action.metaffiliation.com^|
+16_filter_1.txt 164660: @@||www.dogpile.com^|
+16_filter_1.txt 164661: @@||acs-m.daraz.com.bd^|
+16_filter_1.txt 164662: @@||f-gear.ec-optimizer.com^|
+16_filter_1.txt 164663: @@||get.neofinancial.com^|
+16_filter_1.txt 164664: @@||hidive.com^|
+16_filter_1.txt 164665: @@||learn.khanacademy.org^|
+16_filter_1.txt 164666: @@||res.ads.nicovideo.jp^|
+16_filter_1.txt 164667: @@||sax.sina.com.cn^|
+16_filter_1.txt 164668: @@||linka.page^|
+16_filter_1.txt 164669: @@||track.webgains.com^|
+16_filter_1.txt 164670: @@||secureimage.securedataimages.com^|
+16_filter_1.txt 164671: @@||infra-api.newrelic.com^|
+16_filter_1.txt 164672: @@||tms.capitalone.com^|
+16_filter_1.txt 164673: @@||redir.ownpage.fr^|
+16_filter_1.txt 164674: @@||tr.rdrtr.com^|
+16_filter_1.txt 164675: @@||media-consumer365.desigual.com^|
+16_filter_1.txt 164676: @@||cdn.us*.exponea.com^|
+16_filter_1.txt 164677: @@||crm-cdn.peek-cloppenburg.com^|
+16_filter_1.txt 164678: @@||public-cis.exponea.com^|
+16_filter_1.txt 164679: @@||cdn.rozetka.com.ua^|
+16_filter_1.txt 164680: @@||vcentry2.valuecommerce.ne.jp^|
+16_filter_1.txt 164681: @@||recommender.scarabresearch.com^|
+16_filter_1.txt 164682: @@||refer.discover.com^|
+16_filter_1.txt 164683: @@||cmp.inmobi.com^|
+16_filter_1.txt 164684: @@||data.digital.costco.ca^|
+16_filter_1.txt 164685: @@||data.digital.costco.com^|
+16_filter_1.txt 164686: @@||api.karte.io^|
+16_filter_1.txt 164687: @@||sponsor.nitropay.com^|
+16_filter_1.txt 164688: @@||click.cptrack.de^|
+16_filter_1.txt 164689: @@|ezodn.com^|
+16_filter_1.txt 164690: @@||gate.first-id.fr^|
+16_filter_1.txt 164691: @@||leechers-paradise.org^|
+16_filter_1.txt 164692: @@||data-*.herz-fuer-tiere.de^|
+16_filter_1.txt 164693: @@||go.adjust.com^|
+16_filter_1.txt 164694: @@||clickattr.wayup.com^|
+16_filter_1.txt 164695: @@||remembering.ca^|
+16_filter_1.txt 164696: @@||obituaries.toacorn.com^|
+16_filter_1.txt 164697: @@||obituaries.thestar.com^|
+16_filter_1.txt 164698: @@||obituaries.therecord.com^|
+16_filter_1.txt 164699: @@||catchup.thisisdax.com^|
+16_filter_1.txt 164700: @@||px.a8.net^|
+16_filter_1.txt 164701: @@||cdn.duurzaam.greenchoice.nl^|
+16_filter_1.txt 164702: @@||c.office.com^|
+16_filter_1.txt 164703: @@||surveymyopinion.researchnow.com^|
+16_filter_1.txt 164704: @@||e.customeriomail.com^|
+16_filter_1.txt 164705: @@||partner.everydays.de^|
+16_filter_1.txt 164706: @@||api.docodoco.jp^|
+16_filter_1.txt 164707: @@||js.monitor.azure.com^|
+16_filter_1.txt 164708: @@||link.morningbrew.com^|
+16_filter_1.txt 164709: @@||click.appcast.io^|
+16_filter_1.txt 164710: @@||anwb.webpower.eu^|
+16_filter_1.txt 164711: @@||bcicl.*.evergage.com^|
+16_filter_1.txt 164712: @@||torimochi.line-apps.com^|
+16_filter_1.txt 164713: @@|core.crazyegg.com^|
+16_filter_1.txt 164714: @@|app.crazyegg.com^|
+16_filter_1.txt 164715: @@||oa.tr.line.me^|
+16_filter_1.txt 164716: @@||stash.roistat.com^|
+16_filter_1.txt 164717: @@||static-v*.trbo.com^|
+16_filter_1.txt 164718: @@||api-v*.trbo.com^|
+16_filter_1.txt 164719: @@||brm-core-*.brsrvr.com^|
+16_filter_1.txt 164720: @@||marketing.net.idealo-partner.com^|
+16_filter_1.txt 164721: @@||netatmo.commander1.com^|
+16_filter_1.txt 164722: @@||vcentry3.valuecommerce.ne.jp^|
+16_filter_1.txt 164723: @@-ds.metric.gstatic.com^|
+16_filter_1.txt 164724: @@||id.i2i.jp^|
+16_filter_1.txt 164725: @@||thumbnail.thench.net^|
+16_filter_1.txt 164726: @@||validate.perfdrive.com^|
+16_filter_1.txt 164727: @@||ia.hit.interia.pl^|
+16_filter_1.txt 164728: @@||analytics.amplitude.com^|
+16_filter_1.txt 164729: @@|adsterra.com^|
+16_filter_1.txt 164730: @@|ads.adsterra.com^|
+16_filter_1.txt 164731: @@|publishers.adsterra.com^|
+16_filter_1.txt 164732: @@|beta.publishers.adsterra.com^|
+16_filter_1.txt 164733: @@|partners.adsterra.com^|
+16_filter_1.txt 164734: @@|beta.partners.adsterra.com^|
+16_filter_1.txt 164735: @@|affiliates.adsterra.com^|
+16_filter_1.txt 164736: @@|beta.affiliates.adsterra.com^|
+16_filter_1.txt 164737: @@|help-advertisers.adsterra.com^|
+16_filter_1.txt 164738: @@||goto.target.com^|
+16_filter_1.txt 164739: @@||goto.walmart.com^|
+16_filter_1.txt 164740: @@||citiintl.122.2o7.net^|
+16_filter_1.txt 164741: @@||ma135-r.analytics.edgekey.net^|
+16_filter_1.txt 164742: @@||79423.analytics.edgekey.net^|
+16_filter_1.txt 164743: @@||classliving.lpages.co^|
+16_filter_1.txt 164744: @@||home.focusatwill.com^|
+16_filter_1.txt 164745: @@||health.halodoc.com^|
+16_filter_1.txt 164746: @@||promo.gramedia.com^|
+16_filter_1.txt 164747: @@||support-beacon.nakanohito.jp^|
+16_filter_1.txt 164748: @@||support-widget.nakanohito.jp^|
+16_filter_1.txt 164749: @@||afi-b.com^|
+16_filter_1.txt 164750: @@||daikoku.ebis.ne.jp^|
+16_filter_1.txt 164751: @@||envato.market^|
+16_filter_1.txt 164752: @@||ac.ebis.ne.jp^|
+16_filter_1.txt 164753: @@||email.awscloud.com^|
+16_filter_1.txt 164754: @@||oneline.nextday.media^|
+16_filter_1.txt 164755: @@|ftp.bmp.ovh^|
+16_filter_1.txt 164756: @@||cloud.notification-naviextras.com^|
+16_filter_1.txt 164757: @@||email.elitedangerous.com^|
+16_filter_1.txt 164758: @@||links.e.theatlantic.com^|
+16_filter_1.txt 164759: @@||app.appsflyer.com^|
+16_filter_1.txt 164760: @@||email.procook.co.uk^|
+16_filter_1.txt 164761: @@||omsc.kpn.com^|
+16_filter_1.txt 164762: @@||logentries.com^|
+16_filter_1.txt 164763: @@||email.*.skyeng.ru^|
+16_filter_1.txt 164764: @@||go.scorptec.com.au^|
+16_filter_1.txt 164765: @@||links.getblueshift.com^|
+16_filter_1.txt 164766: @@||click.trafficguard.ai^|
+16_filter_1.txt 164767: @@||hb.afl.rakuten.co.jp^|
+16_filter_1.txt 164768: @@||pt.afl.rakuten.co.jp^|
+16_filter_1.txt 164769: @@||proto2ad.durasite.net^|
+16_filter_1.txt 164770: @@||tags.crwdcntrl.net^|
+16_filter_1.txt 164771: @@||official.paymaya.com^|
+16_filter_1.txt 164772: @@|statcounter.com^|
+16_filter_1.txt 164773: @@||www.statcounter.com^|
+16_filter_1.txt 164774: @@||gs.statcounter.com^|
+16_filter_1.txt 164775: @@||click.virt.s*.exacttarget.com^|
+16_filter_1.txt 164776: @@||click.virt.exacttarget.com^|
+16_filter_1.txt 164777: @@||mc.*.exacttarget.com^|
+16_filter_1.txt 164778: @@||login.sendpulse.com^|
+16_filter_1.txt 164779: @@||a.sellpoint.net^|
+16_filter_1.txt 164780: @@||tlaol.com^|
+16_filter_1.txt 164781: @@||admin.dable.io^|
+16_filter_1.txt 164782: @@||log.mmstat.com^|
+16_filter_1.txt 164783: @@||click.simba.taobao.com^|
+16_filter_1.txt 164784: @@||cs.silverpop.com^|
+16_filter_1.txt 164785: @@||grp07.ias.rakuten.co.jp^|
+16_filter_1.txt 164786: @@||cindyholbrook.lpages.co^|
+16_filter_1.txt 164787: @@||pagead.l.doubleclick.net^|
+16_filter_1.txt 164788: @@||www.googleadservices.com^|
+16_filter_1.txt 164789: @@||my.tealiumiq.com^|
+16_filter_1.txt 164790: @@||artifactory.appodeal.com^|
+16_filter_1.txt 164791: @@||www.jdoqocy.com^|
+16_filter_1.txt 164792: @@||cj.dotomi.com^|
+16_filter_1.txt 164793: @@||intersport.peerius.com^|
+16_filter_1.txt 164794: @@||cutcaptcha.com^|
+16_filter_1.txt 164795: @@||forum.notebookreview.com^|
+16_filter_1.txt 164796: @@||radiofrance.targetspot.com^|
+16_filter_1.txt 164797: @@||awin1.com^|
+16_filter_1.txt 164798: @@||app.adjust.com^|
+16_filter_1.txt 164799: @@||feed.adrelayer.com^|
+16_filter_1.txt 164800: @@||redirect.appmetrica.yandex.com^|
+16_filter_1.txt 164801: @@||guce.advertising.com^|
+16_filter_1.txt 164802: @@||a.adwolf.ru^|
+16_filter_1.txt 164803: @@||cm-beacon.nakanohito.jp^|
+16_filter_1.txt 164804: @@||cm-widget.nakanohito.jp^|
+16_filter_1.txt 164805: @@||ads.tdbank.com^|
+16_filter_1.txt 164806: @@||nineto5mac-d.openx.net^|
+16_filter_1.txt 164807: @@||redir.tradedoubler.com^|
+16_filter_1.txt 164808: @@||clk*.tradedoubler.com^|
+16_filter_1.txt 164809: @@||href.li^|
+16_filter_1.txt 164810: @@||str.hit.gemius.pl^|
+16_filter_1.txt 164811: @@||track.rutarget.ru^|
+16_filter_1.txt 164812: @@||5471782.fls.doubleclick.net^|
+16_filter_1.txt 164813: @@||omniture.walmart.com^|
+17_filter_3.txt 2496: INVALID_TLD(example0101): ||pgl.example0101^
+19_filter_50.txt 197: ||familysimulator.
+19_filter_50.txt 217: /\/(?:[0-9a-z]{7,25}-){9,13}[0-9a-z]{10,15}\/(?:[0-9a-z]+\/)+index\.php/
+19_filter_50.txt 219: /_dating\d\/index\.html\?aref=/
+19_filter_50.txt 220: ||familysimulators.
+19_filter_50.txt 372: ||discordap.
+19_filter_50.txt 373: ||discord-give.
+19_filter_50.txt 374: ||discord-nitro.
+19_filter_50.txt 375: ||dlscord*.
+19_filter_50.txt 376: ||dlscrod*.
+19_filter_50.txt 377: ||freediscordnitro.
+19_filter_50.txt 479: ://account.booking.xn--
+19_filter_50.txt 1006: ||gloria-divination.
+19_filter_50.txt 1749: ||viruswarning*.web.core.windows.net^
+19_filter_50.txt 1750: ://message1*.z13.web.core.windows.net^
+19_filter_50.txt 1807: ||re-captha-version-
+19_filter_50.txt 1808: ||valid-check-tl-
+19_filter_50.txt 1810: ||check-tl-
+19_filter_50.txt 1828: ||vnote-*.myqcloud.com^
+19_filter_50.txt 1831: ||testra*-covid.weebly.com^
+19_filter_50.txt 1846: ||rampostsouthafrican-*.codeanyapp.com^
+19_filter_50.txt 1848: ||download-wetransfer-*.vercel.app^
+19_filter_50.txt 1851: ||bingkasprogram-*.xdbng.com^
+19_filter_50.txt 1853: ||lnkdeka.standard.*.oortech.com^
+19_filter_50.txt 1865: ||my-ee-*.web.app^
+19_filter_50.txt 1878: ||apples-24x7-*.pages.dev^
+19_filter_50.txt 1881: ||icloud.apple-*.cn^
+19_filter_50.txt 1885: ||profile-ourtime.*.workers.dev^
+19_filter_50.txt 1886: ||voice-ourtime.*.workers.dev^
+19_filter_50.txt 1888: ||cardverify*-booking.com^
+19_filter_50.txt 1889: ||air-bnb.check-
+19_filter_50.txt 1896: ||adobepd*.glitch.me^
+19_filter_50.txt 1897: ||doc*-order*adobe.glitch.me^
+19_filter_50.txt 1901: ||loginnetflixleiojfioje.blogspot.
+19_filter_50.txt 1904: ||allegrolokalnie.pl-
+19_filter_50.txt 1905: ||allegrolokalnie.*.shop^
+19_filter_50.txt 1907: ||rackweb-----support*.weebly.com^
+19_filter_50.txt 1909: ||pemesanan*.glowz.my.id^
+19_filter_50.txt 1916: ||messagerie*.godaddysites.com^
+19_filter_50.txt 1917: ||messagerie*.wixsite.com^
+19_filter_50.txt 1918: ||messagerie*.yolasite.com^
+19_filter_50.txt 1919: ||payer-ma-acture-*.mystrikingly.com^
+19_filter_50.txt 1920: ||orange-connexion*.godaddysites.com^
+19_filter_50.txt 1921: ||amazon-*.shop^
+19_filter_50.txt 1946: ||attonlineservice*.wixstudio.com^
+19_filter_50.txt 1947: ||currentlyatt*.weebly.com^
+19_filter_50.txt 1948: ||currentlymail*.weebly.com^
+19_filter_50.txt 1949: ||attmailservice*.weebly.com^
+19_filter_50.txt 1950: ||att-currently-*.weeblysite.com^
+19_filter_50.txt 1951: ||2025*maintenance.weebly.com^
+19_filter_50.txt 1952: ||plum-binder-*.typedream.app^
+19_filter_50.txt 1954: ||gov.*.qpon^
+19_filter_50.txt 1956: ||dichvucong*.top^
+19_filter_50.txt 1960: ||dwp-yous*.top^
+19_filter_50.txt 1969: ||impotsgouv.*.wcomhost.com^
+19_filter_50.txt 1970: ||amandes*.serv00.net^
+19_filter_50.txt 1982: ||vietcombank*.cfd^
+19_filter_50.txt 1986: ||caixa-*.codeanyapp.com^
+19_filter_50.txt 1990: ||www-winbank-lfremhmida*.codeanyapp.com^
+19_filter_50.txt 1998: ||cancelaciondeseguros-*.azurewebsites.net^
+19_filter_50.txt 2001: ||gohvb-*.web.app^
+19_filter_50.txt 2004: ||bdvenlinea*.pages.dev^
+19_filter_50.txt 2011: ||santander.*.fino.digital^
+19_filter_50.txt 2013: ||santanderpod.*.co.uk^
+19_filter_50.txt 2014: ||dhl.*.potabox.com^
+19_filter_50.txt 2032: ||instagram0639.blogspot.
+19_filter_50.txt 2034: ||notificationbyfacebook.
+19_filter_50.txt 2037: ||business-facebook-*.pages.dev^
+19_filter_50.txt 2041: ||www-mfacebook.
+19_filter_50.txt 2042: ||www-facebooks.
+19_filter_50.txt 2043: ||www-facebook.
+19_filter_50.txt 2044: ||vww-facebook.
+19_filter_50.txt 2049: ||fakeserhelpsreivew-
+19_filter_50.txt 2050: ||govern-assessment-validation-*.vercel.app^
+19_filter_50.txt 2051: ||support-center-for-*.vercel.app^
+19_filter_50.txt 2052: ||safety-profiles-fb-ads-*.vercel.app^
+19_filter_50.txt 2053: ||request-page-violation-*.surge.sh^
+19_filter_50.txt 2054: ||violation-*.surge.sh^
+19_filter_50.txt 2055: ||copyrights-*.surge.sh^
+19_filter_50.txt 2056: ||fan-page-*.surge.sh^
+19_filter_50.txt 2057: ||content-voilation-
+19_filter_50.txt 2058: ||appeal-account-copyright-case-review.
+19_filter_50.txt 2059: ||community-flagged-
+19_filter_50.txt 2060: ||help-for-work-*.pages.dev^
+19_filter_50.txt 2061: ||marketplace-item-details-*.zya.me^
+19_filter_50.txt 2063: ||business-help-temp-
+19_filter_50.txt 2065: ||helps-center-page-number-
+19_filter_50.txt 2068: ||facebook-*.ubpages.com^
+19_filter_50.txt 2069: ||support-metahelpcenter-id*.netlify.app^
+19_filter_50.txt 2079: ||meta-for-business-
+19_filter_50.txt 2086: ||microsoft*.dfautomotive.de^
+19_filter_50.txt 2102: ||wwwservicemsnlive-*.hubspotpagebuilder.com^
+19_filter_50.txt 2110: /\.com(\.[a-z]{2})?\/wp-includes\/images\/smilies\/images?\/smili?es\/[a-z]{25,35}\.html/
+19_filter_50.txt 2116: ||authsignonstaff*.softr.app^
+19_filter_50.txt 2117: ||facture-pdf-secure-*.vercel.app^
+19_filter_50.txt 2118: ||msoftupdate.*.linodeobjects.com^
+19_filter_50.txt 2120: ||outloksupport*.glitch.me^
+19_filter_50.txt 2127: ||telezelm-*.icu^
+19_filter_50.txt 2128: ||whatsapp*.icu^
+19_filter_50.txt 2131: ||usps.*.sbs^
+19_filter_50.txt 2132: ||informed.delivery*.top^
+19_filter_50.txt 2133: ||info-tracking*.cc^
+19_filter_50.txt 2134: ||uspost.*.cfd^
+19_filter_50.txt 2135: ||spoti-safe-support*.codeanyapp.com^
+19_filter_50.txt 2136: ||spoti-*.codeanyapp.com^
+19_filter_50.txt 2141: ||suissscomee-correo*.codeanyapp.com^
+19_filter_50.txt 2143: ||cffsbbhost-aniamaria*.codeanyapp.com^
+19_filter_50.txt 2144: ||manage-administrere-swisspass-*.codeanyapp.com^
+19_filter_50.txt 2172: ||azuki-*.vercel.app^
+19_filter_50.txt 2173: ||base-swap-frontend-*.vercel.app^
+19_filter_50.txt 2175: ||alienxchain*.pages.dev^
+19_filter_50.txt 2191: ||metamask*.webflow.io^
+19_filter_50.txt 2193: ||bitvavo*.cc^
+19_filter_50.txt 2194: ||bitvavo*.top^
+19_filter_50.txt 2195: ||bitvavo*.vip^
+19_filter_50.txt 2204: ||mail.*-coinbase.com^
+19_filter_50.txt 2210: ||pancakeswap-*.vercel.app^
+19_filter_50.txt 2211: ||pancake-swap*.vercel.app^
+19_filter_50.txt 2212: ||pancake-nft*.vercel.app^
+19_filter_50.txt 2213: ||pancakeclaim-*.vercel.app^
+19_filter_50.txt 2216: ||pay8-2v-*-gmailcom.vercel.app^
+19_filter_50.txt 2219: ||sso-*.webflow.io^
+19_filter_50.txt 2220: -sso-*.webflow.io^
+19_filter_50.txt 2221: -ndax-*.webflow.io^
+19_filter_50.txt 2238: ||utahpolicetraining.*.mybluehost.me^
+19_filter_50.txt 2239: ||namecheapsupport-*.codeanyapp.com^
+19_filter_50.txt 2242: ||agripro-fr-*.com^
+19_filter_50.txt 2244: ||aolmaiillogin.blogspot.
+19_filter_50.txt 2245: ||info-espanol-id-configes*.codeanyapp.com^
+19_filter_50.txt 2246: ||lcldetecthumainweb*.firebaseapp.com^
+19_filter_50.txt 2255: ||tin-dung-
+19_filter_50.txt 2256: ||khcn-tindung-
+19_filter_50.txt 2258: ||khach-hang-the-
+19_filter_50.txt 2259: ||chamsockhachhang-
+19_filter_50.txt 2260: ||cskh-vib-
+19_filter_50.txt 2261: ||cskh-vib.
+19_filter_50.txt 2262: ||chamsockhachang-
+19_filter_50.txt 2263: ||chamsocthekhachang-
+19_filter_50.txt 2264: ||nang-cap-
+19_filter_50.txt 2269: ||uudai-tructuyen-
+19_filter_50.txt 2270: ||uudaikhachhang-
+19_filter_50.txt 2271: ||nang-hang-
+19_filter_50.txt 2273: ||baoviet*.vip^
+19_filter_50.txt 2274: ||hotrokhachhang-
+19_filter_50.txt 2275: ||cham-soc-the-
+19_filter_50.txt 2276: ||vssid.*.cc^
+19_filter_50.txt 2278: ||baoviet*.top^
+19_filter_50.txt 2279: ||uudauthekhachhanh-
+19_filter_50.txt 2280: ||chamsocthe-
+19_filter_50.txt 2282: ||cskhtructuyen-
+19_filter_50.txt 2285: ||tikifreeship.
+19_filter_50.txt 2286: ||tiktok-svip*.com^
+19_filter_50.txt 2287: ||khach-hang-
+19_filter_50.txt 2288: ||nhantienquocte*.vercel.app^
+19_filter_50.txt 2289: ||khuyenmaidacbiet-
+19_filter_50.txt 2290: ||uudaidacbiet-
+19_filter_50.txt 2293: ||khuyenmaithang-
+19_filter_50.txt 2294: ||han-muc-the-
+19_filter_50.txt 2295: ||hotrodacbiet-
+19_filter_50.txt 2296: ||newmall*.cc^
+19_filter_50.txt 2297: ||chinhphu.*.org^
+19_filter_50.txt 2299: ||vincomplaza.*.top^
+19_filter_50.txt 2300: ||westernunion*.wixsite.com^
+19_filter_50.txt 2308: ||marketplace-item-*.000.pe^
+19_filter_50.txt 2313: ||kmspico-
+19_filter_50.txt 2382: ||ajmaboxanherulv*.b-cdn.net^
+19_filter_50.txt 2383: ||anti-automation-v*.b-cdn.net^
+19_filter_50.txt 2384: ||bot-check-v*.b-cdn.net^
+19_filter_50.txt 2385: ||dedicloadpgeing*.b-cdn.net^
+19_filter_50.txt 2386: ||file-typ-botcheck*.b-cdn.net^
+19_filter_50.txt 2387: ||izmncdnboxuse*.b-cdn.net^
+19_filter_50.txt 2388: ||newverifyyourself-system*.b-cdn.net^
+19_filter_50.txt 2389: ||nikutjyjgchr*.b-cdn.net^
+19_filter_50.txt 2390: ||verification-module-v*.b-cdn.net^
+19_filter_50.txt 2391: ||verifyyourself-*system.b-cdn.net^
+19_filter_50.txt 2392: ||weoidnet*.b-cdn.net^
+19_filter_50.txt 2408: ||orca-slicer.
+19_filter_50.txt 2409: ||ocraslicer.
+19_filter_50.txt 2410: ||orca3dslicer.
+19_filter_50.txt 2411: ||orcaslice.
+19_filter_50.txt 2412: ||orcaslicer3d.
+19_filter_50.txt 2413: ||orcaslicerdownload.
+19_filter_50.txt 2414: ||orcaslicerofficial.
+19_filter_50.txt 2415: ||orcaslicerr.
+19_filter_50.txt 2416: ||orcaslicers.
+19_filter_50.txt 2417: ||theorcaslicer.
+19_filter_50.txt 2418: ||orcasslicer.
+19_filter_50.txt 2419: ||nvcleanstall.
+19_filter_50.txt 2420: ||nvcleanstal.
+19_filter_50.txt 2426: ||uobretailcreditmanagement.
+19_filter_50.txt 2427: ||blockfiupdates.
+19_filter_50.txt 2441: ||usps-packages-*.com^
+19_filter_50.txt 2468: ||e-interac-*.com^
+19_filter_50.txt 2469: ||press-continue.*.top^
+19_filter_50.txt 2470: ||evri.*.xyz^
+19_filter_50.txt 2474: -ez-pass.com^
+19_filter_50.txt 2475: ||irs.gov.*.com^
+19_filter_50.txt 2476: ||govuk.*.top^
+19_filter_50.txt 2477: ||e-navy*.weebly.com^
+19_filter_50.txt 2479: ||zoom.us*web.us^
+19_filter_50.txt 2480: ||e-zpass.com-
+19_filter_50.txt 2485: ||irs.gov-
+19_filter_50.txt 2486: ||secure.mygov.
+19_filter_50.txt 2487: ||org.gov-
+19_filter_50.txt 2488: ||israeipost.co-
+19_filter_50.txt 2489: ||canpost.id-
+19_filter_50.txt 2490: ||anpost.id-
+19_filter_50.txt 2491: ||kveesh6.il-
+19_filter_50.txt 2542: ||pttavm.*.com.tr^
+19_filter_50.txt 2598: ||phila.revenue*.cc^
+19_filter_50.txt 2602: ||upa1bit.
+19_filter_50.txt 2603: ||upbitbr.
+19_filter_50.txt 2604: -ledger.live^
+19_filter_50.txt 2609: ||client.*-blockfi.com^
+19_filter_50.txt 2615: /^https?:\/\/www\.[a-z]{8,11}\.com\/product\/(?:[0-9a-z]+-)*(?:%[%0-9a-z]{8,}-)+(?:[0-9a-z]+-)*(?:[%0-9a-z]{8,}-)*[%0-9a-z]+\/?$/$doc,match-case,ipaddress=/^173\.2(08|32)\.\d{3}\.\d{3}$/
+19_filter_50.txt 2616: /^https?:\/\/[a-z]{7}\.[a-z]{8,11}\.com\/products\/(?:[0-9a-z]+-)*(?:%[%0-9A-F]{8,}-)+(?:[0-9a-z]+-)*(?:[%0-9A-F]{8,}-)*[-%0-9A-Fa-z]+\/?$/$doc,match-case,ipaddress=/^23\.2\d{2}\.\d{2}\.\d{2}$/
+19_filter_50.txt 2634: ||blocchecker*.pages.dev^
+19_filter_50.txt 2636: ||xblocklist*.pages.dev^
+19_filter_50.txt 2637: ||xsuki*.pages.dev^
+19_filter_50.txt 2639: ||xblockchecker*.pages.dev^
+19_filter_50.txt 2645: ||sportifymore.
+19_filter_50.txt 2646: ||voting-express-tl.
+19_filter_50.txt 2647: ||spotifyprimeszones-
+19_filter_50.txt 2648: ||spotify*.ct.ws^
+19_filter_50.txt 2950: -wps.com.cn^
+19_filter_50.txt 2951: -youdao.com.cn^
+19_filter_50.txt 2952: -dingding.com.cn^
+19_filter_50.txt 2953: -chrome-chrome.com.cn^
+19_filter_50.txt 2954: ||chrome-chrome-
+19_filter_50.txt 2971: -qishui.com.cn^
+19_filter_50.txt 2972: ||qishui-*.com.cn^
+19_filter_50.txt 3010: ||labor-day-*.top^
+20_filter_53.txt 866: *-ad.sm.cn*
+20_filter_53.txt 867: *-ad.video.yximgs.com*
+20_filter_53.txt 868: *-ad.wtzw.com*
+20_filter_53.txt 869: *-be-pack-sign.pglstatp-toutiao.com*
+20_filter_53.txt 870: *-normal.zijieapi.com*
+21_source 1: [Adblock Plus]
+23_hosts 18: 127.0.0.1 localhost #[IPv4]
+23_hosts 19: ::1 localhost #[IPv6]
+23_hosts 39: 0.0.0.0 103.27.52.92
+23_hosts 40: 0.0.0.0 103.43.75.87
+23_hosts 41: 0.0.0.0 104.131.182.103
+23_hosts 42: 0.0.0.0 107.170.20.33
+23_hosts 43: 0.0.0.0 107.181.174.34
+23_hosts 44: 0.0.0.0 107.181.187.228
+23_hosts 45: 0.0.0.0 108.174.196.88
+23_hosts 46: 0.0.0.0 109.108.129.43
+23_hosts 47: 0.0.0.0 109.234.35.123
+23_hosts 48: 0.0.0.0 109.234.35.128
+23_hosts 49: 0.0.0.0 109.234.35.75
+23_hosts 50: 0.0.0.0 109.237.111.168
+23_hosts 51: 0.0.0.0 109.248.222.47
+23_hosts 52: 0.0.0.0 109.73.234.241
+23_hosts 56: 0.0.0.0 111.86.142.67
+23_hosts 57: 0.0.0.0 112.213.84.94
+23_hosts 59: 0.0.0.0 117.239.70.228
+23_hosts 60: 0.0.0.0 121.83.206.211
+23_hosts 62: 0.0.0.0 122.15.8.163
+23_hosts 68: 0.0.0.0 138.201.118.102
+23_hosts 69: 0.0.0.0 138.201.93.46
+23_hosts 70: 0.0.0.0 138.201.95.72
+23_hosts 71: 0.0.0.0 139.162.29.193
+23_hosts 72: 0.0.0.0 139.59.147.0
+23_hosts 73: 0.0.0.0 146.120.110.46
+23_hosts 74: 0.0.0.0 146.185.137.40
+23_hosts 75: 0.0.0.0 146.185.155.126
+23_hosts 76: 0.0.0.0 146.185.249.189
+23_hosts 77: 0.0.0.0 148.163.73.29
+23_hosts 78: 0.0.0.0 149.154.152.108
+23_hosts 79: 0.0.0.0 149.154.157.14
+23_hosts 80: 0.0.0.0 149.154.159.179
+23_hosts 81: 0.0.0.0 149.154.68.190
+23_hosts 82: 0.0.0.0 149.202.109.202
+23_hosts 83: 0.0.0.0 149.202.52.215
+23_hosts 84: 0.0.0.0 151.236.14.51
+23_hosts 86: 0.0.0.0 158.195.68.10
+23_hosts 87: 0.0.0.0 158.199.158.185
+23_hosts 88: 0.0.0.0 158.255.6.109
+23_hosts 89: 0.0.0.0 158.255.6.115
+23_hosts 90: 0.0.0.0 158.69.223.5
+23_hosts 92: 0.0.0.0 164.132.40.47
+23_hosts 96: 0.0.0.0 172.246.84.150
+23_hosts 97: 0.0.0.0 173.83.200.78
+23_hosts 98: 0.0.0.0 173.83.200.79
+23_hosts 99: 0.0.0.0 176.107.185.19
+23_hosts 100: 0.0.0.0 176.114.3.173
+23_hosts 101: 0.0.0.0 176.121.14.95
+23_hosts 102: 0.0.0.0 176.31.127.168
+23_hosts 103: 0.0.0.0 176.31.47.100
+23_hosts 104: 0.0.0.0 176.53.21.105
+23_hosts 105: 0.0.0.0 176.58.124.197
+23_hosts 106: 0.0.0.0 176.9.41.156
+23_hosts 107: 0.0.0.0 178.62.232.244
+23_hosts 108: 0.0.0.0 178.63.238.185
+23_hosts 109: 0.0.0.0 178.78.87.8
+23_hosts 111: 0.0.0.0 185.102.136.67
+23_hosts 112: 0.0.0.0 185.102.136.77
+23_hosts 113: 0.0.0.0 185.106.122.38
+23_hosts 114: 0.0.0.0 185.115.140.170
+23_hosts 115: 0.0.0.0 185.117.153.176
+23_hosts 116: 0.0.0.0 185.117.72.105
+23_hosts 117: 0.0.0.0 185.117.72.94
+23_hosts 118: 0.0.0.0 185.127.25.176
+23_hosts 119: 0.0.0.0 185.141.25.108
+23_hosts 120: 0.0.0.0 185.141.25.150
+23_hosts 121: 0.0.0.0 185.14.28.30
+23_hosts 122: 0.0.0.0 185.14.29.188
+23_hosts 123: 0.0.0.0 185.14.29.64
+23_hosts 124: 0.0.0.0 185.14.30.97
+23_hosts 125: 0.0.0.0 185.146.169.16
+23_hosts 126: 0.0.0.0 185.159.128.119
+23_hosts 127: 0.0.0.0 185.162.8.101
+23_hosts 128: 0.0.0.0 185.17.120.130
+23_hosts 129: 0.0.0.0 185.179.190.31
+23_hosts 130: 0.0.0.0 185.22.67.108
+23_hosts 131: 0.0.0.0 185.22.67.27
+23_hosts 132: 0.0.0.0 185.46.11.239
+23_hosts 133: 0.0.0.0 185.46.11.73
+23_hosts 134: 0.0.0.0 185.5.250.135
+23_hosts 135: 0.0.0.0 185.67.2.156
+23_hosts 136: 0.0.0.0 185.75.46.122
+23_hosts 137: 0.0.0.0 185.75.46.4
+23_hosts 138: 0.0.0.0 185.75.46.73
+23_hosts 139: 0.0.0.0 185.80.148.137
+23_hosts 140: 0.0.0.0 185.82.216.213
+23_hosts 141: 0.0.0.0 185.82.216.45
+23_hosts 142: 0.0.0.0 185.82.217.102
+23_hosts 143: 0.0.0.0 185.82.217.29
+23_hosts 144: 0.0.0.0 185.86.78.3
+23_hosts 145: 0.0.0.0 185.92.220.35
+23_hosts 146: 0.0.0.0 188.120.239.230
+23_hosts 147: 0.0.0.0 188.127.230.60
+23_hosts 148: 0.0.0.0 188.127.231.116
+23_hosts 149: 0.0.0.0 188.127.231.124
+23_hosts 150: 0.0.0.0 188.127.239.48
+23_hosts 151: 0.0.0.0 188.127.239.53
+23_hosts 152: 0.0.0.0 188.127.251.99
+23_hosts 153: 0.0.0.0 188.138.88.184
+23_hosts 154: 0.0.0.0 188.166.168.250
+23_hosts 159: 0.0.0.0 192.121.16.196
+23_hosts 160: 0.0.0.0 192.138.189.69
+23_hosts 161: 0.0.0.0 192.71.213.69
+23_hosts 162: 0.0.0.0 193.0.178.74
+23_hosts 163: 0.0.0.0 193.124.180.6
+23_hosts 164: 0.0.0.0 193.124.185.87
+23_hosts 165: 0.0.0.0 193.32.68.48
+23_hosts 166: 0.0.0.0 193.70.86.51
+23_hosts 167: 0.0.0.0 193.9.28.13
+23_hosts 168: 0.0.0.0 193.9.28.16
+23_hosts 169: 0.0.0.0 193.9.28.254
+23_hosts 170: 0.0.0.0 193.9.28.49
+23_hosts 171: 0.0.0.0 194.1.236.126
+23_hosts 172: 0.0.0.0 194.28.172.166
+23_hosts 173: 0.0.0.0 194.28.87.26
+23_hosts 174: 0.0.0.0 194.31.59.5
+23_hosts 175: 0.0.0.0 195.123.209.122
+23_hosts 176: 0.0.0.0 195.123.209.23
+23_hosts 177: 0.0.0.0 195.123.211.6
+23_hosts 178: 0.0.0.0 195.123.218.226
+23_hosts 179: 0.0.0.0 195.154.241.208
+23_hosts 180: 0.0.0.0 195.154.69.90
+23_hosts 181: 0.0.0.0 195.19.192.99
+23_hosts 182: 0.0.0.0 195.64.154.114
+23_hosts 183: 0.0.0.0 195.64.154.126
+23_hosts 184: 0.0.0.0 195.64.154.14
+23_hosts 185: 0.0.0.0 198.1.95.93
+23_hosts 200: 0.0.0.0 202.210.189.111
+23_hosts 201: 0.0.0.0 207.244.97.230
+23_hosts 202: 0.0.0.0 209.41.183.242
+23_hosts 203: 0.0.0.0 210.118.170.181
+23_hosts 204: 0.0.0.0 210.240.104.2
+23_hosts 205: 0.0.0.0 211.115.110.218
+23_hosts 206: 0.0.0.0 211.18.200.4
+23_hosts 207: 0.0.0.0 212.109.192.235
+23_hosts 208: 0.0.0.0 212.109.219.31
+23_hosts 209: 0.0.0.0 212.26.129.68
+23_hosts 210: 0.0.0.0 212.47.223.19
+23_hosts 211: 0.0.0.0 213.159.214.86
+23_hosts 212: 0.0.0.0 213.228.128.12
+23_hosts 213: 0.0.0.0 213.32.66.16
+23_hosts 214: 0.0.0.0 216.104.183.199
+23_hosts 215: 0.0.0.0 216.104.188.249
+23_hosts 216: 0.0.0.0 217.106.238.89
+23_hosts 217: 0.0.0.0 217.12.199.151
+23_hosts 218: 0.0.0.0 217.12.199.244
+23_hosts 219: 0.0.0.0 217.12.199.90
+23_hosts 220: 0.0.0.0 217.12.199.94
+23_hosts 221: 0.0.0.0 217.12.203.233
+23_hosts 222: 0.0.0.0 217.12.218.158
+23_hosts 223: 0.0.0.0 217.172.226.2
+23_hosts 224: 0.0.0.0 217.26.70.200
+23_hosts 225: 0.0.0.0 217.64.197.138
+23_hosts 226: 0.0.0.0 218.228.19.9
+23_hosts 281: 0.0.0.0 31.148.99.241
+23_hosts 282: 0.0.0.0 31.184.196.74
+23_hosts 283: 0.0.0.0 31.184.196.75
+23_hosts 284: 0.0.0.0 31.184.196.78
+23_hosts 285: 0.0.0.0 31.184.197.119
+23_hosts 286: 0.0.0.0 31.184.197.126
+23_hosts 287: 0.0.0.0 31.184.197.72
+23_hosts 288: 0.0.0.0 31.184.233.106
+23_hosts 289: 0.0.0.0 31.202.128.249
+23_hosts 290: 0.0.0.0 31.202.130.9
+23_hosts 291: 0.0.0.0 31.41.44.130
+23_hosts 292: 0.0.0.0 31.41.44.246
+23_hosts 293: 0.0.0.0 31.41.44.45
+23_hosts 294: 0.0.0.0 31.41.47.37
+23_hosts 295: 0.0.0.0 31.41.47.41
+23_hosts 296: 0.0.0.0 31.41.47.50
+23_hosts 306: 0.0.0.0 37.139.2.214
+23_hosts 307: 0.0.0.0 37.139.27.52
+23_hosts 308: 0.0.0.0 37.139.30.95
+23_hosts 309: 0.0.0.0 37.235.50.29
+23_hosts 310: 0.0.0.0 37.235.53.18
+23_hosts 311: 0.0.0.0 37.235.53.210
+23_hosts 312: 0.0.0.0 37.46.131.153
+23_hosts 347: 0.0.0.0 45.55.192.133
+23_hosts 348: 0.0.0.0 46.108.39.18
+23_hosts 349: 0.0.0.0 46.148.20.46
+23_hosts 350: 0.0.0.0 46.165.253.93
+23_hosts 351: 0.0.0.0 46.17.40.234
+23_hosts 352: 0.0.0.0 46.17.44.153
+23_hosts 353: 0.0.0.0 46.183.165.45
+23_hosts 354: 0.0.0.0 46.38.52.225
+23_hosts 355: 0.0.0.0 46.4.239.76
+23_hosts 357: 0.0.0.0 46.8.44.39
+23_hosts 358: 0.0.0.0 46.8.45.18
+23_hosts 520: 0.0.0.0 50.28.211.199
+23_hosts 523: 0.0.0.0 51.254.181.122
+23_hosts 524: 0.0.0.0 51.254.19.227
+23_hosts 525: 0.0.0.0 51.254.240.45
+23_hosts 526: 0.0.0.0 51.254.240.60
+23_hosts 527: 0.0.0.0 51.254.240.89
+23_hosts 528: 0.0.0.0 51.254.55.171
+23_hosts 529: 0.0.0.0 51.255.105.2
+23_hosts 530: 0.0.0.0 51.255.107.10
+23_hosts 531: 0.0.0.0 51.255.107.20
+23_hosts 532: 0.0.0.0 51.255.107.37
+23_hosts 533: 0.0.0.0 51.255.107.8
+23_hosts 534: 0.0.0.0 51.255.172.55
+23_hosts 535: 0.0.0.0 5.135.76.18
+23_hosts 537: 0.0.0.0 5.152.199.70
+23_hosts 538: 0.0.0.0 5.187.0.137
+23_hosts 539: 0.0.0.0 5.187.5.171
+23_hosts 540: 0.0.0.0 5.188.63.23
+23_hosts 541: 0.0.0.0 5.188.63.30
+23_hosts 542: 0.0.0.0 5.196.200.229
+23_hosts 543: 0.0.0.0 5.196.200.247
+23_hosts 544: 0.0.0.0 5.196.99.239
+23_hosts 888: 0.0.0.0 5.34.180.135
+23_hosts 889: 0.0.0.0 5.34.183.136
+23_hosts 890: 0.0.0.0 5.34.183.195
+23_hosts 891: 0.0.0.0 5.34.183.40
+23_hosts 892: 0.0.0.0 5.39.76.12
+23_hosts 896: 0.0.0.0 5.79.106.152
+23_hosts 897: 0.0.0.0 5.8.63.54
+23_hosts 898: 0.0.0.0 5.9.253.173
+23_hosts 905: 0.0.0.0 64.207.144.148
+23_hosts 906: 0.0.0.0 64.22.100.95
+23_hosts 907: 0.0.0.0 66.147.244.210
+23_hosts 908: 0.0.0.0 67.199.41.9
+23_hosts 909: 0.0.0.0 67.23.226.139
+23_hosts 910: 0.0.0.0 68.171.49.151
+23_hosts 911: 0.0.0.0 69.162.74.116
+23_hosts 912: 0.0.0.0 69.61.11.216
+23_hosts 917: 0.0.0.0 70.32.93.234
+23_hosts 918: 0.0.0.0 72.47.222.40
+23_hosts 920: 0.0.0.0 77.222.54.202
+23_hosts 921: 0.0.0.0 77.73.66.227
+23_hosts 922: 0.0.0.0 78.40.108.39
+23_hosts 923: 0.0.0.0 78.46.170.79
+23_hosts 924: 0.0.0.0 78.47.110.82
+23_hosts 925: 0.0.0.0 78.47.159.97
+23_hosts 926: 0.0.0.0 79.96.153.93
+23_hosts 932: 0.0.0.0 80.109.240.71
+23_hosts 933: 0.0.0.0 80.241.232.207
+23_hosts 934: 0.0.0.0 80.87.202.49
+23_hosts 935: 0.0.0.0 81.177.181.164
+23_hosts 936: 0.0.0.0 81.177.26.201
+23_hosts 937: 0.0.0.0 81.177.27.222
+23_hosts 938: 0.0.0.0 81.177.27.36
+23_hosts 939: 0.0.0.0 81.218.219.227
+23_hosts 942: 0.0.0.0 82.146.37.200
+23_hosts 943: 0.0.0.0 82.196.6.154
+23_hosts 944: 0.0.0.0 82.202.221.108
+23_hosts 945: 0.0.0.0 82.202.221.88
+23_hosts 946: 0.0.0.0 83.217.11.191
+23_hosts 947: 0.0.0.0 83.217.11.193
+23_hosts 948: 0.0.0.0 83.217.25.239
+23_hosts 949: 0.0.0.0 83.217.26.168
+23_hosts 950: 0.0.0.0 83.217.8.127
+23_hosts 951: 0.0.0.0 83.217.8.155
+23_hosts 952: 0.0.0.0 83.217.8.234
+23_hosts 953: 0.0.0.0 83.220.172.182
+23_hosts 954: 0.0.0.0 83.235.64.44
+23_hosts 955: 0.0.0.0 84.19.170.244
+23_hosts 956: 0.0.0.0 84.19.170.249
+23_hosts 957: 0.0.0.0 85.25.138.187
+23_hosts 959: 0.0.0.0 85.92.144.157
+23_hosts 960: 0.0.0.0 86.104.134.144
+23_hosts 961: 0.0.0.0 87.106.38.204
+23_hosts 962: 0.0.0.0 87.244.17.86
+23_hosts 964: 0.0.0.0 88.150.144.236
+23_hosts 965: 0.0.0.0 88.198.119.177
+23_hosts 966: 0.0.0.0 88.214.236.11
+23_hosts 967: 0.0.0.0 88.214.236.182
+23_hosts 968: 0.0.0.0 88.214.237.45
+23_hosts 969: 0.0.0.0 88.214.237.57
+23_hosts 972: 0.0.0.0 89.108.73.124
+23_hosts 973: 0.0.0.0 89.108.83.189
+23_hosts 974: 0.0.0.0 89.108.83.196
+23_hosts 975: 0.0.0.0 89.108.84.132
+23_hosts 976: 0.0.0.0 89.108.84.155
+23_hosts 977: 0.0.0.0 89.108.84.87
+23_hosts 978: 0.0.0.0 89.108.85.163
+23_hosts 979: 0.0.0.0 89.145.78.9
+23_hosts 981: 0.0.0.0 89.40.181.39
+23_hosts 985: 0.0.0.0 91.121.97.170
+23_hosts 986: 0.0.0.0 91.142.90.46
+23_hosts 987: 0.0.0.0 91.142.90.61
+23_hosts 988: 0.0.0.0 91.191.184.158
+23_hosts 989: 0.0.0.0 91.195.12.131
+23_hosts 990: 0.0.0.0 91.195.12.143
+23_hosts 991: 0.0.0.0 91.195.12.187
+23_hosts 992: 0.0.0.0 91.200.14.109
+23_hosts 993: 0.0.0.0 91.200.14.124
+23_hosts 994: 0.0.0.0 91.200.14.139
+23_hosts 995: 0.0.0.0 91.200.14.73
+23_hosts 996: 0.0.0.0 91.201.202.12
+23_hosts 997: 0.0.0.0 91.201.202.232
+23_hosts 998: 0.0.0.0 91.201.41.91
+23_hosts 999: 0.0.0.0 91.203.5.145
+23_hosts 1000: 0.0.0.0 91.203.5.181
+23_hosts 1001: 0.0.0.0 91.209.77.86
+23_hosts 1002: 0.0.0.0 91.210.166.51
+23_hosts 1003: 0.0.0.0 91.211.119.71
+23_hosts 1004: 0.0.0.0 91.211.119.98
+23_hosts 1005: 0.0.0.0 91.214.71.101
+23_hosts 1006: 0.0.0.0 91.219.28.231
+23_hosts 1007: 0.0.0.0 91.219.28.44
+23_hosts 1008: 0.0.0.0 91.219.29.106
+23_hosts 1009: 0.0.0.0 91.219.29.41
+23_hosts 1010: 0.0.0.0 91.219.29.48
+23_hosts 1011: 0.0.0.0 91.219.29.55
+23_hosts 1012: 0.0.0.0 91.219.29.64
+23_hosts 1013: 0.0.0.0 91.219.29.66
+23_hosts 1014: 0.0.0.0 91.219.29.81
+23_hosts 1015: 0.0.0.0 91.219.30.254
+23_hosts 1016: 0.0.0.0 91.219.31.14
+23_hosts 1017: 0.0.0.0 91.219.31.15
+23_hosts 1018: 0.0.0.0 91.223.180.240
+23_hosts 1019: 0.0.0.0 91.223.88.205
+23_hosts 1020: 0.0.0.0 91.223.88.50
+23_hosts 1021: 0.0.0.0 91.226.92.204
+23_hosts 1022: 0.0.0.0 91.226.93.113
+23_hosts 1023: 0.0.0.0 91.226.93.124
+23_hosts 1024: 0.0.0.0 91.228.239.216
+23_hosts 1025: 0.0.0.0 91.229.188.178
+23_hosts 1026: 0.0.0.0 91.230.211.103
+23_hosts 1027: 0.0.0.0 91.230.211.139
+23_hosts 1028: 0.0.0.0 91.230.211.187
+23_hosts 1029: 0.0.0.0 91.234.32.192
+23_hosts 1030: 0.0.0.0 91.234.33.149
+23_hosts 1031: 0.0.0.0 91.234.33.215
+23_hosts 1032: 0.0.0.0 91.234.34.98
+23_hosts 1033: 0.0.0.0 91.234.35.216
+23_hosts 1034: 0.0.0.0 91.234.35.243
+23_hosts 1035: 0.0.0.0 91.237.247.24
+23_hosts 1036: 0.0.0.0 91.247.37.137
+23_hosts 1039: 0.0.0.0 92.222.71.26
+23_hosts 1041: 0.0.0.0 92.63.87.106
+23_hosts 1042: 0.0.0.0 92.63.87.134
+23_hosts 1043: 0.0.0.0 92.63.87.48
+23_hosts 1044: 0.0.0.0 92.63.87.53
+23_hosts 1045: 0.0.0.0 93.170.123.119
+23_hosts 1046: 0.0.0.0 93.170.123.185
+23_hosts 1047: 0.0.0.0 93.170.123.60
+23_hosts 1048: 0.0.0.0 93.170.131.108
+23_hosts 1049: 0.0.0.0 93.170.169.52
+23_hosts 1050: 0.0.0.0 94.127.33.126
+23_hosts 1051: 0.0.0.0 94.242.57.45
+23_hosts 1052: 0.0.0.0 94.242.59.239
+23_hosts 1054: 0.0.0.0 95.163.107.41
+23_hosts 1055: 0.0.0.0 95.181.171.58
+23_hosts 1056: 0.0.0.0 95.213.184.10
+23_hosts 1057: 0.0.0.0 95.213.192.77
+23_hosts 1058: 0.0.0.0 95.213.195.123
+23_hosts 1059: 0.0.0.0 95.46.114.205
+23_hosts 1060: 0.0.0.0 95.46.114.80
+23_hosts 1061: 0.0.0.0 95.85.19.195
+23_hosts 1064: 0.0.0.0 98.131.20.17
+23_hosts 1237: INVALID_TLD(fakedomain): 0.0.0.0 afake.fake.fakedomain
+23_hosts 3397: 0.0.0.0 cukiernia_izabela.republika.pl
+23_hosts 3822: INVALID_TLD(exist): 0.0.0.0 does.not.exist
+23_hosts 4481: INVALID_TLD(uberfake): 0.0.0.0 fake.veryfake.uberfake
+23_hosts 5947: INVALID_TLD(superfake): 0.0.0.0 iamfake.fake.superfake
+23_hosts 9323: 0.0.0.0 pp4_09_10_2s.republika.pl
+23_hosts 10352: 0.0.0.0 sfdao.ga14pwy4pfrhp8xeqhdbnxkcnl.php?rand=13InboxLightaspxn.1774256418&fid.4.1252899642&fid=1&fav.1&rand.13InboxLight.aspxn.1774256418&fid.1252899642&fid.1&fav.1&email=&emailID=&.rand=13InboxLight.aspx?n=1774256418&fid=4#n=1252899642&fid=1&fav=1
+23_hosts 11415: INVALID_TLD(doesnotexist): 0.0.0.0 thisisfake.fake.doesnotexist
+23_hosts 13828: 0.0.0.0 zsz_szyn.republika.pl
+25_adguard.txt 968: ||avito.avito.avito.
+25_adguard.txt 969: .com-id*.info^
+25_adguard.txt 970: .com-id*.com^
+25_adguard.txt 971: ||yandex.avito.sber*
+25_adguard.txt 972: ||yandex.avito.www.
+25_adguard.txt 973: ||yandex.pay.avito.
+25_adguard.txt 974: .avito.www.booking.
+25_adguard.txt 975: ||booklng.com-*
+25_adguard.txt 976: ||avito.avito.www.avito.
+25_adguard.txt 977: ||booking.com-id*
+27_hosts.txt 182: INVALID_TLD(domain): 0.0.0.0 my.domain
+28_SmartTV-AGH.txt 15: @@||mhc-ajax-eu.myhomescreen.tv^
+28_SmartTV-AGH.txt 16: @@||mhc-ajax-eu-s2.myhomescreen.tv^
+28_SmartTV-AGH.txt 17: @@||mhc-xpana-eu.myhomescreen.tv^
+28_SmartTV-AGH.txt 18: @@||mhc-xpana-eu-s2.myhomescreen.tv^
+28_SmartTV-AGH.txt 56: |lgtvsdp.com^
+28_SmartTV-AGH.txt 88: ||fkp.samsungcloudsolution.
+28_SmartTV-AGH.txt 98: ||oempprd.samsungcloudsolution.
+28_SmartTV-AGH.txt 108: |samsungcloudsolution.com^
+28_SmartTV-AGH.txt 109: |samsungcloudsolution.net^
+28_SmartTV-AGH.txt 110: |samsungqbe.com^
+28_SmartTV-AGH.txt 127: @@||infolink.pavv.co.kr^
+28_SmartTV-AGH.txt 161: ||hbbtv.*.de^
+28_SmartTV-AGH.txt 165: @@||hbbtv.zdf.de^
+28_SmartTV-AGH.txt 166: @@||hbbtv.prosieben.de^
+28_SmartTV-AGH.txt 167: @@||hbbtv.redbutton.de^
+28_SmartTV-AGH.txt 168: @@||hbbtv.kika.de^
+28_SmartTV-AGH.txt 237: ||api.*.hismarttv.com^
+28_SmartTV-AGH.txt 266: ||fls-*.amazon.com^
+30_serverlist.php 1: [Adblock Plus 1.1]
+30_serverlist.php 2506: INVALID_TLD(example0101): ||pgl.example0101^
+31_hosts 72: 127.0.0.1	localhost
+31_hosts 73: 127.0.0.1	localhost.localdomain
+31_hosts 74: 255.255.255.255	broadcasthost
+31_hosts 75: ::1		localhost
+31_hosts 76: 127.0.0.1	local
+31_hosts 77: ::1		ip6-localhost ip6-loopback
+31_hosts 78: fe00::0		ip6-localnet
+31_hosts 79: ff00::0		ip6-mcastprefix
+31_hosts 80: ff02::1		ip6-allnodes
+31_hosts 81: ff02::2		ip6-allrouters
+31_hosts 82: ff02::3		ip6-allhosts
+31_hosts 1908: 0.0.0.0 dig
+31_hosts 3270: 0.0.0.0 wpad # For reference: https://www.youtube.com/watch?v=uwsykPWa5Lc

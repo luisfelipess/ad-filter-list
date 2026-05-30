@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-30T12:07:57.724257Z",
+  "generated": "2026-05-30T12:31:49.554466Z",
   "default_tier": "good",
   "tiers": [
     "light",
@@ -7,27 +7,27 @@
     "aggressive"
   ],
   "summary": {
-    "scanned": 1461675,
-    "unique_deduped": 953062,
-    "duplicates_deduped": 210159,
-    "reduction_pct_deduped": 18.067,
-    "unique_optimized": 719735,
+    "scanned": 2386990,
+    "unique_deduped": 952794,
+    "duplicates_deduped": 216620,
+    "reduction_pct_deduped": 18.5238,
+    "unique_optimized": 719492,
     "wildcards": 94185,
-    "duplicates_optimized": 443486,
-    "reduction_pct_optimized": 38.1257,
+    "duplicates_optimized": 449922,
+    "reduction_pct_optimized": 38.4741,
     "delta_added": 0,
-    "delta_removed": 0,
-    "rejected_total": 161,
-    "tld_rejected": 27,
+    "delta_removed": 269662,
+    "rejected_total": 2662,
+    "tld_rejected": 41,
     "matched_allowlisted": 1,
     "added_by_blocklist_override": 0,
     "output_sizes": {
-      "blocklist.txt": 30095039,
-      "blocklist-adblock.txt": 15394744,
-      "blocklist-bind9.zone.gz": 6962575,
-      "blocklist-dnsmasq.conf": 20952898,
-      "blocklist-unbound.conf": 35296308,
-      "blocklist-domains.txt": 22470558
+      "blocklist.txt": 30085816,
+      "blocklist-adblock.txt": 15388251,
+      "blocklist-bind9.zone.gz": 6960088,
+      "blocklist-dnsmasq.conf": 20944619,
+      "blocklist-unbound.conf": 35283689,
+      "blocklist-domains.txt": 22463479
     },
     "tier_summaries": {
       "light": {
@@ -44,16 +44,16 @@
         }
       },
       "aggressive": {
-        "unique_deduped": 1197174,
-        "unique_optimized": 905758,
+        "unique_deduped": 1439039,
+        "unique_optimized": 1141585,
         "wildcards": 94185,
         "output_sizes": {
-          "blocklist.txt": 38233129,
-          "blocklist-adblock.txt": 19344766,
-          "blocklist-bind9.zone.gz": 8587302,
-          "blocklist-dnsmasq.conf": 26162608,
-          "blocklist-unbound.conf": 43649398,
-          "blocklist-domains.txt": 28655752
+          "blocklist.txt": 45618813,
+          "blocklist-adblock.txt": 25192322,
+          "blocklist-bind9.zone.gz": 11149022,
+          "blocklist-dnsmasq.conf": 33869266,
+          "blocklist-unbound.conf": 56003196,
+          "blocklist-domains.txt": 34106516
         }
       }
     }
@@ -162,29 +162,18 @@
       "health": "redundant",
       "health_reason": "all entries already covered by earlier sources"
     },
-    "10_spy.txt": {
-      "url": "https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/spy.txt",
-      "format": "host",
-      "format_reason": "host format detected",
-      "scanned": 347,
-      "accepted": 347,
-      "rejected": 0,
-      "net_new": 268,
-      "skipped": false,
-      "health": "ok"
-    },
-    "11_GoodbyeAds.txt": {
+    "10_GoodbyeAds.txt": {
       "url": "https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Hosts/GoodbyeAds.txt",
       "format": "host",
       "format_reason": "host format detected",
       "scanned": 277846,
       "accepted": 277722,
       "rejected": 124,
-      "net_new": 226651,
+      "net_new": 226665,
       "skipped": false,
       "health": "ok"
     },
-    "12_domains.hosts": {
+    "11_domains.hosts": {
       "url": "https://raw.githubusercontent.com/cbuijs/hagezi/refs/heads/main/lists/doh/domains.hosts",
       "format": "host",
       "format_reason": "host format detected",
@@ -195,7 +184,7 @@
       "skipped": false,
       "health": "ok"
     },
-    "13_domains.hosts": {
+    "12_domains.hosts": {
       "url": "https://raw.githubusercontent.com/cbuijs/hagezi/refs/heads/main/lists/doh-vpn-proxy-bypass/domains.hosts",
       "format": "host",
       "format_reason": "host format detected",
@@ -206,8 +195,8 @@
       "skipped": false,
       "health": "ok"
     },
-    "14_hosts.txt": {
-      "url": "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt",
+    "13_hosts.txt": {
+      "url": "https://adaway.org/hosts.txt",
       "format": "host",
       "format_reason": "host format detected",
       "scanned": 6542,
@@ -217,6 +206,210 @@
       "skipped": false,
       "health": "low_value",
       "health_reason": "11 net-new of 6540 accepted (0.2%)"
+    },
+    "14_hosts.txt": {
+      "url": "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 6542,
+      "accepted": 6540,
+      "rejected": 2,
+      "net_new": 0,
+      "skipped": false,
+      "health": "redundant",
+      "health_reason": "all entries already covered by earlier sources"
+    },
+    "15_filter.txt": {
+      "url": "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt",
+      "format": "adblock",
+      "format_reason": "adblock format detected",
+      "scanned": 164804,
+      "accepted": 163877,
+      "rejected": 927,
+      "net_new": 45973,
+      "skipped": false,
+      "health": "ok"
+    },
+    "16_filter_1.txt": {
+      "url": "https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt",
+      "format": "adblock",
+      "format_reason": "adblock format detected",
+      "scanned": 164804,
+      "accepted": 163877,
+      "rejected": 927,
+      "net_new": 0,
+      "skipped": false,
+      "health": "redundant",
+      "health_reason": "all entries already covered by earlier sources"
+    },
+    "17_filter_3.txt": {
+      "url": "https://adguardteam.github.io/HostlistsRegistry/assets/filter_3.txt",
+      "format": "adblock",
+      "format_reason": "adblock format detected",
+      "scanned": 3506,
+      "accepted": 3505,
+      "rejected": 1,
+      "net_new": 2,
+      "skipped": false,
+      "health": "low_value",
+      "health_reason": "2 net-new of 3505 accepted (0.1%)"
+    },
+    "18_filter_34.txt": {
+      "url": "https://adguardteam.github.io/HostlistsRegistry/assets/filter_34.txt",
+      "format": "adblock",
+      "format_reason": "adblock format detected",
+      "scanned": 160818,
+      "accepted": 160818,
+      "rejected": 0,
+      "net_new": 1,
+      "skipped": false,
+      "health": "low_value",
+      "health_reason": "1 net-new of 160818 accepted (0.0%)"
+    },
+    "19_filter_50.txt": {
+      "url": "https://adguardteam.github.io/HostlistsRegistry/assets/filter_50.txt",
+      "format": "adblock",
+      "format_reason": "adblock format detected",
+      "scanned": 3008,
+      "accepted": 2777,
+      "rejected": 231,
+      "net_new": 139,
+      "skipped": false,
+      "health": "ok"
+    },
+    "20_filter_53.txt": {
+      "url": "https://adguardteam.github.io/HostlistsRegistry/assets/filter_53.txt",
+      "format": "adblock",
+      "format_reason": "adblock format detected",
+      "scanned": 861,
+      "accepted": 856,
+      "rejected": 5,
+      "net_new": 27,
+      "skipped": false,
+      "health": "ok"
+    },
+    "21_source": {
+      "url": "https://abp.oisd.nl/",
+      "format": "adblock",
+      "format_reason": "adblock format detected",
+      "scanned": 366238,
+      "accepted": 366237,
+      "rejected": 1,
+      "net_new": 160704,
+      "skipped": false,
+      "health": "ok"
+    },
+    "22_spy.txt": {
+      "url": "https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/spy.txt",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 347,
+      "accepted": 347,
+      "rejected": 0,
+      "net_new": 254,
+      "skipped": false,
+      "health": "ok"
+    },
+    "23_hosts": {
+      "url": "https://raw.githubusercontent.com/mitchellkrogza/The-Big-List-of-Hacked-Malware-Web-Sites/master/hosts",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 13822,
+      "accepted": 13459,
+      "rejected": 363,
+      "net_new": 13072,
+      "skipped": false,
+      "health": "ok"
+    },
+    "24_main-blacklist.txt": {
+      "url": "https://raw.githubusercontent.com/Spam404/lists/master/main-blacklist.txt",
+      "format": "domain-only",
+      "format_reason": "domain-only format detected",
+      "scanned": 8140,
+      "accepted": 8140,
+      "rejected": 0,
+      "net_new": 6525,
+      "skipped": false,
+      "health": "ok"
+    },
+    "25_adguard.txt": {
+      "url": "https://raw.githubusercontent.com/durablenapkin/scamblocklist/master/adguard.txt",
+      "format": "adblock",
+      "format_reason": "adblock format detected",
+      "scanned": 969,
+      "accepted": 959,
+      "rejected": 10,
+      "net_new": 114,
+      "skipped": false,
+      "health": "ok"
+    },
+    "26_urlhaus-filter-hosts.txt": {
+      "url": "https://malware-filter.gitlab.io/malware-filter/urlhaus-filter-hosts.txt",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 16962,
+      "accepted": 16962,
+      "rejected": 0,
+      "net_new": 14947,
+      "skipped": false,
+      "health": "ok"
+    },
+    "27_hosts.txt": {
+      "url": "https://raw.githubusercontent.com/hoshsadiq/adblock-nocoin-list/master/hosts.txt",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 313,
+      "accepted": 312,
+      "rejected": 1,
+      "net_new": 132,
+      "skipped": false,
+      "health": "ok"
+    },
+    "28_SmartTV-AGH.txt": {
+      "url": "https://raw.githubusercontent.com/Perflyst/PiHoleBlocklist/master/SmartTV-AGH.txt",
+      "format": "adblock",
+      "format_reason": "adblock format detected",
+      "scanned": 162,
+      "accepted": 144,
+      "rejected": 18,
+      "net_new": 34,
+      "skipped": false,
+      "health": "ok"
+    },
+    "29_hosts-file.txt": {
+      "url": "https://paulgb.github.io/BarbBlock/blacklists/hosts-file.txt",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 550,
+      "accepted": 550,
+      "rejected": 0,
+      "net_new": 195,
+      "skipped": false,
+      "health": "ok"
+    },
+    "30_serverlist.php": {
+      "url": "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=adblockplus&showintro=1&mimetype=plaintext",
+      "format": "adblock",
+      "format_reason": "adblock format detected",
+      "scanned": 3509,
+      "accepted": 3507,
+      "rejected": 2,
+      "net_new": 0,
+      "skipped": false,
+      "health": "redundant",
+      "health_reason": "all entries already covered by earlier sources"
+    },
+    "31_hosts": {
+      "url": "https://someonewhocares.org/hosts/zero/hosts",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 12808,
+      "accepted": 12795,
+      "rejected": 13,
+      "net_new": 0,
+      "skipped": false,
+      "health": "redundant",
+      "health_reason": "all entries already covered by earlier sources"
     }
   }
 }
