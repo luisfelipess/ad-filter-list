@@ -169,7 +169,40 @@ def _load_iana_tlds(cache_path: str = ".iana-tlds.cache") -> set[str] | None:
         return None
 
 
-def read_map(map_path: str) -> list[tuple[str, str]]:
+def read_tiers_config(path: str = "tiers.conf") -> tuple[list[str], str]:
+    """Return (tiers_ordered, default_tier) from tiers.conf.
+
+    tiers_ordered: tier names lightest-first.
+    default_tier: the * tier whose outputs land at processed/ root.
+    Falls back to (['default'], 'default') when the file is missing.
+    """
+    if not os.path.exists(path):
+        return ["default"], "default"
+    tiers: list[str] = []
+    default_tier: str | None = None
+    with open(path, encoding="utf-8") as fh:
+        for line in fh:
+            line = line.split("#", 1)[0].strip()
+            if not line:
+                continue
+            is_default = "*" in line
+            name = line.replace("*", "").strip()
+            if name:
+                tiers.append(name)
+                if is_default:
+                    default_tier = name
+    if not tiers:
+        return ["default"], "default"
+    if default_tier is None:
+        default_tier = tiers[0]
+    return tiers, default_tier
+
+
+def read_map(map_path: str) -> list[tuple[str, str, str]]:
+    """Return list of (fname, url, tier) from sources.map.
+
+    Backward-compatible: old 2-column lines return tier=''.
+    """
     pairs = []
     if not os.path.exists(map_path):
         return pairs
@@ -178,10 +211,11 @@ def read_map(map_path: str) -> list[tuple[str, str]]:
             line = line.strip()
             if not line:
                 continue
-            parts = line.split(None, 1)
+            parts = line.split(None, 2)
             fname = parts[0]
-            url = parts[1] if len(parts) == 2 else ""
-            pairs.append((fname, url))
+            url = parts[1] if len(parts) >= 2 else ""
+            tier = parts[2].strip() if len(parts) == 3 else ""
+            pairs.append((fname, url, tier))
     return pairs
 
 
@@ -234,23 +268,25 @@ def _pick_reader(path: str, sample_size: int = 50):
     return None, "unsupported", "no recognizable format in sample"
 
 
-def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries, valid_tlds=None):
-    """Scan source files and return (ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected)."""
+def _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats, source_infos,
+                     rejected_entries, valid_tlds=None, default_rank: int = 0):
+    """Scan source files and return
+    (ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected, domain_min_rank).
+
+    pairs_with_ranks: list of (fname, url, tier_rank).
+    domain_min_rank maps each domain to the lowest tier rank among all sources that contain it,
+    used by merge() to filter per-tier output lists.
+    """
     seen: set[str] = set()
     allowlisted_skipped: set[str] = set()
     ordered: list[str] = []
     wildcard_domains: set[str] = set()
+    domain_min_rank: dict[str, int] = {}
     total_candidates = 0
     matched_allowlisted = 0
     tld_rejected = 0
 
-    sources = pairs if pairs else [
-        (fname, "")
-        for fname in sorted(os.listdir(raw_dir))
-        if os.path.isfile(os.path.join(raw_dir, fname))
-    ]
-
-    for fname, url in sources:
+    for fname, url, src_rank in pairs_with_ranks:
         path = os.path.join(raw_dir, fname)
         headers = read_leading_header(path)
         reader, fmt, reason = _pick_reader(path)
@@ -259,6 +295,7 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
             "url": url, "format": fmt, "format_reason": reason,
             "scanned": 0, "accepted": 0, "rejected": 0, "net_new": 0,
             "skipped": reader is None,
+            "tier_rank": src_rank,
         }
         print(f"{fname}: detected format={fmt} ({reason})")
         if reader is None:
@@ -298,35 +335,67 @@ def _collect_domains(raw_dir, pairs, allowlist, source_stats, source_infos, reje
                     seen.add(dom)
                     ordered.append(dom)
                     source_stats[fname]["net_new"] += 1
+                    domain_min_rank[dom] = src_rank
+                else:
+                    # Domain already collected — update rank if this source is lighter.
+                    if src_rank < domain_min_rank.get(dom, src_rank):
+                        domain_min_rank[dom] = src_rank
                 if is_wildcard:
                     wildcard_domains.add(dom)
 
-    return ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected
+    return ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected, domain_min_rank
 
 
 def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
           allowlist_path: str = "allowlist.txt", blocklist_path: str = "blocklist.txt",
           optimize_subdomains: bool = True, writers_config: str = "writers.conf",
           skip_iana_check: bool = False, _valid_tlds: set[str] | None = None,
-          max_drop_pct: float = 50.0) -> None:
+          max_drop_pct: float = 50.0, tiers_config: str = "tiers.conf") -> None:
     allowlist = load_allowlist(allowlist_path)
     blocklist = load_blocklist(blocklist_path)
     active_writers = load_writers_config(writers_config)
-    pairs = read_map(map_path)
     source_infos: list[tuple[str, list[str], str, str]] = []
     rejected_entries: list[tuple[str, int, str]] = []
     source_stats: dict[str, dict] = {}
 
+    tiers_ordered, default_tier = read_tiers_config(tiers_config)
+    tier_rank: dict[str, int] = {name: idx for idx, name in enumerate(tiers_ordered)}
+    default_rank = tier_rank[default_tier]
+
+    # Build pairs with tier ranks from sources.map (or fall back to scanning raw/).
+    raw_pairs = read_map(map_path)
+    if raw_pairs:
+        pairs_with_ranks: list[tuple[str, str, int]] = []
+        for fname, url, tier_str in raw_pairs:
+            if tier_str and tier_str in tier_rank:
+                rank = tier_rank[tier_str]
+            elif tier_str:
+                print(f"Warning: unknown tier '{tier_str}' for {fname}, using default '{default_tier}'")
+                rank = default_rank
+            else:
+                rank = default_rank
+            pairs_with_ranks.append((fname, url, rank))
+    else:
+        pairs_with_ranks = [
+            (fname, "", default_rank)
+            for fname in sorted(os.listdir(raw_dir))
+            if os.path.isfile(os.path.join(raw_dir, fname))
+        ]
+
     if _valid_tlds is not None:
-        valid_tlds = _valid_tlds                 # test/caller-supplied override
+        valid_tlds = _valid_tlds
     elif skip_iana_check:
         valid_tlds = None
     else:
         valid_tlds = _load_iana_tlds()
 
-    ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected = _collect_domains(
-        raw_dir, pairs, allowlist, source_stats, source_infos, rejected_entries, valid_tlds
+    ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected, domain_min_rank = (
+        _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats,
+                         source_infos, rejected_entries, valid_tlds, default_rank)
     )
+
+    # source_ranks lets us compute per-tier candidate counts later.
+    source_ranks: dict[str, int] = {f: s["tier_rank"] for f, s in source_stats.items()}
 
     added_by_blocklist_override = 0
     if blocklist.exact or blocklist.wildcards:
@@ -343,37 +412,26 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
                 seen_set.add(dom)
                 ordered.append(dom)
                 added_by_blocklist_override += 1
+            # Blocklist-forced domains appear in every tier (rank 0).
+            if dom in seen_set:
+                domain_min_rank[dom] = 0
         for base in sorted(blocklist.wildcards):
             wildcard_domains.add(base)
             if base not in seen_set and not allowlist.matches(base):
                 seen_set.add(base)
                 ordered.append(base)
                 added_by_blocklist_override += 1
+            if base in seen_set:
+                domain_min_rank[base] = 0
         if added_by_blocklist_override:
             print(
                 f"Blocklist: added {added_by_blocklist_override} forced domain(s) "
                 f"from {blocklist_path}"
             )
 
-    if sort_output:
-        ordered = sorted(ordered)
+    ordered_all = sorted(ordered) if sort_output else list(ordered)
 
-    # ordered_deduped: all unique entries after exact dedup only (hosts / domains files)
-    ordered_deduped = list(ordered)
-    total_unique_deduped = len(ordered_deduped)
-    duplicates_deduped = max(0, total_candidates - total_unique_deduped)
-    reduction_pct_deduped = (duplicates_deduped / total_candidates * 100) if total_candidates else 0.0
-
-    # ordered_optimized: after subdomain optimization (DNS resolver formats)
-    if optimize_subdomains:
-        ordered_optimized = remove_subdomains(ordered_deduped, wildcard_domains)
-    else:
-        ordered_optimized = ordered_deduped
-    total_unique_optimized = len(ordered_optimized)
-    duplicates_optimized = max(0, total_candidates - total_unique_optimized)
-    reduction_pct_optimized = (duplicates_optimized / total_candidates * 100) if total_candidates else 0.0
-
-    # delta vs previous hosts file (compare against the full dedup-only list)
+    # ── delta vs previous default-tier hosts file ─────────────────────────────
     out_dir = os.path.dirname(out_path) or "."
     prev_domains: set[str] = set()
     delta_added = delta_removed = 0
@@ -385,57 +443,123 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
                     continue
                 parts = s.split()
                 prev_domains.add(parts[1].lower() if len(parts) >= 2 else parts[0].lower())
-        new_set = {d.lower() for d in ordered_deduped}
+
+    # Use default-tier domain count for the regression guard.
+    default_tier_deduped = [d for d in ordered_all if domain_min_rank.get(d, default_rank) <= default_rank]
+    if prev_domains:
+        new_set = {d.lower() for d in default_tier_deduped}
         delta_added = len(new_set - prev_domains)
         delta_removed = len(prev_domains - new_set)
-
-    if prev_domains and max_drop_pct < 100.0:
-        threshold = len(prev_domains) * (1.0 - max_drop_pct / 100.0)
-        if len(ordered_deduped) < threshold:
-            drop_pct = (1.0 - len(ordered_deduped) / len(prev_domains)) * 100.0
-            raise SystemExit(
-                f"ABORT: domain count dropped {drop_pct:.1f}% "
-                f"({len(prev_domains):,} → {len(ordered_deduped):,}), "
-                f"exceeds --max-drop-pct={max_drop_pct:.0f}%. "
-                f"Possible download failure. processed/ left untouched."
-            )
+        if max_drop_pct < 100.0:
+            threshold = len(prev_domains) * (1.0 - max_drop_pct / 100.0)
+            if len(default_tier_deduped) < threshold:
+                drop_pct = (1.0 - len(default_tier_deduped) / len(prev_domains)) * 100.0
+                raise SystemExit(
+                    f"ABORT: domain count dropped {drop_pct:.1f}% "
+                    f"({len(prev_domains):,} → {len(default_tier_deduped):,}), "
+                    f"exceeds --max-drop-pct={max_drop_pct:.0f}%. "
+                    f"Possible download failure. processed/ left untouched."
+                )
 
     now_str = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 
-    meta = WriterMeta(
-        now_str=now_str,
-        total_candidates=total_candidates,
-        total_unique_optimized=total_unique_optimized,
-        duplicates_optimized=duplicates_optimized,
-        reduction_pct_optimized=reduction_pct_optimized,
-        total_unique_deduped=total_unique_deduped,
-        duplicates_deduped=duplicates_deduped,
-        reduction_pct_deduped=reduction_pct_deduped,
-        delta_added=delta_added,
-        delta_removed=delta_removed,
-        source_infos=source_infos,
-        wildcard_domains=frozenset(wildcard_domains),
-    )
+    # ── per-tier write loop ───────────────────────────────────────────────────
+    tier_summaries: dict[str, dict] = {}
+    default_output_sizes: dict[str, int] = {}
+    default_unique_deduped = default_unique_optimized = 0
+    default_dupes_deduped = default_dupes_optimized = 0
+    default_pct_deduped = default_pct_optimized = 0.0
 
-    # ── run enabled writers ───────────────────────────────────────────────────
-    output_sizes: dict[str, int] = {}
-    for writer in active_writers:
-        # hosts/domains writers get the full dedup-only list; DNS resolver writers
-        # get the subdomain-optimized list
-        domains_for_writer = ordered_deduped if not writer.optimize_subdomains else ordered_optimized
-        written_path = writer.write(domains_for_writer, meta, out_dir)
-        if not domains_for_writer and written_path and os.path.exists(written_path):
-            os.remove(written_path)
-            print(f"Removed empty output: {written_path}")
-        elif written_path and os.path.exists(written_path):
-            output_sizes[os.path.basename(written_path)] = os.path.getsize(written_path)
+    for tier_name in tiers_ordered:
+        tier_r = tier_rank[tier_name]
+        is_default = (tier_name == default_tier)
 
-    # ── rejected entries + JSON report → reports/ ─────────────────────────────
-    reports_dir = os.path.join(os.path.dirname(out_path) or ".", "..", "reports")
-    reports_dir = os.path.normpath(reports_dir)
+        tier_domains_deduped = [d for d in ordered_all if domain_min_rank.get(d, default_rank) <= tier_r]
+        tier_wildcard_domains: set[str] = {d for d in wildcard_domains
+                                            if domain_min_rank.get(d, default_rank) <= tier_r}
+
+        if optimize_subdomains:
+            tier_domains_optimized = remove_subdomains(tier_domains_deduped, tier_wildcard_domains)
+        else:
+            tier_domains_optimized = tier_domains_deduped
+
+        tier_unique_deduped = len(tier_domains_deduped)
+        tier_unique_optimized = len(tier_domains_optimized)
+        tier_candidates = sum(
+            stats["accepted"]
+            for fname, stats in source_stats.items()
+            if source_ranks.get(fname, default_rank) <= tier_r
+        )
+        tier_dupes_deduped = max(0, tier_candidates - tier_unique_deduped)
+        tier_dupes_optimized = max(0, tier_candidates - tier_unique_optimized)
+        tier_pct_deduped = (tier_dupes_deduped / tier_candidates * 100) if tier_candidates else 0.0
+        tier_pct_optimized = (tier_dupes_optimized / tier_candidates * 100) if tier_candidates else 0.0
+
+        tier_source_infos = [
+            (fname, headers, url, fmt) for fname, headers, url, fmt in source_infos
+            if source_ranks.get(fname, default_rank) <= tier_r
+        ]
+
+        tier_meta = WriterMeta(
+            now_str=now_str,
+            total_candidates=tier_candidates,
+            total_unique_optimized=tier_unique_optimized,
+            duplicates_optimized=tier_dupes_optimized,
+            reduction_pct_optimized=tier_pct_optimized,
+            total_unique_deduped=tier_unique_deduped,
+            duplicates_deduped=tier_dupes_deduped,
+            reduction_pct_deduped=tier_pct_deduped,
+            delta_added=delta_added if is_default else 0,
+            delta_removed=delta_removed if is_default else 0,
+            source_infos=tier_source_infos,
+            wildcard_domains=frozenset(tier_wildcard_domains),
+        )
+
+        tier_out_dir = out_dir if is_default else os.path.join(out_dir, tier_name)
+        if not is_default:
+            os.makedirs(tier_out_dir, exist_ok=True)
+
+        tier_output_sizes: dict[str, int] = {}
+        for writer in active_writers:
+            domains_for_writer = (tier_domains_deduped if not writer.optimize_subdomains
+                                  else tier_domains_optimized)
+            written_path = writer.write(domains_for_writer, tier_meta, tier_out_dir)
+            if not domains_for_writer and written_path and os.path.exists(written_path):
+                os.remove(written_path)
+                print(f"Removed empty output: {written_path}")
+            elif written_path and os.path.exists(written_path):
+                tier_output_sizes[os.path.basename(written_path)] = os.path.getsize(written_path)
+
+        # Clean up empty non-default tier subdirectory.
+        if not is_default and os.path.isdir(tier_out_dir) and not os.listdir(tier_out_dir):
+            os.rmdir(tier_out_dir)
+
+        tier_summaries[tier_name] = {
+            "unique_deduped": tier_unique_deduped,
+            "unique_optimized": tier_unique_optimized,
+            "wildcards": len(tier_wildcard_domains),
+            "output_sizes": tier_output_sizes,
+        }
+
+        if is_default:
+            default_output_sizes = tier_output_sizes
+            default_unique_deduped = tier_unique_deduped
+            default_unique_optimized = tier_unique_optimized
+            default_dupes_deduped = tier_dupes_deduped
+            default_dupes_optimized = tier_dupes_optimized
+            default_pct_deduped = tier_pct_deduped
+            default_pct_optimized = tier_pct_optimized
+
+        loc = "root" if is_default else tier_out_dir
+        print(f"[{tier_name}{'*' if is_default else ''}] "
+              f"deduped={tier_unique_deduped:,} "
+              f"dns-optimized={tier_unique_optimized:,} → {loc}")
+
+    # ── reports/ ─────────────────────────────────────────────────────────────
+    reports_dir = os.path.normpath(os.path.join(os.path.dirname(out_path) or ".", "..", "reports"))
     os.makedirs(reports_dir, exist_ok=True)
-
     rejected_path = os.path.join(reports_dir, "rejected-entries.txt")
+
     if rejected_entries:
         with open(rejected_path, "w", encoding="utf-8") as rej:
             rej.write(f"# Rejected entries - generated: {now_str}\n")
@@ -452,32 +576,35 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             stats["health_reason"] = reason
         if status != "ok":
             health_issues.append((fname, status, reason))
+        stats.pop("tier_rank", None)  # internal field, not for JSON
     if health_issues:
         print(f"\nSource health ({len(health_issues)} issue(s)):")
         for fname, status, reason in health_issues:
             print(f"  {status.upper():<16} {fname}: {reason}")
 
     # ── JSON report ───────────────────────────────────────────────────────────
+    non_default_summaries = {k: v for k, v in tier_summaries.items() if k != default_tier}
     report = {
         "generated": now_str,
+        "default_tier": default_tier,
+        "tiers": tiers_ordered,
         "summary": {
             "scanned": total_candidates,
-            # dedup-only stats (hosts / plain-domains files)
-            "unique_deduped": total_unique_deduped,
-            "duplicates_deduped": duplicates_deduped,
-            "reduction_pct_deduped": round(reduction_pct_deduped, 4),
-            # subdomain-optimized stats (RPZ / dnsmasq / unbound / adblock)
-            "unique_optimized": total_unique_optimized,
+            "unique_deduped": default_unique_deduped,
+            "duplicates_deduped": default_dupes_deduped,
+            "reduction_pct_deduped": round(default_pct_deduped, 4),
+            "unique_optimized": default_unique_optimized,
             "wildcards": len(wildcard_domains),
-            "duplicates_optimized": duplicates_optimized,
-            "reduction_pct_optimized": round(reduction_pct_optimized, 4),
+            "duplicates_optimized": default_dupes_optimized,
+            "reduction_pct_optimized": round(default_pct_optimized, 4),
             "delta_added": delta_added,
             "delta_removed": delta_removed,
             "rejected_total": len(rejected_entries),
             "tld_rejected": tld_rejected,
             "matched_allowlisted": matched_allowlisted,
             "added_by_blocklist_override": added_by_blocklist_override,
-            "output_sizes": output_sizes,
+            "output_sizes": default_output_sizes,
+            **({"tier_summaries": non_default_summaries} if non_default_summaries else {}),
         },
         "sources": source_stats,
     }
@@ -485,10 +612,11 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         json.dump(report, rf, indent=2, ensure_ascii=False)
 
     print(f"Processed: scanned={total_candidates} "
-          f"→ deduped={total_unique_deduped} (-{reduction_pct_deduped:.2f}%, hosts/domains) "
-          f"→ dns-optimized={total_unique_optimized} (-{reduction_pct_optimized:.2f}%, adblock/rpz/dnsmasq/unbound) "
+          f"→ deduped={default_unique_deduped} (-{default_pct_deduped:.2f}%, hosts/domains) "
+          f"→ dns-optimized={default_unique_optimized} (-{default_pct_optimized:.2f}%, adblock/rpz/dnsmasq/unbound) "
           f"| wildcards={len(wildcard_domains)} "
-          f"rejected={len(rejected_entries)} tld_rejected={tld_rejected} matched_allowlisted={matched_allowlisted} "
+          f"rejected={len(rejected_entries)} tld_rejected={tld_rejected} "
+          f"matched_allowlisted={matched_allowlisted} "
           f"added_by_blocklist_override={added_by_blocklist_override} "
           f"sorted={sort_output} → {rejected_path}")
 
@@ -507,6 +635,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--writers-config", default="writers.conf")
     p.add_argument("--max-drop-pct", type=float, default=50.0,
                    help="abort if domain count drops by more than this %% vs previous run (default: 50)")
+    p.add_argument("--tiers-config", default="tiers.conf",
+                   help="tier definitions file (default: tiers.conf)")
     args = p.parse_args(argv)
 
     merge(args.raw, args.map, args.out,
@@ -516,7 +646,8 @@ def main(argv: list[str] | None = None) -> int:
           optimize_subdomains=not args.no_optimize_subdomains,
           skip_iana_check=args.no_iana_tld_check,
           writers_config=args.writers_config,
-          max_drop_pct=args.max_drop_pct)
+          max_drop_pct=args.max_drop_pct,
+          tiers_config=args.tiers_config)
     return 0
 
 

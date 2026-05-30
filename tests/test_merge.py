@@ -660,6 +660,149 @@ class TestIanaTldValidation(unittest.TestCase):
         shutil.rmtree(self.tmp)
 
 
+class TestTiers(unittest.TestCase):
+    """Tests for multi-tier output support."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.raw_dir = os.path.join(self.tmp, "raw")
+        self.out_dir = os.path.join(self.tmp, "processed")
+        os.makedirs(self.raw_dir)
+        os.makedirs(self.out_dir)
+        self.out_path = os.path.join(self.out_dir, "blocklist.txt")
+        self.map_path = os.path.join(self.raw_dir, "sources.map")
+        self.tiers_conf = os.path.join(self.tmp, "tiers.conf")
+
+    def _write_tiers(self, content: str) -> str:
+        with open(self.tiers_conf, "w") as f:
+            f.write(content)
+        return self.tiers_conf
+
+    def _write_source(self, fname: str, content: str, tier: str = "") -> None:
+        with open(os.path.join(self.raw_dir, fname), "w") as f:
+            f.write(content)
+        with open(self.map_path, "a") as mf:
+            line = f"{fname} http://example.com/{fname} {tier}" if tier else f"{fname} http://example.com/{fname}"
+            mf.write(line + "\n")
+
+    def _read_hosts(self, path: str | None = None) -> list[str]:
+        p = path or self.out_path
+        with open(p) as f:
+            return [ln.split()[1] for ln in f if ln.strip() and not ln.startswith("#")]
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmp)
+
+    def test_no_tiers_conf_single_default_tier(self):
+        # When tiers.conf is absent the pipeline runs exactly as before.
+        self._write_source("01_a.txt", "0.0.0.0 example.com\n")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                skip_iana_check=True, optimize_subdomains=False,
+                tiers_config=os.path.join(self.tmp, "missing-tiers.conf"))
+        self.assertIn("example.com", self._read_hosts())
+        # No subdirectories created
+        subdirs = [d for d in os.listdir(self.out_dir) if os.path.isdir(os.path.join(self.out_dir, d))]
+        self.assertEqual(subdirs, [])
+
+    def test_default_tier_outputs_at_root(self):
+        # Default tier (good *) writes to processed/ root, not a subdirectory.
+        self._write_tiers("light\ngood *\naggressive\n")
+        self._write_source("01_a.txt", "0.0.0.0 example.com\n", tier="good")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                skip_iana_check=True, optimize_subdomains=False,
+                tiers_config=self.tiers_conf)
+        self.assertIn("example.com", self._read_hosts())
+        self.assertFalse(os.path.isdir(os.path.join(self.out_dir, "good")))
+
+    def test_empty_tier_dir_not_created(self):
+        # light dir must NOT be created when no light-tagged sources exist
+        # (good sources propagate up to aggressive, not down to light).
+        self._write_tiers("light\ngood *\naggressive\n")
+        self._write_source("01_a.txt", "0.0.0.0 example.com\n", tier="good")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                skip_iana_check=True, optimize_subdomains=False,
+                tiers_config=self.tiers_conf)
+        self.assertFalse(os.path.isdir(os.path.join(self.out_dir, "light")))
+        # aggressive IS created — good sources propagate up to it
+        self.assertTrue(os.path.isdir(os.path.join(self.out_dir, "aggressive")))
+
+    def test_tier_filtering_cumulative(self):
+        # light source → light, good, aggressive
+        # good source  → good, aggressive only
+        # aggressive source → aggressive only
+        self._write_tiers("light\ngood *\naggressive\n")
+        self._write_source("01_a.txt", "0.0.0.0 light-only.com\n", tier="light")
+        self._write_source("02_b.txt", "0.0.0.0 good-domain.com\n", tier="good")
+        self._write_source("03_c.txt", "0.0.0.0 aggressive-only.com\n", tier="aggressive")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                skip_iana_check=True, optimize_subdomains=False,
+                tiers_config=self.tiers_conf)
+
+        light_path = os.path.join(self.out_dir, "light", "blocklist.txt")
+        good_path = self.out_path  # default tier → root
+        aggressive_path = os.path.join(self.out_dir, "aggressive", "blocklist.txt")
+
+        light_domains = self._read_hosts(light_path)
+        good_domains = self._read_hosts(good_path)
+        aggressive_domains = self._read_hosts(aggressive_path)
+
+        # light tier: only light-tagged source
+        self.assertIn("light-only.com", light_domains)
+        self.assertNotIn("good-domain.com", light_domains)
+        self.assertNotIn("aggressive-only.com", light_domains)
+
+        # good tier: light + good sources
+        self.assertIn("light-only.com", good_domains)
+        self.assertIn("good-domain.com", good_domains)
+        self.assertNotIn("aggressive-only.com", good_domains)
+
+        # aggressive tier: all sources
+        self.assertIn("light-only.com", aggressive_domains)
+        self.assertIn("good-domain.com", aggressive_domains)
+        self.assertIn("aggressive-only.com", aggressive_domains)
+
+    def test_domain_shared_by_multiple_tiers_uses_lowest(self):
+        # shared.com appears in both light and good sources → should appear in light tier.
+        self._write_tiers("light\ngood *\naggressive\n")
+        self._write_source("01_a.txt", "0.0.0.0 shared.com\n", tier="light")
+        self._write_source("02_b.txt", "0.0.0.0 shared.com\n0.0.0.0 good-only.com\n", tier="good")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                skip_iana_check=True, optimize_subdomains=False,
+                tiers_config=self.tiers_conf)
+        light_path = os.path.join(self.out_dir, "light", "blocklist.txt")
+        self.assertIn("shared.com", self._read_hosts(light_path))
+        self.assertNotIn("good-only.com", self._read_hosts(light_path))
+
+    def test_untagged_source_defaults_to_default_tier(self):
+        # Untagged sources default to good (the * tier) and appear in good + aggressive.
+        self._write_tiers("light\ngood *\naggressive\n")
+        self._write_source("01_a.txt", "0.0.0.0 example.com\n")  # no tier tag
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                skip_iana_check=True, optimize_subdomains=False,
+                tiers_config=self.tiers_conf)
+        # Appears in root (good tier)
+        self.assertIn("example.com", self._read_hosts())
+        # light tier has no sources → no dir
+        self.assertFalse(os.path.isdir(os.path.join(self.out_dir, "light")))
+
+    def test_json_report_has_tier_metadata(self):
+        self._write_tiers("light\ngood *\naggressive\n")
+        self._write_source("01_a.txt", "0.0.0.0 example.com\n", tier="light")
+        m.merge(self.raw_dir, self.map_path, self.out_path,
+                skip_iana_check=True, optimize_subdomains=False,
+                tiers_config=self.tiers_conf)
+        with open(os.path.join(self.tmp, "reports", "blocklist-report.json")) as f:
+            report = json.load(f)
+        self.assertEqual(report["default_tier"], "good")
+        self.assertEqual(report["tiers"], ["light", "good", "aggressive"])
+        # light is a non-default tier with output → in tier_summaries
+        self.assertIn("tier_summaries", report["summary"])
+        self.assertIn("light", report["summary"]["tier_summaries"])
+        # light source propagates up → aggressive also has the domain
+        self.assertEqual(report["summary"]["tier_summaries"].get("aggressive", {}).get("unique_deduped", 0), 1)
+
+
 class TestSourceHealth(unittest.TestCase):
     """Unit tests for _source_health — no file I/O needed."""
 

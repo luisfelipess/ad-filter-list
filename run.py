@@ -44,6 +44,8 @@ def main(argv: list[str] | None = None) -> int:
                    help="abort if domain count drops by more than this %% vs previous run (default: 50)")
     p.add_argument("--incremental", action="store_true",
                    help="skip re-downloading sources unchanged since last run (ETag / If-Modified-Since)")
+    p.add_argument("--tiers-config", default="tiers.conf",
+                   help="tier definitions file (default: tiers.conf)")
     p.add_argument("--no-post-run", action="store_true",
                    help="skip the post_run README stats update")
     args = p.parse_args(argv)
@@ -93,6 +95,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.no_iana_tld_check:
         merge_argv.append("--no-iana-tld-check")
     merge_argv += ["--max-drop-pct", str(args.max_drop_pct)]
+    merge_argv += ["--tiers-config", args.tiers_config]
     rc = merge.main(merge_argv)
     if rc != 0:
         return rc

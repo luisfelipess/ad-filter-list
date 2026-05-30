@@ -20,6 +20,7 @@ import gzip
 import io
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -27,14 +28,19 @@ import urllib.request
 import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+_TIER_RE = re.compile(r'\btier=(\w+)\b')
 
-def read_sources(path: str) -> list[tuple[str, str | None]]:
-    """Return list of (primary_url, fallback_url|None).
 
-    Each non-comment line may contain one or two URLs separated by a comma:
-        https://primary.example.com/list.txt , https://fallback.example.com/list.txt
+def read_sources(path: str) -> list[tuple[str, str | None, str]]:
+    """Return list of (primary_url, fallback_url|None, tier).
+
+    Each non-comment line may contain one or two URLs separated by a comma
+    and an optional tier tag:
+        https://primary.example.com/list.txt tier=good
+        https://primary.example.com/list , https://fallback.example.com/list tier=light
+    The tier tag is an empty string when not specified.
     """
-    entries: list[tuple[str, str | None]] = []
+    entries: list[tuple[str, str | None, str]] = []
     if not os.path.exists(path) and path == "sources.conf" and os.path.exists("sources.txt"):
         path = "sources.txt"
     with open(path, "r", encoding="utf-8") as fh:
@@ -42,12 +48,16 @@ def read_sources(path: str) -> list[tuple[str, str | None]]:
             line = line.strip()
             if not line or line[0] in ("#", ";", "!"):
                 continue
+            # Extract tier tag before stripping inline comment
+            tier_m = _TIER_RE.search(line)
+            tier = tier_m.group(1) if tier_m else ""
+            line = _TIER_RE.sub("", line)
             line = line.split("#", 1)[0].strip()
             parts = [p.strip() for p in line.split(",", 1)]
             primary = parts[0]
             fallback = parts[1] if len(parts) > 1 and parts[1] else None
             if primary:
-                entries.append((primary, fallback))
+                entries.append((primary, fallback, tier))
     return entries
 
 
@@ -198,26 +208,26 @@ def main(argv: list[str] | None = None) -> int:
     # Expected raw filenames for the current sources.conf — used for orphan cleanup.
     expected_fnames = {
         f"{i + 1:02d}_{os.path.basename(url.split('?', 1)[0]) or 'source'}"
-        for i, (url, _) in enumerate(sources)
+        for i, (url, _, _) in enumerate(sources)
     }
 
-    results: list[tuple[int, str, str, bool, str | None, bool, dict]] = []
+    results: list[tuple[int, str, str, str, bool, str | None, bool, dict]] = []
     print(f"Downloading {len(sources)} source(s) with {args.workers} workers…")
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         futures = {
             pool.submit(
                 download_one, i + 1, url, fallback, args.raw, args.retries, args.timeout,
                 cache if args.incremental else None,
-            ): (i + 1, url)
-            for i, (url, fallback) in enumerate(sources)
+            ): (i + 1, url, tier)
+            for i, (url, fallback, tier) in enumerate(sources)
         }
         for future in as_completed(futures):
-            i, url = futures[future]
+            i, url, tier = futures[future]
             fname, _, fb_used, err, not_modified, cache_patch = future.result()
-            results.append((i, fname, url, fb_used, err, not_modified, cache_patch))
+            results.append((i, fname, url, tier, fb_used, err, not_modified, cache_patch))
 
     results.sort(key=lambda r: r[0])
-    failures = [(url, err) for _, _, url, _, err, _, _ in results if err]
+    failures = [(url, err) for _, _, url, _, _, err, _, _ in results if err]
     if failures:
         for url, err in failures:
             print(f"  FAILED {url}: {err}", file=sys.stderr)
@@ -229,13 +239,14 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     not_modified_count = 0
-    for _, fname, url, fb_used, _, not_modified, cache_patch in results:
+    for _, fname, url, tier, fb_used, _, not_modified, cache_patch in results:
         if not_modified:
             not_modified_count += 1
             tag = "CACHED"
         else:
             tag = "FALLBACK" if fb_used else "OK"
-        print(f"  {tag:<8} {url} -> {args.raw}/{fname}")
+        tier_tag = f" [tier={tier}]" if tier else ""
+        print(f"  {tag:<8}{tier_tag} {url} -> {args.raw}/{fname}")
         if args.incremental and cache_patch:
             cache[url] = cache_patch
 
@@ -256,8 +267,9 @@ def main(argv: list[str] | None = None) -> int:
                 os.remove(fp)
 
     with open(map_path, "w", encoding="utf-8") as mf:
-        for _, fname, url, _, _, _, _ in results:
-            mf.write(f"{fname} {url}\n")
+        for _, fname, url, tier, _, _, _, _ in results:
+            line = f"{fname} {url} {tier}" if tier else f"{fname} {url}"
+            mf.write(line + "\n")
 
     return 0
 
