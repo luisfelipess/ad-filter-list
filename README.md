@@ -23,22 +23,28 @@ Some projects convert upstream lists individually to specific formats without me
 **Custom configurations are a first-class local use case.**
 Want only certain sources? Different combinations? A more aggressive or more conservative set? `sources.conf`, `allowlist.txt`, and `blocklist.txt` are designed for exactly that. Clone the repo, edit the config, run `python3 run.py`. The pipeline is self-contained and requires no external dependencies beyond Python 3.8.
 
-**Pre-built flavours are on the radar, not the roadmap.**
-Different pre-built variants (light, standard, aggressive) combining different source subsets are an interesting future direction. We don't have a clean implementation path for them yet and they're not a current priority — see the TODO.
+**Multiple tiers, one pipeline.**
+Sources are tagged `light`, `good`, or `aggressive` in `sources.conf`. The pipeline produces a separate output set per tier — all six formats, in `processed/` (good, default) and `processed/aggressive/`. Tiers are cumulative: a `light` source appears in every tier; a `good` source appears in good and aggressive; `aggressive`-only sources are isolated. The hierarchy is defined in `tiers.conf` and is fully configurable.
 
 ---
 
 <!-- stats:start -->
-**Last run:** 2026-05-30 &nbsp;·&nbsp; **Sources:** 11 &nbsp;·&nbsp; **Unique domains:** 950,960 *(hosts/domains)* · 715,215 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 92,431
+**Last run:** 2026-05-30 &nbsp;·&nbsp; **Sources:** 11 &nbsp;·&nbsp; **Unique domains:** 953,062 *(hosts/domains)* · 719,735 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 94,185
 
 | Format | Download | Domains | Size | Use case |
 |---|---|---|---|---|
-| Hosts (`0.0.0.0 domain`) | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist.txt) | 950,960 | 30.1 MB | MikroTik adlists, Pi-hole, generic hosts |
-| Plain domains | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-domains.txt) | 950,960 | 22.5 MB | Generic use, custom DNS resolvers |
-| Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-adblock.txt) | 715,215 | 15.3 MB | uBlock Origin, AdGuard, browser extensions |
-| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-bind9.zone.gz) | 715,215 | 6.9 MB | BIND9 `response-policy` |
-| dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-dnsmasq.conf) | 715,215 | 20.9 MB | OpenWrt, DD-WRT, Pi-hole (dnsmasq mode) |
-| Unbound | [blocklist-unbound.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-unbound.conf) | 715,215 | 35.1 MB | Unbound resolver |
+| Hosts (`0.0.0.0 domain`) — good tier | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist.txt) | 953,062 | 30.1 MB | MikroTik adlists, Pi-hole, generic hosts |
+| Plain domains — good tier | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-domains.txt) | 953,062 | 22.5 MB | Generic use, custom DNS resolvers |
+| Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-adblock.txt) | 719,735 | 15.4 MB | uBlock Origin, AdGuard, browser extensions |
+| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-bind9.zone.gz) | 719,735 | 7.0 MB | BIND9 `response-policy` |
+| dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-dnsmasq.conf) | 719,735 | 21.0 MB | OpenWrt, DD-WRT, Pi-hole (dnsmasq mode) |
+| Unbound | [blocklist-unbound.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-unbound.conf) | 719,735 | 35.3 MB | Unbound resolver |
+| **Aggressive tier** — Hosts | [aggressive/blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist.txt) | 953,062 | 30.1 MB | MikroTik adlists, Pi-hole |
+| **Aggressive tier** — Plain domains | [aggressive/blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-domains.txt) | 953,062 | 22.5 MB | Generic use |
+| **Aggressive tier** — Adblock | [aggressive/blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-adblock.txt) | 719,735 | 15.4 MB | uBlock Origin, AdGuard |
+| **Aggressive tier** — BIND9 RPZ | [aggressive/blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-bind9.zone.gz) | 719,735 | 7.0 MB | BIND9 `response-policy` |
+| **Aggressive tier** — dnsmasq | [aggressive/blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-dnsmasq.conf) | 719,735 | 21.0 MB | OpenWrt, DD-WRT |
+| **Aggressive tier** — Unbound | [aggressive/blocklist-unbound.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-unbound.conf) | 719,735 | 35.3 MB | Unbound resolver |
 <!-- stats:end -->
 
 Run diagnostics are committed alongside the output on every run:
@@ -79,6 +85,8 @@ When tuning `allowlist.txt` or `blocklist.txt`, avoid re-downloading on every ed
 | `--no-iana-tld-check` | Skip IANA TLD validation (useful when offline) |
 | `--max-drop-pct N` | Abort if domain count drops more than N% vs previous run (default: 50) |
 | `--no-post-run` | Skip the README stats update step |
+| `--incremental` | Skip re-downloading sources unchanged since last run (ETag / If-Modified-Since) |
+| `--tiers-config FILE` | Tier hierarchy config file (default: `tiers.conf`) |
 | `--workers N` | Parallel download threads (default 8) |
 | `--retries N` | Per-URL retry count (default 3) |
 | `--timeout N` | Per-request timeout in seconds (default 30) |
@@ -94,10 +102,11 @@ python3 run.py --no-post-run              # skip README stats update
 
 ```bash
 python3 fetch.py [--sources sources.conf] [--raw raw] [--workers 8] [--retries 3] [--timeout 30]
+                 [--incremental]
 python3 merge.py [--raw raw] [--map raw/sources.map] [--out processed/blocklist.txt]
                  [--unsorted] [--allowlist allowlist.txt] [--blocklist blocklist.txt]
                  [--no-optimize-subdomains] [--no-iana-tld-check] [--max-drop-pct 50]
-                 [--writers-config writers.conf]
+                 [--writers-config writers.conf] [--tiers-config tiers.conf]
 python3 post_run.py [--report reports/blocklist-report.json] [--readme README.md]
 ```
 
@@ -128,6 +137,15 @@ https://primary.example.com/list , https://fallback.example.com/list
 ```
 
 The fallback is tried only if the primary fails after all retries. The primary URL is always used for deduplication and reporting.
+
+To assign a source to a tier, add a `tier=` tag:
+
+```
+https://example.com/aggressive-list.txt tier=aggressive
+https://example.com/safe-list.txt tier=light , https://fallback.example.com/safe-list.txt
+```
+
+Sources without a `tier=` tag default to the tier marked `*` in `tiers.conf` (currently `good`). Tier semantics are cumulative: a `light` source appears in every tier's output; a `good` source in `good` and `aggressive`; an `aggressive` source only in `aggressive`. The tier hierarchy is defined in `tiers.conf` — see the repository layout below.
 
 Supported source formats are auto-detected: hosts-style (`0.0.0.0 domain` / `127.0.0.1 domain`), domain-only (including `*.domain` wildcard entries), and adblock (`||domain^`). Gzip (`.gz`) and zip (`.zip`) sources are decompressed automatically.
 
@@ -194,13 +212,15 @@ Processed: scanned=989104 → deduped=815804 (-16.95%, hosts/domains) → dns-op
 ## How it works
 
 ```
-sources.conf
+sources.conf  ←  tier tags (tier=light / tier=good / tier=aggressive)
+tiers.conf    ←  tier hierarchy and default tier
     │
     ▼
 fetch.py  ───── concurrent downloads (ThreadPoolExecutor)
     │             primary + fallback URL per source
     │             retry with exponential backoff
     │             transparent gzip/zip decompression
+    │             incremental mode (ETag / If-Modified-Since)
     │
     ▼
 raw/  (gitignored)
@@ -209,20 +229,22 @@ raw/  (gitignored)
 merge.py  ──── format detection per source  (readers/)
     │           domain extraction & normalisation
     │           allowlist filter + blocklist override
-    │           exact deduplication
+    │           exact deduplication + domain_min_rank tracking
     │           │
     │           ├── dedup-only list  (hosts / domains — all unique entries)
     │           └── optimized list   (subdomain optimizer applied)
     │                                 (skipped with --no-optimize-subdomains)
     │           delta vs previous run
     │
-    ├── writers/ (controlled by writers.conf)
-    │     hosts.py      → processed/blocklist.txt          (dedup-only)
-    │     domains.py    → processed/blocklist-domains.txt  (dedup-only)
-    │     adblock.py    → processed/blocklist-adblock.txt  (optimized)
-    │     rpz.py        → processed/blocklist-bind9.zone.gz (optimized)
-    │     dnsmasq.py    → processed/blocklist-dnsmasq.conf (optimized)
-    │     unbound.py    → processed/blocklist-unbound.conf (optimized)
+    ├── writers/ (controlled by writers.conf) — run once per tier
+    │     hosts.py      → processed/blocklist.txt               (good tier, dedup-only)
+    │     domains.py    → processed/blocklist-domains.txt       (good tier, dedup-only)
+    │     adblock.py    → processed/blocklist-adblock.txt       (good tier, optimized)
+    │     rpz.py        → processed/blocklist-bind9.zone.gz     (good tier, optimized)
+    │     dnsmasq.py    → processed/blocklist-dnsmasq.conf      (good tier, optimized)
+    │     unbound.py    → processed/blocklist-unbound.conf      (good tier, optimized)
+    │     (same writers) → processed/aggressive/blocklist.txt … (aggressive tier)
+    │     (same writers) → processed/light/blocklist.txt …      (light tier)
     │
     └── reports/
           blocklist-report.json
@@ -377,10 +399,14 @@ RouterOS 7.15+ natively supports DNS adlists in hosts format (`0.0.0.0 domain`).
 
 #### Add the adlist
 
-In an SSH or Winbox terminal:
+In an SSH or Winbox terminal — use the tier that fits your router's RAM:
 
 ```
+# Good tier (default) — ~953K domains, ~30 MB hosts file
 /ip/dns/adlist/add url="https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist.txt" name="ad-filter-list"
+
+# Aggressive tier — includes DoH/VPN bypass blocklists in addition to the good tier
+/ip/dns/adlist/add url="https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist.txt" name="ad-filter-list-aggressive"
 ```
 
 Verify it loaded:
@@ -449,7 +475,8 @@ writers/                         pluggable output format writers
 scripts/
   compare.sh                     diff current blocklist against last git-committed version
   trigger-update-workflow.sh     trigger the GitHub Actions workflow via gh CLI
-sources.conf                     source URL list (one URL per line; primary , fallback supported)
+sources.conf                     source URL list (one URL per line; primary , fallback; tier= tag supported)
+tiers.conf                       tier hierarchy (light / good * / aggressive); * marks the default
 allowlist.txt                    domains that are never blocked
 blocklist.txt                    domains always blocked, even if absent from sources
 writers.conf                     enable/disable output writers
