@@ -429,6 +429,11 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             if os.path.isfile(os.path.join(raw_dir, fname))
         ]
 
+    # Stable sort by tier rank so lights are processed before goods before aggressives,
+    # preserving sources.conf order within each tier. This makes net_new unambiguous:
+    # a lighter source always gets first-seen credit over a heavier one.
+    pairs_with_ranks.sort(key=lambda x: x[2])
+
     if _valid_tlds is not None:
         valid_tlds = _valid_tlds
     elif skip_iana_check:
