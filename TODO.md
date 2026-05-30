@@ -107,6 +107,14 @@ Output writers live in `writers/`. Adding a new format = one new file + one line
 
   Next step: tag each source in `sources.conf` with the appropriate tier (light/good/aggressive).
 
+### net_new ordering bias
+
+- [ ] **Sort sources by tier rank before processing** — `_collect_domains` currently processes sources in `sources.conf` file order, so `net_new` is first-come-first-served within a tier. Two sources at the same tier compete: whichever is listed first "wins" all shared domains, and the second shows `net_new=0` even though it contributes equally. If sources were sorted lightest-first (light → good → aggressive, preserving original order within the same tier), `net_new` would gain real meaning: first occurrence within a tier rather than within an arbitrary file order.
+
+  After this change, `net_new` and `tier_exclusive` would agree for same-tier comparisons and `_source_health` could safely use either. Currently `tier_exclusive` is the reliable signal; `net_new` is only meaningful for cross-tier overlap (e.g. an aggressive source that shows `net_new=50000` contributed 50K domains not yet seen from any earlier source, but that includes earlier-processed aggressive sources — it doesn't tell you how many are good-tier-exclusive). Sorting by tier would fix this and make `net_new` unambiguous again.
+
+  Note: this only affects reporting — the domain set, tier outputs, and `domain_min_rank` are all unaffected by processing order.
+
 ### Source discovery
 
 - [ ] **AdGuard Host Lists Registry** — `https://adguardteam.github.io/HostlistsRegistry/assets/filters.json` is a curated JSON meta-index of trusted filter lists; could be used to discover and pull sources automatically rather than maintaining `sources.conf` by hand; needs a JSON source resolver in `fetch.py` and a way to select which lists to include
