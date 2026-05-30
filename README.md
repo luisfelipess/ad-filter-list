@@ -69,7 +69,7 @@ Run diagnostics are committed alongside the output on every run:
 
 | File | Contents |
 |---|---|
-| [`reports/blocklist-report.json`](reports/blocklist-report.json) | Per-source stats plus run summary (`matched_allowlisted`, `added_by_blocklist_override`, deltas, wildcards) |
+| [`reports/blocklist-report.json`](reports/blocklist-report.json) | Per-source stats (`scanned`, `accepted`, `net_new`, `content_sha1`, `version`, `last_modified`, `last_changed`, `health`) plus run summary (`matched_allowlisted`, `added_by_blocklist_override`, deltas, wildcards) |
 | [`reports/rejected-entries.txt`](reports/rejected-entries.txt) | Lines that could not be parsed, with source file, line number, and rejection reason |
 
 ---
@@ -218,6 +218,23 @@ One domain per line. Lines starting with `#`, `!`, or `;` are ignored. Inline co
 | `tld_rejected` | Domains rejected because their TLD is not in the IANA root zone |
 | `matched_allowlisted` | Unique source domains removed because they matched the allowlist |
 | `added_by_blocklist_override` | Domains (or wildcard bases) forced into the output solely from `blocklist.txt` |
+
+**Per-source fields** — `reports/blocklist-report.json` → `sources[filename]`:
+
+| Field | Meaning |
+|---|---|
+| `scanned` | Lines processed from this source (before extraction and normalisation) |
+| `accepted` | Domains successfully extracted and normalised |
+| `rejected` | Lines that could not be parsed or failed validation |
+| `net_new` | Domains this source contributed that no earlier source had already seen |
+| `tier_exclusive` | Domains from this source not covered by any lighter tier |
+| `format` | Detected format (`host`, `adblock`, `domain-only`, `wildcard-domain`, `mixed-domain`) |
+| `tier` | Tier this source belongs to (`light`, `good`, `aggressive`) |
+| `health` | Source health: `ok`, `failed`, `empty`, `redundant`, `high_rejection`, `low_value` |
+| `content_sha1` | SHA1 of the raw downloaded file — use this to detect whether the source changed between runs |
+| `version` | Value of the `! Version:` / `# Version:` header from the source file, or `null` if absent |
+| `last_modified` | Value of the `! Last modified:` header from the source file, or `null` if absent |
+| `last_changed` | ISO timestamp of the last run in which the file's SHA1 changed — unchanged across runs when the source content is identical; use this to detect stale sources that stopped updating |
 
 `unique_deduped` ≥ `unique_optimized` — the gap is the count of entries that DNS formats omit because a parent domain already covers them. When `--no-optimize-subdomains` is passed, both values are equal.
 

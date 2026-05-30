@@ -8,8 +8,10 @@ Add a new format by creating writers/<name>.py and appending to WRITERS below.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
+import re
 import time
 import urllib.request
 from datetime import datetime, timezone
@@ -222,6 +224,38 @@ def read_map(map_path: str) -> list[tuple[str, str, str]]:
 _HEALTH_LOW_VALUE_THRESHOLD = 0.01    # net_new / accepted < 1%
 _HEALTH_HIGH_REJECTION_THRESHOLD = 0.50  # rejected / scanned > 50%
 
+_VERSION_RE = re.compile(r'^[#!]+\s*version\s*:\s*(.+)', re.IGNORECASE)
+_LAST_MOD_RE = re.compile(r'^[#!]+\s*last\s+modified\s*:\s*(.+)', re.IGNORECASE)
+
+
+def _file_sha1(path: str) -> str | None:
+    try:
+        h = hashlib.sha1()
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(65536), b""):
+                h.update(chunk)
+        return h.hexdigest()
+    except OSError:
+        return None
+
+
+def _parse_header_meta(headers: list[str]) -> tuple[str | None, str | None]:
+    """Return (version, last_modified) from a source file's leading comment block."""
+    version = last_modified = None
+    for h in headers:
+        s = h.strip()
+        if version is None:
+            m = _VERSION_RE.match(s)
+            if m:
+                version = m.group(1).strip()
+        if last_modified is None:
+            m = _LAST_MOD_RE.match(s)
+            if m:
+                last_modified = m.group(1).strip()
+        if version and last_modified:
+            break
+    return version, last_modified
+
 
 def _source_health(stats: dict) -> tuple[str, str]:
     """Return (status, reason) for a source based on its single-run stats.
@@ -293,6 +327,8 @@ def _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats, source_
     for src_idx, (fname, url, src_rank) in enumerate(pairs_with_ranks):
         path = os.path.join(raw_dir, fname)
         headers = read_leading_header(path)
+        sha1 = _file_sha1(path)
+        version, last_modified = _parse_header_meta(headers)
         reader, fmt, reason = _pick_reader(path)
         source_infos.append((fname, headers, url, fmt))
         source_stats[fname] = {
@@ -301,6 +337,9 @@ def _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats, source_
             "tier_exclusive": 0,
             "skipped": reader is None,
             "tier_rank": src_rank,
+            "content_sha1": sha1,
+            "version": version,
+            "last_modified": last_modified,
         }
         print(f"{fname}: detected format={fmt} ({reason})")
         if reader is None:
@@ -397,10 +436,31 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
     else:
         valid_tlds = _load_iana_tlds()
 
+    now_str = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
+    reports_dir = os.path.normpath(os.path.join(os.path.dirname(out_path) or ".", "..", "reports"))
+
+    # Load previous report to carry forward last_changed when SHA1 is unchanged.
+    prev_sources: dict[str, dict] = {}
+    _prev_report_path = os.path.join(reports_dir, "blocklist-report.json")
+    if os.path.exists(_prev_report_path):
+        try:
+            with open(_prev_report_path, encoding="utf-8") as f:
+                prev_sources = json.load(f).get("sources", {})
+        except (json.JSONDecodeError, OSError):
+            pass
+
     ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected, domain_min_rank, domain_source_indices = (
         _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats,
                          source_infos, rejected_entries, valid_tlds, default_rank)
     )
+
+    # Set last_changed: carry forward when SHA1 unchanged, else stamp now.
+    for _fname, _stats in source_stats.items():
+        _prev = prev_sources.get(_fname, {})
+        if _stats["content_sha1"] and _stats["content_sha1"] == _prev.get("content_sha1"):
+            _stats["last_changed"] = _prev.get("last_changed", now_str)
+        else:
+            _stats["last_changed"] = now_str
 
     # source_ranks lets us compute per-tier candidate counts later.
     source_ranks: dict[str, int] = {f: s["tier_rank"] for f, s in source_stats.items()}
@@ -480,8 +540,6 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
                     f"exceeds --max-drop-pct={max_drop_pct:.0f}%. "
                     f"Possible download failure. processed/ left untouched."
                 )
-
-    now_str = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 
     # ── per-tier write loop ───────────────────────────────────────────────────
     tier_summaries: dict[str, dict] = {}
@@ -576,7 +634,6 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
               f"dns-optimized={tier_unique_optimized:,} → {loc}")
 
     # ── reports/ ─────────────────────────────────────────────────────────────
-    reports_dir = os.path.normpath(os.path.join(os.path.dirname(out_path) or ".", "..", "reports"))
     os.makedirs(reports_dir, exist_ok=True)
     rejected_path = os.path.join(reports_dir, "rejected-entries.txt")
 
