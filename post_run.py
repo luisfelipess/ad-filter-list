@@ -49,6 +49,19 @@ def _fmt_size(sizes: dict, filename: str) -> str:
     return f"{b} B"
 
 
+def _tier_table_rows(tb: str, t_all: int, t_opt: int, sizes: dict) -> list[str]:
+    return [
+        "| Format | Download | Domains | Size | Use case |",
+        "|---|---|---|---|---|",
+        f"| Hosts (`0.0.0.0 domain`) | [blocklist.txt]({tb}/blocklist.txt) | {t_all:,} | {_fmt_size(sizes, 'blocklist.txt')} | MikroTik adlists, Pi-hole, generic hosts |",
+        f"| Plain domains | [blocklist-domains.txt]({tb}/blocklist-domains.txt) | {t_all:,} | {_fmt_size(sizes, 'blocklist-domains.txt')} | Generic use, custom DNS resolvers |",
+        f"| Adblock syntax | [blocklist-adblock.txt]({tb}/blocklist-adblock.txt) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-adblock.txt')} | uBlock Origin, AdGuard, browser extensions |",
+        f"| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz]({tb}/blocklist-bind9.zone.gz) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-bind9.zone.gz')} | BIND9 `response-policy` |",
+        f"| dnsmasq | [blocklist-dnsmasq.conf]({tb}/blocklist-dnsmasq.conf) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-dnsmasq.conf')} | OpenWrt, DD-WRT, Pi-hole (dnsmasq mode) |",
+        f"| Unbound | [blocklist-unbound.conf]({tb}/blocklist-unbound.conf) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-unbound.conf')} | Unbound resolver |",
+    ]
+
+
 def _build_block(report: dict, raw_base: str) -> str:
     s = report.get("summary", {})
     date = report.get("generated", "")[:10] or "unknown"
@@ -56,7 +69,6 @@ def _build_block(report: dict, raw_base: str) -> str:
     unique_all = s.get("unique_deduped", 0)
     unique_opt = s.get("unique_optimized", 0)
     wildcards = s.get("wildcards", 0)
-    sizes = s.get("output_sizes", {})
     default_tier = report.get("default_tier", "")
     tiers_ordered = report.get("tiers", [])
     tier_summaries = s.get("tier_summaries", {})
@@ -69,39 +81,35 @@ def _build_block(report: dict, raw_base: str) -> str:
         f"**Wildcards:** {wildcards:,}",
     ]
 
-    if raw_base:
-        tier_label = f" — {default_tier} tier" if default_tier else ""
-        lines += [
-            "",
-            "| Format | Download | Domains | Size | Use case |",
-            "|---|---|---|---|---|",
-            f"| Hosts (`0.0.0.0 domain`){tier_label} | [blocklist.txt]({raw_base}/processed/blocklist.txt) | {unique_all:,} | {_fmt_size(sizes, 'blocklist.txt')} | MikroTik adlists, Pi-hole, generic hosts |",
-            f"| Plain domains{tier_label} | [blocklist-domains.txt]({raw_base}/processed/blocklist-domains.txt) | {unique_all:,} | {_fmt_size(sizes, 'blocklist-domains.txt')} | Generic use, custom DNS resolvers |",
-            f"| Adblock syntax | [blocklist-adblock.txt]({raw_base}/processed/blocklist-adblock.txt) | {unique_opt:,} | {_fmt_size(sizes, 'blocklist-adblock.txt')} | uBlock Origin, AdGuard, browser extensions |",
-            f"| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz]({raw_base}/processed/blocklist-bind9.zone.gz) | {unique_opt:,} | {_fmt_size(sizes, 'blocklist-bind9.zone.gz')} | BIND9 `response-policy` |",
-            f"| dnsmasq | [blocklist-dnsmasq.conf]({raw_base}/processed/blocklist-dnsmasq.conf) | {unique_opt:,} | {_fmt_size(sizes, 'blocklist-dnsmasq.conf')} | OpenWrt, DD-WRT, Pi-hole (dnsmasq mode) |",
-            f"| Unbound | [blocklist-unbound.conf]({raw_base}/processed/blocklist-unbound.conf) | {unique_opt:,} | {_fmt_size(sizes, 'blocklist-unbound.conf')} | Unbound resolver |",
-        ]
+    if not raw_base:
+        return "\n".join(lines)
 
-        # Add rows for non-default tiers that produced output, in tier order.
-        for tier_name in tiers_ordered:
-            if tier_name == default_tier:
-                continue
+    # One table per tier in hierarchy order; fall back to a single unnamed table
+    # when no tier metadata is present (old reports / no tiers.conf).
+    emit_tiers = tiers_ordered if tiers_ordered else ([""] if not default_tier else [default_tier])
+    multi_tier = len(emit_tiers) > 1
+
+    for tier_name in emit_tiers:
+        is_default = (tier_name == default_tier) or (not default_tier)
+
+        if is_default:
+            t_all = unique_all
+            t_opt = unique_opt
+            sizes = s.get("output_sizes", {})
+            tb = f"{raw_base}/processed"
+        else:
             ts = tier_summaries.get(tier_name, {})
-            tsizes = ts.get("output_sizes", {})
-            if not tsizes:
-                continue
             t_all = ts.get("unique_deduped", 0)
             t_opt = ts.get("unique_optimized", 0)
+            sizes = ts.get("output_sizes", {})
             tb = f"{raw_base}/processed/{tier_name}"
-            lines += [
-                f"| **{tier_name.capitalize()} tier** — Hosts | [{tier_name}/blocklist.txt]({tb}/blocklist.txt) | {t_all:,} | {_fmt_size(tsizes, 'blocklist.txt')} | MikroTik adlists, Pi-hole |",
-                f"| **{tier_name.capitalize()} tier** — Plain domains | [{tier_name}/blocklist-domains.txt]({tb}/blocklist-domains.txt) | {t_all:,} | {_fmt_size(tsizes, 'blocklist-domains.txt')} | Generic use |",
-                f"| **{tier_name.capitalize()} tier** — Adblock | [{tier_name}/blocklist-adblock.txt]({tb}/blocklist-adblock.txt) | {t_opt:,} | {_fmt_size(tsizes, 'blocklist-adblock.txt')} | uBlock Origin, AdGuard |",
-                f"| **{tier_name.capitalize()} tier** — BIND9 RPZ | [{tier_name}/blocklist-bind9.zone.gz]({tb}/blocklist-bind9.zone.gz) | {t_opt:,} | {_fmt_size(tsizes, 'blocklist-bind9.zone.gz')} | BIND9 `response-policy` |",
-                f"| **{tier_name.capitalize()} tier** — dnsmasq | [{tier_name}/blocklist-dnsmasq.conf]({tb}/blocklist-dnsmasq.conf) | {t_opt:,} | {_fmt_size(tsizes, 'blocklist-dnsmasq.conf')} | OpenWrt, DD-WRT |",
-                f"| **{tier_name.capitalize()} tier** — Unbound | [{tier_name}/blocklist-unbound.conf]({tb}/blocklist-unbound.conf) | {t_opt:,} | {_fmt_size(tsizes, 'blocklist-unbound.conf')} | Unbound resolver |",
-            ]
+
+        if multi_tier:
+            label = tier_name.capitalize() if tier_name else "Default"
+            suffix = " *(default)*" if is_default else ""
+            lines += ["", f"### {label} tier{suffix}", ""]
+
+        lines += _tier_table_rows(tb, t_all, t_opt, sizes)
 
     return "\n".join(lines)
 
