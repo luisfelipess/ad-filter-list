@@ -444,13 +444,15 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
     now_str = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
     reports_dir = os.path.normpath(os.path.join(os.path.dirname(out_path) or ".", "..", "reports"))
 
-    # Load previous report to carry forward last_changed when SHA1 is unchanged.
+    # Load previous report for SHA1 staleness tracking and per-tier delta computation.
+    _prev_report: dict = {}
     prev_sources: dict[str, dict] = {}
     _prev_report_path = os.path.join(reports_dir, "blocklist-report.json")
     if os.path.exists(_prev_report_path):
         try:
             with open(_prev_report_path, encoding="utf-8") as f:
-                prev_sources = json.load(f).get("sources", {})
+                _prev_report = json.load(f)
+            prev_sources = _prev_report.get("sources", {})
         except (json.JSONDecodeError, OSError):
             pass
 
@@ -615,12 +617,29 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         tier_delta = (tier_unique_deduped - _prev_tier_deduped) if has_lighter else tier_unique_deduped
         _prev_tier_deduped = tier_unique_deduped
 
+        # ── delta vs previous run ─────────────────────────────────────────────
+        _prev_smry = _prev_report.get("summary", {}) if _prev_report else {}
+        _prev_tier_data = _prev_smry if is_default else _prev_smry.get("tier_summaries", {}).get(tier_name, {})
+        _prev_ud = _prev_tier_data.get("unique_deduped")
+        _prev_uo = _prev_tier_data.get("unique_optimized")
+        _prev_sizes = _prev_tier_data.get("output_sizes", {})
+        delta_domains_deduped   = (tier_unique_deduped   - _prev_ud) if _prev_ud is not None else None
+        delta_domains_optimized = (tier_unique_optimized - _prev_uo) if _prev_uo is not None else None
+        delta_sizes = {
+            fname: tier_output_sizes[fname] - _prev_sizes[fname]
+            for fname in tier_output_sizes
+            if fname in _prev_sizes
+        }
+
         tier_summaries[tier_name] = {
             "unique_deduped": tier_unique_deduped,
             "unique_optimized": tier_unique_optimized,
             "wildcards": len(tier_wildcard_domains),
             "tier_delta": tier_delta,
             "output_sizes": tier_output_sizes,
+            **({"delta_domains_deduped": delta_domains_deduped,
+                "delta_domains_optimized": delta_domains_optimized,
+                "delta_sizes": delta_sizes} if delta_domains_deduped is not None else {}),
         }
 
         if is_default:
@@ -634,8 +653,10 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
 
         loc = "root" if is_default else tier_out_dir
         delta_suffix = f" (+{tier_delta:,} vs {tiers_ordered[tiers_ordered.index(tier_name) - 1]})" if has_lighter else ""
+        _vs_prev = (f" ({'+' if delta_domains_deduped >= 0 else ''}{delta_domains_deduped:,} vs prev)"
+                    if delta_domains_deduped is not None else "")
         print(f"[{tier_name}{'*' if is_default else ''}] "
-              f"deduped={tier_unique_deduped:,}{delta_suffix} "
+              f"deduped={tier_unique_deduped:,}{delta_suffix}{_vs_prev} "
               f"dns-optimized={tier_unique_optimized:,} → {loc}")
 
     # ── reports/ ─────────────────────────────────────────────────────────────
@@ -682,6 +703,9 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             "reduction_pct_optimized": round(default_pct_optimized, 4),
             "delta_added": delta_added,
             "delta_removed": delta_removed,
+            "delta_domains_deduped": tier_summaries.get(default_tier, {}).get("delta_domains_deduped"),
+            "delta_domains_optimized": tier_summaries.get(default_tier, {}).get("delta_domains_optimized"),
+            "delta_sizes": tier_summaries.get(default_tier, {}).get("delta_sizes", {}),
             "rejected_total": len(rejected_entries),
             "tld_rejected": tld_rejected,
             "matched_allowlisted": matched_allowlisted,
