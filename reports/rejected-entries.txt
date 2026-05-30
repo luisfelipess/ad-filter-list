@@ -1,4 +1,4 @@
-# Rejected entries - generated: 2026-05-30T11:41:44.534675Z
+# Rejected entries - generated: 2026-05-30T12:07:57.724257Z
 # Format: source_file line_number : original_line
 
 01_pro.txt 282110: INVALID_TLD(scloud): 0.0.0.0 collector.azure.microsoft.scloud
@@ -36,5 +36,129 @@
 08_hosts 46: 127.0.0.1 localhost
 08_hosts 47: ::1 localhost #[IPv6]
 09_hosts 2502: INVALID_TLD(example0101): 0.0.0.0 pgl.example0101
-11_hosts.txt 22: 127.0.0.1  localhost
-11_hosts.txt 23: ::1  localhost
+11_GoodbyeAds.txt 1: ﻿# --------------------------------------------
+11_GoodbyeAds.txt 22: 127.0.0.1 localhost
+11_GoodbyeAds.txt 23: 127.0.0.1 localhost.localdomain
+11_GoodbyeAds.txt 24: 127.0.0.1 local
+11_GoodbyeAds.txt 25: 255.255.255.255 broadcasthost
+11_GoodbyeAds.txt 26: ::1 localhost
+11_GoodbyeAds.txt 27: ::1 ip6-localhost
+11_GoodbyeAds.txt 28: ::1 ip6-loopback
+11_GoodbyeAds.txt 29: fe80::1%lo0 localhost
+11_GoodbyeAds.txt 30: ff00::0 ip6-localnet
+11_GoodbyeAds.txt 31: ff00::0 ip6-mcastprefix
+11_GoodbyeAds.txt 32: ff02::1 ip6-allnodes
+11_GoodbyeAds.txt 33: ff02::2 ip6-allrouters
+11_GoodbyeAds.txt 34: ff02::3 ip6-allhosts
+11_GoodbyeAds.txt 35: 0.0.0.0 0.0.0.0
+11_GoodbyeAds.txt 8473: 0.0.0.0 109.123.233.251
+11_GoodbyeAds.txt 8758: 0.0.0.0 10dkim1._domainkey.e-mail.harley-davidson.com
+11_GoodbyeAds.txt 8882: 0.0.0.0 110.93.143.144
+11_GoodbyeAds.txt 9583: 0.0.0.0 11dkim1._domainkey.marketing.kraken.com
+11_GoodbyeAds.txt 10779: 0.0.0.0 12dkim1._domainkey.eg.cheaptickets.com
+11_GoodbyeAds.txt 10780: 0.0.0.0 12dkim1._domainkey.emails.paypal.com
+11_GoodbyeAds.txt 11455: 0.0.0.0 13dkim1._domainkey.email.abbviecare.ca
+11_GoodbyeAds.txt 12351: 0.0.0.0 156.233.32.123
+11_GoodbyeAds.txt 12400: 0.0.0.0 157.90.183.248
+11_GoodbyeAds.txt 13648: 0.0.0.0 180.76.2.18
+11_GoodbyeAds.txt 13823: 0.0.0.0 184.106.248.76
+11_GoodbyeAds.txt 13858: 0.0.0.0 185.149.120.173
+11_GoodbyeAds.txt 13859: 0.0.0.0 185.246.188.124
+11_GoodbyeAds.txt 13860: 0.0.0.0 185.246.188.125
+11_GoodbyeAds.txt 13990: 0.0.0.0 188.72.219.36
+11_GoodbyeAds.txt 14263: 0.0.0.0 192.151.218.66
+11_GoodbyeAds.txt 14334: 0.0.0.0 193.200.64.24
+11_GoodbyeAds.txt 14335: 0.0.0.0 193.200.64.30
+11_GoodbyeAds.txt 14336: 0.0.0.0 193.200.64.31
+11_GoodbyeAds.txt 14337: 0.0.0.0 193.200.65.61
+11_GoodbyeAds.txt 14373: 0.0.0.0 194.63.140.103
+11_GoodbyeAds.txt 14374: 0.0.0.0 194.63.143.61
+11_GoodbyeAds.txt 14375: 0.0.0.0 194.63.143.96
+11_GoodbyeAds.txt 15450: 0.0.0.0 200.72.40.46
+11_GoodbyeAds.txt 15756: 0.0.0.0 206.54.181.250
+11_GoodbyeAds.txt 16008: 0.0.0.0 212.117.190.201
+11_GoodbyeAds.txt 16009: 0.0.0.0 212.117.190.202
+11_GoodbyeAds.txt 16010: 0.0.0.0 212.117.190.210
+11_GoodbyeAds.txt 16011: 0.0.0.0 212.117.190.211
+11_GoodbyeAds.txt 16012: 0.0.0.0 212.117.190.212
+11_GoodbyeAds.txt 16013: 0.0.0.0 212.117.190.213
+11_GoodbyeAds.txt 16063: 0.0.0.0 213.8.137.51
+11_GoodbyeAds.txt 16778: 0.0.0.0 23.224.89.2
+11_GoodbyeAds.txt 20115: 0.0.0.0 31.14.252.148
+11_GoodbyeAds.txt 22394: 0.0.0.0 37.1.213.100
+11_GoodbyeAds.txt 22395: 0.0.0.0 37.220.26.135
+11_GoodbyeAds.txt 22396: 0.0.0.0 37.220.26.136
+11_GoodbyeAds.txt 22397: 0.0.0.0 37.220.26.137
+11_GoodbyeAds.txt 24557: 0.0.0.0 45.82.68.79
+11_GoodbyeAds.txt 24774: INVALID_TLD(vtt): 0.0.0.0 46186911.vtt
+11_GoodbyeAds.txt 26323: 0.0.0.0 5.61.55.143
+11_GoodbyeAds.txt 26551: 0.0.0.0 50dkim1._domainkey.flaticon.com
+11_GoodbyeAds.txt 28254: 0.0.0.0 54.222.186.106
+11_GoodbyeAds.txt 28858: 0.0.0.0 57.128.71.215
+11_GoodbyeAds.txt 30576: 0.0.0.0 62.76.25.27
+11_GoodbyeAds.txt 30577: 0.0.0.0 62.76.25.28
+11_GoodbyeAds.txt 31255: 0.0.0.0 66.228.52.30
+11_GoodbyeAds.txt 31500: 0.0.0.0 67.228.151.70
+11_GoodbyeAds.txt 33575: 0.0.0.0 74.55.82.102
+11_GoodbyeAds.txt 33960: 0.0.0.0 77.247.178.41
+11_GoodbyeAds.txt 34131: 0.0.0.0 78.140.134.198
+11_GoodbyeAds.txt 34132: 0.0.0.0 78.140.149.216
+11_GoodbyeAds.txt 34299: 0.0.0.0 79.125.117.123
+11_GoodbyeAds.txt 34919: INVALID_TLD(vtt): 0.0.0.0 80055404.vtt
+11_GoodbyeAds.txt 35933: 0.0.0.0 88.208.46.222
+11_GoodbyeAds.txt 35934: 0.0.0.0 88.85.75.147
+11_GoodbyeAds.txt 35935: 0.0.0.0 88.85.77.92
+11_GoodbyeAds.txt 36850: 0.0.0.0 91.204.226.224
+11_GoodbyeAds.txt 36851: 0.0.0.0 91.207.192.31
+11_GoodbyeAds.txt 37204: 0.0.0.0 94.130.167.163
+11_GoodbyeAds.txt 37344: 0.0.0.0 95.211.125.226
+11_GoodbyeAds.txt 41564: INVALID_TLD(tl2): 0.0.0.0 a4.tl2
+11_GoodbyeAds.txt 51784: INVALID_TLD(coom): 0.0.0.0 afahivar.coom
+11_GoodbyeAds.txt 53589: INVALID_TLD(nett): 0.0.0.0 aistekso.nett
+11_GoodbyeAds.txt 72545: INVALID_TLD(xy): 0.0.0.0 cbyqzt.xy
+11_GoodbyeAds.txt 73566: INVALID_TLD(xy): 0.0.0.0 cdn1.fhits.xy
+11_GoodbyeAds.txt 74899: 0.0.0.0 chicago_cbslocal.us.intellitxt.com
+11_GoodbyeAds.txt 75406: 0.0.0.0 cio_office_email.truckpad.net.br
+11_GoodbyeAds.txt 78782: 0.0.0.0 client_monitor.isnssdk.com
+11_GoodbyeAds.txt 85587: 0.0.0.0 customer_email.flowjin.com
+11_GoodbyeAds.txt 85620: 0.0.0.0 customerio_email.bigstock.com
+11_GoodbyeAds.txt 85621: 0.0.0.0 customerio_email.referralcandy.com
+11_GoodbyeAds.txt 93348: 0.0.0.0 development-.bloblohub.com
+11_GoodbyeAds.txt 95458: 0.0.0.0 dmol_mn.adk2x.com
+11_GoodbyeAds.txt 99638: 0.0.0.0 ecpm_api.propellerads.com
+11_GoodbyeAds.txt 133396: 0.0.0.0 email_customer_io.happyscribe.co
+11_GoodbyeAds.txt 133397: 0.0.0.0 email_tracking.actforsport.eu
+11_GoodbyeAds.txt 133398: 0.0.0.0 email_tracking.nowlvble.com
+11_GoodbyeAds.txt 134851: 0.0.0.0 es-sunicontent_test.videoplaza.tv
+11_GoodbyeAds.txt 135147: INVALID_TLD(comm): 0.0.0.0 etl.xlmc.sec.miui.comm
+11_GoodbyeAds.txt 138713: INVALID_TLD(xy): 0.0.0.0 fhits.xy
+11_GoodbyeAds.txt 154561: 0.0.0.0 hawaii.-043ns11.net.daraz.com
+11_GoodbyeAds.txt 157342: 0.0.0.0 ht-viral_laughingc.native.andbeyond.media
+11_GoodbyeAds.txt 158343: 0.0.0.0 i_mobistar.tealiumiq.com
+11_GoodbyeAds.txt 178565: 0.0.0.0 losangeles_cbslocal.us.intellitxt.com
+11_GoodbyeAds.txt 185172: 0.0.0.0 mcr_media.adk2x.com
+11_GoodbyeAds.txt 205563: INVALID_TLD(comm): 0.0.0.0 performer.api.naiadsystems.comm
+11_GoodbyeAds.txt 205943: 0.0.0.0 philadelphia_cbslocal.us.intellitxt.com
+11_GoodbyeAds.txt 206156: 0.0.0.0 piano_log.kingsoft.jp
+11_GoodbyeAds.txt 206546: INVALID_TLD(onion): 0.0.0.0 pixel.archivecaslytosk.onion
+11_GoodbyeAds.txt 206547: INVALID_TLD(onion): 0.0.0.0 pixel.archiveiya74codqgiixo33q62qlrqtkgmcitqx5u2oeqnmn5bpcbiyd.onion
+11_GoodbyeAds.txt 209990: 0.0.0.0 production-.bloblohub.com
+11_GoodbyeAds.txt 210817: 0.0.0.0 pt_br.statcounter.com
+11_GoodbyeAds.txt 221128: 0.0.0.0 sanfrancisco_cbslocal.us.intellitxt.com
+11_GoodbyeAds.txt 240737: INVALID_TLD(senal): 0.0.0.0 t.senal
+11_GoodbyeAds.txt 240743: INVALID_TLD(sidekickopen): 0.0.0.0 t.sidekickopen
+11_GoodbyeAds.txt 240746: INVALID_TLD(signaux): 0.0.0.0 t.signaux
+11_GoodbyeAds.txt 240748: INVALID_TLD(sigopn): 0.0.0.0 t.sigopn
+11_GoodbyeAds.txt 243247: 0.0.0.0 test_pages.crittercism.com
+11_GoodbyeAds.txt 262442: INVALID_TLD(goodbyeads): 0.0.0.0 watchdog.goodbyeads
+11_GoodbyeAds.txt 262443: INVALID_TLD(xiaomi): 0.0.0.0 watchdog.goodbyeads.xiaomi
+11_GoodbyeAds.txt 267541: INVALID_TLD(xy): 0.0.0.0 www.fhits.xy
+11_GoodbyeAds.txt 274024: 0.0.0.0 xtl._domainkey.forgetrust.com
+11_GoodbyeAds.txt 274025: 0.0.0.0 xtl._domainkey.skillshare.com
+11_GoodbyeAds.txt 274503: INVALID_TLD(appspot): 0.0.0.0 yamm-track.appspot
+11_GoodbyeAds.txt 275336: INVALID_TLD(local): 0.0.0.0 youtube.local
+11_GoodbyeAds.txt 276540: 0.0.0.0 zh_cn.statcounter.com
+11_GoodbyeAds.txt 276541: 0.0.0.0 zh_tw.statcounter.com
+11_GoodbyeAds.txt 277560: INVALID_TLD(cim): 0.0.0.0 zupee.cim
+14_hosts.txt 22: 127.0.0.1  localhost
+14_hosts.txt 23: ::1  localhost

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-30T11:41:44.534675Z",
+  "generated": "2026-05-30T12:07:57.724257Z",
   "default_tier": "good",
   "tiers": [
     "light",
@@ -7,7 +7,7 @@
     "aggressive"
   ],
   "summary": {
-    "scanned": 1163221,
+    "scanned": 1461675,
     "unique_deduped": 953062,
     "duplicates_deduped": 210159,
     "reduction_pct_deduped": 18.067,
@@ -15,38 +15,45 @@
     "wildcards": 94185,
     "duplicates_optimized": 443486,
     "reduction_pct_optimized": 38.1257,
-    "delta_added": 16728,
-    "delta_removed": 14626,
-    "rejected_total": 37,
-    "tld_rejected": 5,
+    "delta_added": 0,
+    "delta_removed": 0,
+    "rejected_total": 161,
+    "tld_rejected": 27,
     "matched_allowlisted": 1,
     "added_by_blocklist_override": 0,
     "output_sizes": {
-      "blocklist.txt": 30095086,
-      "blocklist-adblock.txt": 15394791,
-      "blocklist-bind9.zone.gz": 6962598,
-      "blocklist-dnsmasq.conf": 20952945,
-      "blocklist-unbound.conf": 35296355,
-      "blocklist-domains.txt": 22470605
+      "blocklist.txt": 30095039,
+      "blocklist-adblock.txt": 15394744,
+      "blocklist-bind9.zone.gz": 6962575,
+      "blocklist-dnsmasq.conf": 20952898,
+      "blocklist-unbound.conf": 35296308,
+      "blocklist-domains.txt": 22470558
     },
     "tier_summaries": {
       "light": {
         "unique_deduped": 0,
         "unique_optimized": 0,
         "wildcards": 0,
-        "output_sizes": {}
+        "output_sizes": {
+          "blocklist.txt": 281,
+          "blocklist-adblock.txt": 325,
+          "blocklist-bind9.zone.gz": 404,
+          "blocklist-dnsmasq.conf": 325,
+          "blocklist-unbound.conf": 335,
+          "blocklist-domains.txt": 296
+        }
       },
       "aggressive": {
-        "unique_deduped": 953062,
-        "unique_optimized": 719735,
+        "unique_deduped": 1197174,
+        "unique_optimized": 905758,
         "wildcards": 94185,
         "output_sizes": {
-          "blocklist.txt": 30095039,
-          "blocklist-adblock.txt": 15394744,
-          "blocklist-bind9.zone.gz": 6962575,
-          "blocklist-dnsmasq.conf": 20952898,
-          "blocklist-unbound.conf": 35296308,
-          "blocklist-domains.txt": 22470558
+          "blocklist.txt": 38233129,
+          "blocklist-adblock.txt": 19344766,
+          "blocklist-bind9.zone.gz": 8587302,
+          "blocklist-dnsmasq.conf": 26162608,
+          "blocklist-unbound.conf": 43649398,
+          "blocklist-domains.txt": 28655752
         }
       }
     }
@@ -166,7 +173,40 @@
       "skipped": false,
       "health": "ok"
     },
-    "11_hosts.txt": {
+    "11_GoodbyeAds.txt": {
+      "url": "https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Hosts/GoodbyeAds.txt",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 277846,
+      "accepted": 277722,
+      "rejected": 124,
+      "net_new": 226651,
+      "skipped": false,
+      "health": "ok"
+    },
+    "12_domains.hosts": {
+      "url": "https://raw.githubusercontent.com/cbuijs/hagezi/refs/heads/main/lists/doh/domains.hosts",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 3416,
+      "accepted": 3416,
+      "rejected": 0,
+      "net_new": 3349,
+      "skipped": false,
+      "health": "ok"
+    },
+    "13_domains.hosts": {
+      "url": "https://raw.githubusercontent.com/cbuijs/hagezi/refs/heads/main/lists/doh-vpn-proxy-bypass/domains.hosts",
+      "format": "host",
+      "format_reason": "host format detected",
+      "scanned": 17316,
+      "accepted": 17316,
+      "rejected": 0,
+      "net_new": 14112,
+      "skipped": false,
+      "health": "ok"
+    },
+    "14_hosts.txt": {
       "url": "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt",
       "format": "host",
       "format_reason": "host format detected",
