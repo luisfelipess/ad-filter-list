@@ -287,7 +287,7 @@ def _pick_reader(path: str, sample_size: int = 50):
         with open(path, "r", encoding="utf-8", errors="ignore") as fh:
             for line in fh:
                 s = line.strip()
-                if not s or s.lstrip().startswith(('#', '!')):
+                if not s or s.lstrip().startswith(('#', '!', '[')):
                     continue
                 sample.append(s)
                 if len(sample) >= sample_size:
@@ -349,7 +349,7 @@ def _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats, source_
         with open(path, "r", encoding="utf-8", errors="ignore") as fh:
             for lineno, line in enumerate(fh, start=1):
                 stripped = line.strip()
-                if not stripped or stripped.lstrip().startswith(('#', '!')):
+                if not stripped or stripped.lstrip().startswith(('#', '!', '[')):
                     continue
                 source_stats[fname]["scanned"] += 1
                 result = reader.extract(stripped)

@@ -50,7 +50,7 @@ def read_leading_header(path: str) -> list[str]:
                     if headers:
                         break
                     continue
-                if s.lstrip().startswith(('#', '!')):
+                if s.lstrip().startswith(('#', '!', '[')):
                     headers.append(s)
                     continue
                 break
