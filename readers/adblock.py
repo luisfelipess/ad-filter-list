@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from readers import BaseReader
 
-_ADBLOCK_RE = re.compile(r"^\|\|([^/^*]+)\^")
+_ADBLOCK_RE = re.compile(r"^\|\|(\*\.)?([^/^*]+)\^")
 
 
 class AdblockReader(BaseReader):
@@ -16,4 +16,7 @@ class AdblockReader(BaseReader):
 
     def extract(self, line: str) -> tuple[str, bool] | None:
         m = _ADBLOCK_RE.match(line.strip())
-        return (m.group(1), False) if m else None
+        if not m:
+            return None
+        is_wildcard = m.group(1) is not None  # True for ||*.domain^
+        return m.group(2), is_wildcard
