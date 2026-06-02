@@ -1,5 +1,5 @@
 {
-  "generated": "2026-06-02T07:23:31.697223Z",
+  "generated": "2026-06-02T09:35:59.658719Z",
   "default_tier": "good",
   "tiers": [
     "light",
@@ -7,7 +7,7 @@
     "aggressive"
   ],
   "summary": {
-    "scanned": 2524855,
+    "scanned": 2524931,
     "unique_deduped": 940499,
     "duplicates_deduped": 219823,
     "reduction_pct_deduped": 18.945,
@@ -15,29 +15,29 @@
     "wildcards": 486390,
     "duplicates_optimized": 419885,
     "reduction_pct_optimized": 36.1869,
-    "delta_added": 25513,
-    "delta_removed": 61751,
-    "delta_domains_deduped": -36238,
-    "delta_domains_optimized": -41210,
+    "delta_added": 0,
+    "delta_removed": 0,
+    "delta_domains_deduped": 0,
+    "delta_domains_optimized": 0,
     "delta_sizes": {
-      "blocklist.txt": -803573,
-      "blocklist-adblock.txt": -1679974,
-      "blocklist-bind9.zone.gz": -726822,
-      "blocklist-dnsmasq.conf": -2258578,
-      "blocklist-unbound.conf.gz": -521044,
-      "blocklist-domains.txt": -513669
+      "blocklist.txt": -47,
+      "blocklist-adblock.txt": -47,
+      "blocklist-bind9.zone.gz": -25,
+      "blocklist-dnsmasq.conf": -47,
+      "blocklist-unbound.conf.gz": -25,
+      "blocklist-domains.txt": -47
     },
     "rejected_total": 2659,
     "tld_rejected": 40,
     "matched_allowlisted": 1,
     "added_by_blocklist_override": 0,
     "output_sizes": {
-      "blocklist.txt": 30017495,
-      "blocklist-adblock.txt": 23783890,
-      "blocklist-bind9.zone.gz": 10500733,
-      "blocklist-dnsmasq.conf": 31505338,
-      "blocklist-unbound.conf.gz": 7805255,
-      "blocklist-domains.txt": 22493518
+      "blocklist.txt": 30017448,
+      "blocklist-adblock.txt": 23783843,
+      "blocklist-bind9.zone.gz": 10500708,
+      "blocklist-dnsmasq.conf": 31505291,
+      "blocklist-unbound.conf.gz": 7805230,
+      "blocklist-domains.txt": 22493471
     },
     "tier_delta": 940499,
     "tier_summaries": {
@@ -49,9 +49,9 @@
         "output_sizes": {
           "blocklist.txt": 281,
           "blocklist-adblock.txt": 325,
-          "blocklist-bind9.zone.gz": 401,
+          "blocklist-bind9.zone.gz": 405,
           "blocklist-dnsmasq.conf": 325,
-          "blocklist-unbound.conf.gz": 300,
+          "blocklist-unbound.conf.gz": 301,
           "blocklist-domains.txt": 296
         },
         "delta_domains_deduped": 0,
@@ -59,34 +59,34 @@
         "delta_sizes": {
           "blocklist.txt": 0,
           "blocklist-adblock.txt": 0,
-          "blocklist-bind9.zone.gz": -1,
+          "blocklist-bind9.zone.gz": 4,
           "blocklist-dnsmasq.conf": 0,
-          "blocklist-unbound.conf.gz": -1,
+          "blocklist-unbound.conf.gz": 1,
           "blocklist-domains.txt": 0
         }
       },
       "aggressive": {
-        "unique_deduped": 1558977,
-        "unique_optimized": 1299002,
+        "unique_deduped": 1559022,
+        "unique_optimized": 1299045,
         "wildcards": 486390,
-        "tier_delta": 618478,
+        "tier_delta": 618523,
         "output_sizes": {
-          "blocklist.txt": 48916916,
-          "blocklist-adblock.txt": 36148283,
-          "blocklist-bind9.zone.gz": 15857017,
-          "blocklist-dnsmasq.conf": 48004667,
-          "blocklist-unbound.conf.gz": 11783228,
-          "blocklist-domains.txt": 36445115
+          "blocklist.txt": 48918158,
+          "blocklist-adblock.txt": 36149232,
+          "blocklist-bind9.zone.gz": 15857452,
+          "blocklist-dnsmasq.conf": 48005948,
+          "blocklist-unbound.conf.gz": 11783554,
+          "blocklist-domains.txt": 36445997
         },
-        "delta_domains_deduped": 93402,
-        "delta_domains_optimized": 87723,
+        "delta_domains_deduped": 45,
+        "delta_domains_optimized": 43,
         "delta_sizes": {
-          "blocklist.txt": 2490897,
-          "blocklist-adblock.txt": 839102,
-          "blocklist-bind9.zone.gz": 421745,
-          "blocklist-dnsmasq.conf": 1257864,
-          "blocklist-unbound.conf.gz": 322207,
-          "blocklist-domains.txt": 1743681
+          "blocklist.txt": 1242,
+          "blocklist-adblock.txt": 949,
+          "blocklist-bind9.zone.gz": 435,
+          "blocklist-dnsmasq.conf": 1281,
+          "blocklist-unbound.conf.gz": 326,
+          "blocklist-domains.txt": 882
         }
       }
     }
@@ -322,16 +322,16 @@
       "url": "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt",
       "format": "adblock",
       "format_reason": "adblock format detected",
-      "scanned": 165665,
-      "accepted": 164738,
+      "scanned": 165714,
+      "accepted": 164787,
       "rejected": 927,
-      "net_new": 46051,
-      "tier_exclusive": 72580,
+      "net_new": 46096,
+      "tier_exclusive": 72625,
       "skipped": false,
-      "content_sha1": "166a28727411621beb1834a927c77f1cea33bda4",
+      "content_sha1": "e82e92d3ed4a341d6421a0ab44d9fae97970de31",
       "version": null,
-      "last_modified": "2026-06-02T05:40:43.447Z",
-      "last_changed": "2026-06-02T07:23:31.697223Z",
+      "last_modified": "2026-06-02T09:34:18.172Z",
+      "last_changed": "2026-06-02T09:35:59.658719Z",
       "health": "ok",
       "tier": "aggressive"
     },
@@ -339,16 +339,16 @@
       "url": "https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt",
       "format": "adblock",
       "format_reason": "adblock format detected",
-      "scanned": 165665,
-      "accepted": 164738,
+      "scanned": 165692,
+      "accepted": 164765,
       "rejected": 927,
       "net_new": 0,
-      "tier_exclusive": 72580,
+      "tier_exclusive": 72605,
       "skipped": false,
-      "content_sha1": "f6d171b659556b4e05618eb77578bebb15debb72",
-      "version": "1.0.68.38",
-      "last_modified": "2026-06-02T05:43:26.132Z",
-      "last_changed": "2026-06-02T07:23:31.697223Z",
+      "content_sha1": "7207e891e0f8727ca4142f7458c645c85c54ba32",
+      "version": "1.0.68.39",
+      "last_modified": "2026-06-02T07:52:29.349Z",
+      "last_changed": "2026-06-02T09:35:59.658719Z",
       "health": "redundant",
       "health_reason": "all entries already covered by earlier sources",
       "tier": "aggressive"
