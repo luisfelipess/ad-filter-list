@@ -49,16 +49,26 @@ def _fmt_size(sizes: dict, filename: str) -> str:
     return f"{b} B"
 
 
+def _fmt_ram(domains: int) -> str:
+    """Estimate DNS cache RAM at ~50 bytes/domain (MikroTik empirical figure)."""
+    if not domains:
+        return "—"
+    mb = domains * 50 / 1_000_000
+    if mb >= 1:
+        return f"~{mb:.0f} MB"
+    return f"~{domains * 50 / 1_000:.0f} KB"
+
+
 def _tier_table_rows(tb: str, t_all: int, t_opt: int, sizes: dict) -> list[str]:
     return [
-        "| Format | Download | Domains | Size | Use case |",
-        "|---|---|---|---|---|",
-        f"| Hosts (`0.0.0.0 domain`) | [blocklist.txt]({tb}/blocklist.txt) | {t_all:,} | {_fmt_size(sizes, 'blocklist.txt')} | MikroTik adlists (RouterOS 7.15+), Pi-hole, AdAway, uMatrix, OpenSnitch, DNS66, NetGuard |",
-        f"| Plain domains | [blocklist-domains.txt]({tb}/blocklist-domains.txt) | {t_all:,} | {_fmt_size(sizes, 'blocklist-domains.txt')} | Blocky (older than v0.23), Diversion (older than v5), PersonalBlocklist, pfBlockerNG |",
-        f"| Adblock syntax | [blocklist-adblock.txt]({tb}/blocklist-adblock.txt) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-adblock.txt')} | Pi-hole, AdGuard, AdGuard Home, eBlocker, uBlock Origin, Brave (aggressive mode only), AdNauseam, Little Snitch Mini |",
-        f"| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz]({tb}/blocklist-bind9.zone.gz) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-bind9.zone.gz')} | BIND9, Knot, PowerDNS — any RFC 5782 response-policy zone implementation |",
-        f"| dnsmasq | [blocklist-dnsmasq.conf]({tb}/blocklist-dnsmasq.conf) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-dnsmasq.conf')} | dnsmasq (v2.86 or newer), Diversion (v5 or newer), OpenWrt, DD-WRT |",
-        f"| Unbound (gzip) | [blocklist-unbound.conf.gz]({tb}/blocklist-unbound.conf.gz) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-unbound.conf.gz')} | Unbound resolver (native `local-zone` directives) |",
+        "| Format | Download | Domains | Size | Est. RAM | Use case |",
+        "|---|---|---|---|---|---|",
+        f"| Hosts (`0.0.0.0 domain`) | [blocklist.txt]({tb}/blocklist.txt) | {t_all:,} | {_fmt_size(sizes, 'blocklist.txt')} | {_fmt_ram(t_all)} | MikroTik adlists (RouterOS 7.15+), Pi-hole, AdAway, uMatrix, OpenSnitch, DNS66, NetGuard |",
+        f"| Plain domains | [blocklist-domains.txt]({tb}/blocklist-domains.txt) | {t_all:,} | {_fmt_size(sizes, 'blocklist-domains.txt')} | {_fmt_ram(t_all)} | Blocky (older than v0.23), Diversion (older than v5), PersonalBlocklist, pfBlockerNG |",
+        f"| Adblock syntax | [blocklist-adblock.txt]({tb}/blocklist-adblock.txt) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-adblock.txt')} | {_fmt_ram(t_opt)} | Pi-hole, AdGuard, AdGuard Home, eBlocker, uBlock Origin, Brave (aggressive mode only), AdNauseam, Little Snitch Mini |",
+        f"| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz]({tb}/blocklist-bind9.zone.gz) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-bind9.zone.gz')} | {_fmt_ram(t_opt)} | BIND9, Knot, PowerDNS — any RFC 5782 response-policy zone implementation |",
+        f"| dnsmasq | [blocklist-dnsmasq.conf]({tb}/blocklist-dnsmasq.conf) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-dnsmasq.conf')} | {_fmt_ram(t_opt)} | dnsmasq (v2.86 or newer), Diversion (v5 or newer), OpenWrt, DD-WRT |",
+        f"| Unbound (gzip) | [blocklist-unbound.conf.gz]({tb}/blocklist-unbound.conf.gz) | {t_opt:,} | {_fmt_size(sizes, 'blocklist-unbound.conf.gz')} | {_fmt_ram(t_opt)} | Unbound resolver (native `local-zone` directives) |",
     ]
 
 
