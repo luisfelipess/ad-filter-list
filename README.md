@@ -29,7 +29,7 @@ Sources are tagged `light`, `good`, or `aggressive` in `sources.conf`. The pipel
 ---
 
 <!-- stats:start -->
-**Last run:** 2026-06-06 &nbsp;·&nbsp; **Sources:** 30 &nbsp;·&nbsp; **Unique domains:** 945,644 *(hosts/domains)* · 749,538 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 526,772
+**Last run:** 2026-06-07 &nbsp;·&nbsp; **Sources:** 30 &nbsp;·&nbsp; **Unique domains:** 945,025 *(hosts/domains)* · 757,893 *(DNS-optimized)* &nbsp;·&nbsp; **Wildcards:** 537,088
 
 ### Light tier
 
@@ -46,23 +46,23 @@ Sources are tagged `light`, `good`, or `aggressive` in `sources.conf`. The pipel
 
 | Format | Download | Domains | Size | Est. RAM | Use case |
 |---|---|---|---|---|---|
-| Hosts (`0.0.0.0 domain`) | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist.txt) | 945,644 | 30.0 MB | ~47 MB | MikroTik adlists (RouterOS 7.15+), Pi-hole, AdAway, uMatrix, OpenSnitch, DNS66, NetGuard |
-| Plain domains | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-domains.txt) | 945,644 | 22.4 MB | ~47 MB | Blocky (older than v0.23), Diversion (older than v5), PersonalBlocklist, pfBlockerNG |
-| Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-adblock.txt) | 749,538 | 24.7 MB | ~37 MB | Pi-hole, AdGuard, AdGuard Home, eBlocker, uBlock Origin, Brave (aggressive mode only), AdNauseam, Little Snitch Mini |
-| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-bind9.zone.gz) | 749,538 | 10.9 MB | ~37 MB | BIND9, Knot, PowerDNS — any RFC 5782 response-policy zone implementation |
-| dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-dnsmasq.conf) | 749,538 | 32.8 MB | ~37 MB | dnsmasq (v2.86 or newer), Diversion (v5 or newer), OpenWrt, DD-WRT |
-| Unbound (gzip) | [blocklist-unbound.conf.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-unbound.conf.gz) | 749,538 | 8.1 MB | ~37 MB | Unbound resolver (native `local-zone` directives) |
+| Hosts (`0.0.0.0 domain`) | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist.txt) | 945,025 | 30.0 MB | ~47 MB | MikroTik adlists (RouterOS 7.15+), Pi-hole, AdAway, uMatrix, OpenSnitch, DNS66, NetGuard |
+| Plain domains | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-domains.txt) | 945,025 | 22.5 MB | ~47 MB | Blocky (older than v0.23), Diversion (older than v5), PersonalBlocklist, pfBlockerNG |
+| Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-adblock.txt) | 757,893 | 24.8 MB | ~38 MB | Pi-hole, AdGuard, AdGuard Home, eBlocker, uBlock Origin, Brave (aggressive mode only), AdNauseam, Little Snitch Mini |
+| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-bind9.zone.gz) | 757,893 | 11.0 MB | ~38 MB | BIND9, Knot, PowerDNS — any RFC 5782 response-policy zone implementation |
+| dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-dnsmasq.conf) | 757,893 | 33.0 MB | ~38 MB | dnsmasq (v2.86 or newer), Diversion (v5 or newer), OpenWrt, DD-WRT |
+| Unbound (gzip) | [blocklist-unbound.conf.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/blocklist-unbound.conf.gz) | 757,893 | 8.1 MB | ~38 MB | Unbound resolver (native `local-zone` directives) |
 
 ### Aggressive tier
 
 | Format | Download | Domains | Size | Est. RAM | Use case |
 |---|---|---|---|---|---|
-| Hosts (`0.0.0.0 domain`) | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist.txt) | 1,458,056 | 46.3 MB | ~73 MB | MikroTik adlists (RouterOS 7.15+), Pi-hole, AdAway, uMatrix, OpenSnitch, DNS66, NetGuard |
-| Plain domains | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-domains.txt) | 1,458,056 | 34.7 MB | ~73 MB | Blocky (older than v0.23), Diversion (older than v5), PersonalBlocklist, pfBlockerNG |
-| Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-adblock.txt) | 1,202,842 | 35.2 MB | ~60 MB | Pi-hole, AdGuard, AdGuard Home, eBlocker, uBlock Origin, Brave (aggressive mode only), AdNauseam, Little Snitch Mini |
-| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-bind9.zone.gz) | 1,202,842 | 15.4 MB | ~60 MB | BIND9, Knot, PowerDNS — any RFC 5782 response-policy zone implementation |
-| dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-dnsmasq.conf) | 1,202,842 | 46.6 MB | ~60 MB | dnsmasq (v2.86 or newer), Diversion (v5 or newer), OpenWrt, DD-WRT |
-| Unbound (gzip) | [blocklist-unbound.conf.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-unbound.conf.gz) | 1,202,842 | 11.4 MB | ~60 MB | Unbound resolver (native `local-zone` directives) |
+| Hosts (`0.0.0.0 domain`) | [blocklist.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist.txt) | 1,509,068 | 47.7 MB | ~75 MB | MikroTik adlists (RouterOS 7.15+), Pi-hole, AdAway, uMatrix, OpenSnitch, DNS66, NetGuard |
+| Plain domains | [blocklist-domains.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-domains.txt) | 1,509,068 | 35.7 MB | ~75 MB | Blocky (older than v0.23), Diversion (older than v5), PersonalBlocklist, pfBlockerNG |
+| Adblock syntax | [blocklist-adblock.txt](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-adblock.txt) | 1,262,924 | 36.3 MB | ~63 MB | Pi-hole, AdGuard, AdGuard Home, eBlocker, uBlock Origin, Brave (aggressive mode only), AdNauseam, Little Snitch Mini |
+| BIND9 RPZ (gzip) | [blocklist-bind9.zone.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-bind9.zone.gz) | 1,262,924 | 15.9 MB | ~63 MB | BIND9, Knot, PowerDNS — any RFC 5782 response-policy zone implementation |
+| dnsmasq | [blocklist-dnsmasq.conf](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-dnsmasq.conf) | 1,262,924 | 48.1 MB | ~63 MB | dnsmasq (v2.86 or newer), Diversion (v5 or newer), OpenWrt, DD-WRT |
+| Unbound (gzip) | [blocklist-unbound.conf.gz](https://raw.githubusercontent.com/luisfelipess/ad-filter-list/main/processed/aggressive/blocklist-unbound.conf.gz) | 1,262,924 | 11.8 MB | ~63 MB | Unbound resolver (native `local-zone` directives) |
 <!-- stats:end -->
 
 Run diagnostics are committed alongside the output on every run:
