@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-01T22:17:05.702730Z",
+  "generated": "2026-08-01T22:21:57.220789Z",
   "default_tier": "good",
   "tiers": [
     "light",
@@ -7,7 +7,7 @@
     "aggressive"
   ],
   "summary": {
-    "scanned": 2424003,
+    "scanned": 2424033,
     "unique_deduped": 930119,
     "duplicates_deduped": 205483,
     "reduction_pct_deduped": 18.0946,
@@ -15,29 +15,29 @@
     "wildcards": 442772,
     "duplicates_optimized": 412145,
     "reduction_pct_optimized": 36.2931,
-    "delta_added": 43160,
-    "delta_removed": 30542,
-    "delta_domains_deduped": 12618,
-    "delta_domains_optimized": 13512,
+    "delta_added": 0,
+    "delta_removed": 0,
+    "delta_domains_deduped": 0,
+    "delta_domains_optimized": 0,
     "delta_sizes": {
-      "blocklist.txt": 518236,
-      "blocklist-adblock.txt": 870667,
-      "blocklist-bind9.zone.gz": 316550,
-      "blocklist-dnsmasq.conf": 1084167,
-      "blocklist-unbound.conf.gz": 227614,
-      "blocklist-domains.txt": 417292
+      "blocklist.txt": -47,
+      "blocklist-adblock.txt": -47,
+      "blocklist-bind9.zone.gz": -63,
+      "blocklist-dnsmasq.conf": -47,
+      "blocklist-unbound.conf.gz": -43,
+      "blocklist-domains.txt": -47
     },
     "rejected_total": 2689,
     "tld_rejected": 32,
     "matched_allowlisted": 1,
     "added_by_blocklist_override": 0,
     "output_sizes": {
-      "blocklist.txt": 30470462,
-      "blocklist-adblock.txt": 22458169,
-      "blocklist-bind9.zone.gz": 9685459,
-      "blocklist-dnsmasq.conf": 29568265,
-      "blocklist-unbound.conf.gz": 7174283,
-      "blocklist-domains.txt": 23029525
+      "blocklist.txt": 30470415,
+      "blocklist-adblock.txt": 22458122,
+      "blocklist-bind9.zone.gz": 9685396,
+      "blocklist-dnsmasq.conf": 29568218,
+      "blocklist-unbound.conf.gz": 7174240,
+      "blocklist-domains.txt": 23029478
     },
     "tier_delta": 930119,
     "tier_summaries": {
@@ -49,9 +49,9 @@
         "output_sizes": {
           "blocklist.txt": 281,
           "blocklist-adblock.txt": 325,
-          "blocklist-bind9.zone.gz": 404,
+          "blocklist-bind9.zone.gz": 403,
           "blocklist-dnsmasq.conf": 325,
-          "blocklist-unbound.conf.gz": 300,
+          "blocklist-unbound.conf.gz": 301,
           "blocklist-domains.txt": 296
         },
         "delta_domains_deduped": 0,
@@ -59,34 +59,34 @@
         "delta_sizes": {
           "blocklist.txt": 0,
           "blocklist-adblock.txt": 0,
-          "blocklist-bind9.zone.gz": 2,
+          "blocklist-bind9.zone.gz": -1,
           "blocklist-dnsmasq.conf": 0,
-          "blocklist-unbound.conf.gz": -1,
+          "blocklist-unbound.conf.gz": 1,
           "blocklist-domains.txt": 0
         }
       },
       "aggressive": {
-        "unique_deduped": 1504317,
-        "unique_optimized": 1239122,
+        "unique_deduped": 1504347,
+        "unique_optimized": 1239152,
         "wildcards": 442772,
-        "tier_delta": 574198,
+        "tier_delta": 574228,
         "output_sizes": {
-          "blocklist.txt": 48758612,
-          "blocklist-adblock.txt": 34549075,
-          "blocklist-bind9.zone.gz": 14724305,
-          "blocklist-dnsmasq.conf": 45482793,
-          "blocklist-unbound.conf.gz": 10907017,
-          "blocklist-domains.txt": 36724091
+          "blocklist.txt": 48759412,
+          "blocklist-adblock.txt": 34549725,
+          "blocklist-bind9.zone.gz": 14724621,
+          "blocklist-dnsmasq.conf": 45483683,
+          "blocklist-unbound.conf.gz": 10907289,
+          "blocklist-domains.txt": 36724651
         },
-        "delta_domains_deduped": 103410,
-        "delta_domains_optimized": 103848,
+        "delta_domains_deduped": 30,
+        "delta_domains_optimized": 30,
         "delta_sizes": {
-          "blocklist.txt": 3311150,
-          "blocklist-adblock.txt": 3105526,
-          "blocklist-bind9.zone.gz": 1181488,
-          "blocklist-dnsmasq.conf": 4026584,
-          "blocklist-unbound.conf.gz": 849914,
-          "blocklist-domains.txt": 2483870
+          "blocklist.txt": 800,
+          "blocklist-adblock.txt": 650,
+          "blocklist-bind9.zone.gz": 316,
+          "blocklist-dnsmasq.conf": 890,
+          "blocklist-unbound.conf.gz": 272,
+          "blocklist-domains.txt": 560
         }
       }
     }
@@ -322,16 +322,16 @@
       "url": "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt",
       "format": "adblock",
       "format_reason": "adblock format detected",
-      "scanned": 162041,
-      "accepted": 161099,
+      "scanned": 162071,
+      "accepted": 161129,
       "rejected": 942,
-      "net_new": 49996,
-      "tier_exclusive": 81480,
+      "net_new": 50026,
+      "tier_exclusive": 81510,
       "skipped": false,
-      "content_sha1": "fb5e3f8aa57486c3925067d8fe3bfc1abfaafdaa",
+      "content_sha1": "91dbf5a9a64c31a82d3aa1695dc3b10ff37dc668",
       "version": null,
-      "last_modified": "2026-08-01T20:21:58.161Z",
-      "last_changed": "2026-08-01T22:17:05.702730Z",
+      "last_modified": "2026-08-01T22:20:50.494Z",
+      "last_changed": "2026-08-01T22:21:57.220789Z",
       "health": "ok",
       "tier": "aggressive"
     },
