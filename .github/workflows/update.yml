@@ -71,7 +71,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          git config user.name "luifelss"
+          git config user.name "luisfelipess"
           git config user.email "146073519+luisfelipess@users.noreply.github.com"
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
 
@@ -100,14 +100,16 @@ jobs:
           # so we keep only ONE rolling data commit at the tip instead of stacking a
           # new ~60 MB commit every day (which previously bloated the repo to ~5 GB).
           #
-          # If the current tip is already the bot's rolling data commit, amend it;
-          # otherwise (tip is a human/code commit) create a fresh data commit on top.
-          # Either way we force-push — this only ever rewrites the single data commit,
-          # never any code commit beneath it.
-          BOT_EMAIL="146073519+luisfelipess@users.noreply.github.com"
-          TIP_MSG=$(git log -1 --format='%s')
-          TIP_EMAIL=$(git log -1 --format='%ae')
-          if [[ "$TIP_MSG" == "Update blocklists"* && "$TIP_EMAIL" == "$BOT_EMAIL" ]]; then
+          # The tip is a rolling data commit when its subject has the
+          # Update-blocklists prefix AND it changed only generated paths. This is
+          # detected by content (not author), so no identity is referenced here.
+          # If so we amend it; otherwise (tip is a code commit) we start a fresh
+          # data commit on top. Either way the force-push only ever rewrites that
+          # single data commit, never a code commit beneath it.
+          TIP_SUBJECT=$(git log -1 --format='%s')
+          TIP_OTHER=$(git show --name-only --format='' HEAD \
+                      | grep -vE '^(processed/|reports/|README\.md$)' | grep -v '^$' || true)
+          if [[ "$TIP_SUBJECT" == "Update blocklists"* && -z "$TIP_OTHER" ]]; then
             git commit --amend -m "$MSG"
           else
             git commit -m "$MSG"
