@@ -8,6 +8,11 @@ on:
 permissions:
   contents: write
 
+# Never let two runs push concurrently — the data commit is force-pushed.
+concurrency:
+  group: update-blocklists
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -91,8 +96,23 @@ jobs:
             MSG="Update blocklists [skip ci]"
           fi
 
-          git commit -m "$MSG"
-          git push origin HEAD:${{ github.ref_name }}
+          # Squash-in-place: the generated outputs are large and regenerated daily,
+          # so we keep only ONE rolling data commit at the tip instead of stacking a
+          # new ~60 MB commit every day (which previously bloated the repo to ~5 GB).
+          #
+          # If the current tip is already the bot's rolling data commit, amend it;
+          # otherwise (tip is a human/code commit) create a fresh data commit on top.
+          # Either way we force-push — this only ever rewrites the single data commit,
+          # never any code commit beneath it.
+          BOT_EMAIL="146073519+luisfelipess@users.noreply.github.com"
+          TIP_MSG=$(git log -1 --format='%s')
+          TIP_EMAIL=$(git log -1 --format='%ae')
+          if [[ "$TIP_MSG" == "Update blocklists"* && "$TIP_EMAIL" == "$BOT_EMAIL" ]]; then
+            git commit --amend -m "$MSG"
+          else
+            git commit -m "$MSG"
+          fi
+          git push --force origin HEAD:${{ github.ref_name }}
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Upload pipeline output
