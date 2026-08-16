@@ -1,4 +1,4 @@
-! Processed blocklist (Adblock) - generated: 2026-08-15T03:36:36.577711Z
+! Processed blocklist (Adblock) - generated: 2026-08-16T03:45:49.642291Z
 ! Format: Adblock Filter Syntax (||domain^ / ||*.domain^)
 ! Compiled by: https://github.com/luisfelipess/ad-filter-list
 ! Summary: scanned=0 unique=0 duplicates=0 (0.00% reduction)
