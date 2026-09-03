@@ -1,8 +1,7 @@
-! Processed blocklist (Adblock) - generated: 2026-09-02T20:24:55.148014Z
+! Processed blocklist (Adblock) - generated: 2026-09-03T07:47:36.539427Z
 ! Format: Adblock Filter Syntax (||domain^ / ||*.domain^)
 ! Compiled by: https://github.com/luisfelipess/ad-filter-list
 ! Summary: scanned=1106229 unique=654430 duplicates=451799 (40.84% reduction)
-! Delta vs previous: added=161084 removed=208528
 ! Sources and original headers (credits):
 
 ! ----- Source: https://raw.githubusercontent.com/hagezi/dns-blocklists-legacy/main/hosts/pro.txt (01_pro.txt) -----
