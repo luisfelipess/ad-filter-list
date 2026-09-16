@@ -1,4 +1,4 @@
-# Processed blocklist (domains) - generated: 2026-09-15T08:23:25.958639Z
+# Processed blocklist (domains) - generated: 2026-09-16T08:17:04.630049Z
 # Format: one domain per line
 # Compiled by: https://github.com/luisfelipess/ad-filter-list
 # Summary: scanned=0 unique=0 duplicates=0 (0.00% reduction)
