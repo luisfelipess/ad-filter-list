@@ -1,8 +1,7 @@
-# Processed blocklist - generated: 2026-10-13T10:06:29.024272Z
+# Processed blocklist - generated: 2026-10-14T08:23:32.216345Z
 # Format: 0.0.0.0 domain
 # Compiled by: https://github.com/luisfelipess/ad-filter-list
 # Summary: scanned=1268322 unique=1050943 duplicates=217379 (17.14% reduction)
-# Delta vs previous: added=13121 removed=6522
 # Sources and original headers (credits):
 
 # ----- Source: https://raw.githubusercontent.com/hagezi/dns-blocklists-legacy/main/hosts/pro.txt (01_pro.txt) -----
