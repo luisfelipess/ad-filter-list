@@ -18,14 +18,14 @@ class WriterMeta:
         "total_unique_optimized", "duplicates_optimized", "reduction_pct_optimized",  # DNS formats
         "total_unique_deduped", "duplicates_deduped", "reduction_pct_deduped",        # hosts/domains
         "delta_added", "delta_removed", "source_infos",
-        "wildcard_domains",
+        "wildcard_domains", "exact_domains",
     )
 
     def __init__(self, now_str, total_candidates,
                  total_unique_optimized, duplicates_optimized, reduction_pct_optimized,
                  total_unique_deduped, duplicates_deduped, reduction_pct_deduped,
                  delta_added, delta_removed, source_infos,
-                 wildcard_domains=frozenset()):
+                 wildcard_domains=frozenset(), exact_domains=frozenset()):
         self.now_str = now_str
         self.total_candidates = total_candidates
         self.total_unique_optimized = total_unique_optimized
@@ -37,6 +37,7 @@ class WriterMeta:
         self.delta_added = delta_added
         self.delta_removed = delta_removed
         self.source_infos = source_infos
+        self.exact_domains = exact_domains
         self.wildcard_domains = wildcard_domains  # frozenset[str]
 
 
@@ -74,7 +75,7 @@ def write_source_credits(fh, source_infos, comment_char: str) -> None:
         fh.write(f"{comment_char}\n")
 
 
-def split_wildcard_domains(domains: list[str], wildcard_domains: frozenset) -> tuple[list[str], list[str]]:
+def split_wildcard_domains(domains: list[str], wildcard_domains: frozenset, exact_domains: frozenset = frozenset()) -> tuple[list[str], list[str]]:
     """Split domains into (exact_only, wildcards).
 
     exact_only: domains not covered by any wildcard entry.
@@ -88,7 +89,7 @@ def split_wildcard_domains(domains: list[str], wildcard_domains: frozenset) -> t
             ".".join(parts[i:]) in wildcard_domains
             for i in range(1, len(parts) + 1)
         )
-        if not covered:
+        if not covered and (d not in wildcard_domains or d in exact_domains):
             exact.append(d)
     # wildcards are emitted in sorted order
     wildcards = sorted(wildcard_domains & set(domains))

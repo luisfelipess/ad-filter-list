@@ -1,12 +1,15 @@
 """Tests for merge.py — covers readers, load_list_file,
 remove_subdomains, and end-to-end merge output."""
 
+from __future__ import annotations
+
 import gzip
 import json
 import os
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 # ensure repo root is on the path when running from tests/
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
@@ -330,6 +333,9 @@ class TestRemoveSubdomains(unittest.TestCase):
 class TestMergeEndToEnd(unittest.TestCase):
 
     def setUp(self):
+        tlds = patch("merge._load_iana_tlds", return_value={"com", "org", "net"})
+        tlds.start()
+        self.addCleanup(tlds.stop)
         self.tmp = tempfile.mkdtemp()
         self.raw_dir = os.path.join(self.tmp, "raw")
         self.out_dir = os.path.join(self.tmp, "processed")

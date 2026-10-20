@@ -12,7 +12,8 @@ class UnboundWriter(BaseWriter):
         path = os.path.join(out_dir, "blocklist-unbound.conf.gz")
         # unbound local-zone covers all subdomains, so wildcard entries need no
         # special syntax — just deduplicate covered exact entries.
-        exact, wildcards = split_wildcard_domains(domains, meta.wildcard_domains)
+        exact, wildcards = split_wildcard_domains(domains, meta.wildcard_domains, meta.exact_domains)
+        exact = [d for d in exact if d not in meta.wildcard_domains]
         with gzip.open(path, "wt", encoding="utf-8") as fh:
             fh.write(f"# Processed blocklist (Unbound) - generated: {meta.now_str}\n")
             fh.write('# Format: local-zone: "domain." always_nxdomain (matches subdomains)\n')

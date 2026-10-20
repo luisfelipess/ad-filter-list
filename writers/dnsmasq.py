@@ -11,7 +11,8 @@ class DnsmasqWriter(BaseWriter):
         path = os.path.join(out_dir, "blocklist-dnsmasq.conf")
         # dnsmasq address=/domain/# already matches all subdomains, so wildcard
         # entries need no special syntax — just deduplicate covered exact entries.
-        exact, wildcards = split_wildcard_domains(domains, meta.wildcard_domains)
+        exact, wildcards = split_wildcard_domains(domains, meta.wildcard_domains, meta.exact_domains)
+        exact = [d for d in exact if d not in meta.wildcard_domains]
         with open(path, "w", encoding="utf-8") as fh:
             fh.write(f"# Processed blocklist (dnsmasq) - generated: {meta.now_str}\n")
             fh.write("# Format: address=/domain/# (NXDOMAIN, matches subdomains)\n")

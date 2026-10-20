@@ -128,6 +128,18 @@ def load_blocklist(path: str) -> ListEntries:
     return blocked
 
 
+def coverage_conflicts(allowed: ListEntries) -> set[str]:
+    """Parent zones whose inclusive blocking would shadow an allowed name."""
+    conflicts = set()
+    for domain in allowed.exact:
+        parts = domain.split(".")
+        conflicts.update(".".join(parts[i:]) for i in range(1, len(parts) - 1))
+    for base in allowed.wildcards:
+        parts = base.split(".")
+        conflicts.update(".".join(parts[i:]) for i in range(len(parts) - 1))
+    return conflicts
+
+
 def remove_subdomains(domains: list[str], wildcard_domains: set[str] | None = None) -> list[str]:
     domain_set = set(domains)
     wc = wildcard_domains or set()
@@ -305,7 +317,9 @@ def _pick_reader(path: str, sample_size: int = 50):
 def _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats, source_infos,
                      rejected_entries, valid_tlds=None, default_rank: int = 0):
     """Scan source files and return
-    (ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected, domain_min_rank).
+    Ordered domains, candidate count, wildcard bases, allowlist matches,
+    TLD rejections, minimum domain ranks, source indices, wildcard ranks,
+    and exact ranks.
 
     pairs_with_ranks: list of (fname, url, tier_rank).
     domain_min_rank maps each domain to the lowest tier rank among all sources that contain it,
@@ -316,6 +330,8 @@ def _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats, source_
     ordered: list[str] = []
     wildcard_domains: set[str] = set()
     domain_min_rank: dict[str, int] = {}
+    wildcard_min_rank: dict[str, int] = {}
+    exact_min_rank: dict[str, int] = {}
     # domain_source_indices: for each non-allowlisted accepted domain, the list of
     # source indices (into pairs_with_ranks) that contributed it.  Used post-hoc to
     # compute per-source tier_exclusive counts without re-reading any file.
@@ -346,16 +362,41 @@ def _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats, source_
             rejected_entries.append((fname, 0, f"UNSUPPORTED_FILE: {reason}"))
             print(f"Skipping {fname}: {reason}")
             continue
+        source_allow = ListEntries()
+        disabled_rules = set()
+        if isinstance(reader, AdblockReader):
+            with open(path, encoding="utf-8", errors="ignore") as fh:
+                for line in fh:
+                    line = line.strip()
+                    disabled = reader.disabled(line)
+                    if disabled:
+                        disabled_rules.add(disabled)
+                    exception = reader.exception(line)
+                    if exception:
+                        name, wildcard = exception
+                        domain = normalize_domain(name)
+                        if domain:
+                            source_allow.wildcards.add(domain)
+                            if not wildcard:
+                                source_allow.exact.add(domain)
+        source_stats[fname]["adblock_exception_domains"] = len(source_allow.exact | source_allow.wildcards)
+        source_stats[fname]["disabled_rules"] = len(disabled_rules)
+        source_conflicts = coverage_conflicts(source_allow)
         with open(path, "r", encoding="utf-8", errors="ignore") as fh:
             for lineno, line in enumerate(fh, start=1):
                 stripped = line.strip()
                 if not stripped or stripped.lstrip().startswith(('#', '!', '[')):
                     continue
+                if isinstance(reader, AdblockReader) and (reader.exception(stripped) or reader.disabled(stripped)):
+                    continue
                 source_stats[fname]["scanned"] += 1
                 result = reader.extract(stripped)
                 if result is None:
                     source_stats[fname]["rejected"] += 1
-                    rejected_entries.append((fname, lineno, line.rstrip('\n')))
+                    reason = "UNSUPPORTED_ADBLOCK_RULE: " if isinstance(reader, AdblockReader) else ""
+                    rejected_entries.append((fname, lineno, reason + line.rstrip('\n')))
+                    continue
+                if result in disabled_rules:
                     continue
                 raw, is_wildcard = result
                 dom = normalize_domain(raw) if raw else None
@@ -371,6 +412,8 @@ def _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats, source_
                     continue
                 source_stats[fname]["accepted"] += 1
                 total_candidates += 1
+                if source_allow.matches(dom) or dom in source_conflicts:
+                    continue
                 if allowlist.matches(dom):
                     if dom not in allowlisted_skipped:
                         allowlisted_skipped.add(dom)
@@ -387,10 +430,13 @@ def _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats, source_
                         domain_min_rank[dom] = src_rank
                     if dom in domain_source_indices:
                         domain_source_indices[dom].append(src_idx)
-                if is_wildcard:
-                    wildcard_domains.add(dom)
+                if not allowlist.matches(dom):
+                    ranks = wildcard_min_rank if is_wildcard else exact_min_rank
+                    ranks[dom] = min(src_rank, ranks.get(dom, src_rank))
+                    if is_wildcard:
+                        wildcard_domains.add(dom)
 
-    return ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected, domain_min_rank, domain_source_indices
+    return ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected, domain_min_rank, domain_source_indices, wildcard_min_rank, exact_min_rank
 
 
 def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
@@ -427,6 +473,8 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             (fname, "", default_rank)
             for fname in sorted(os.listdir(raw_dir))
             if os.path.isfile(os.path.join(raw_dir, fname))
+            and fname not in {"sources.map", "fetch-status.json", ".fetch-cache.json"}
+            and not fname.startswith(".")
         ]
 
     # Stable sort by tier rank so lights are processed before goods before aggressives,
@@ -456,7 +504,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         except (json.JSONDecodeError, OSError):
             pass
 
-    ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected, domain_min_rank, domain_source_indices = (
+    ordered, total_candidates, wildcard_domains, matched_allowlisted, tld_rejected, domain_min_rank, domain_source_indices, wildcard_min_rank, exact_min_rank = (
         _collect_domains(raw_dir, pairs_with_ranks, allowlist, source_stats,
                          source_infos, rejected_entries, valid_tlds, default_rank)
     )
@@ -493,6 +541,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             # Blocklist-forced domains appear in every tier (rank 0).
             if dom in seen_set:
                 domain_min_rank[dom] = 0
+                exact_min_rank[dom] = 0
         for base in sorted(blocklist.wildcards):
             wildcard_domains.add(base)
             if base not in seen_set and not allowlist.matches(base):
@@ -501,6 +550,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
                 added_by_blocklist_override += 1
             if base in seen_set:
                 domain_min_rank[base] = 0
+                wildcard_min_rank[base] = 0
         if added_by_blocklist_override:
             print(
                 f"Blocklist: added {added_by_blocklist_override} forced domain(s) "
@@ -548,6 +598,22 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
                     f"Possible download failure. processed/ left untouched."
                 )
 
+    # Validate every tier before writing any outputs.
+    for tier_name in tiers_ordered:
+        tier_r = tier_rank[tier_name]
+        count = sum(rank <= tier_r for rank in domain_min_rank.values())
+        previous = (_prev_report.get("summary", {}) if tier_name == default_tier else
+                    _prev_report.get("summary", {}).get("tier_summaries", {}).get(tier_name, {}))
+        previous_count = previous.get("unique_deduped", 0)
+        assigned = any(rank <= tier_r for _, _, rank in pairs_with_ranks)
+        accepted = sum(stats["accepted"] for stats in source_stats.values()
+                       if stats["tier_rank"] <= tier_r)
+        if assigned and count == 0 and accepted == 0:
+            raise SystemExit(f"ABORT: configured tier {tier_name} has no domains; outputs unchanged")
+        if previous_count and count < previous_count * (1 - max_drop_pct / 100):
+            raise SystemExit(f"ABORT: tier {tier_name} domain count dropped beyond {max_drop_pct}%; outputs unchanged")
+
+    parent_conflicts = coverage_conflicts(allowlist)
     # ── per-tier write loop ───────────────────────────────────────────────────
     tier_summaries: dict[str, dict] = {}
     default_output_sizes: dict[str, int] = {}
@@ -562,13 +628,19 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
 
         tier_domains_deduped = [d for d in ordered_all if domain_min_rank.get(d, default_rank) <= tier_r]
         tier_wildcard_domains: set[str] = {d for d in wildcard_domains
-                                            if domain_min_rank.get(d, default_rank) <= tier_r}
+                                            if wildcard_min_rank.get(d, len(tiers_ordered)) <= tier_r}
+        # Keep exact and wildcard provenance separate across cumulative tiers.
+        tier_exact_domains = {d for d in tier_domains_deduped
+                              if exact_min_rank.get(d, len(tiers_ordered)) <= tier_r}
+        safe_dns_domains = [d for d in tier_domains_deduped if d not in parent_conflicts]
+        tier_wildcard_domains.intersection_update(safe_dns_domains)
 
         if optimize_subdomains:
-            tier_domains_optimized = remove_subdomains(tier_domains_deduped, tier_wildcard_domains)
+            tier_domains_optimized = remove_subdomains(safe_dns_domains)
         else:
-            tier_domains_optimized = tier_domains_deduped
+            tier_domains_optimized = safe_dns_domains
 
+        tier_wildcard_domains.intersection_update(tier_domains_optimized)
         tier_unique_deduped = len(tier_domains_deduped)
         tier_unique_optimized = len(tier_domains_optimized)
         tier_candidates = sum(
@@ -599,6 +671,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             delta_removed=delta_removed if is_default else 0,
             source_infos=tier_source_infos,
             wildcard_domains=frozenset(tier_wildcard_domains),
+            exact_domains=frozenset(tier_exact_domains),
         )
 
         tier_out_dir = out_dir if is_default else os.path.join(out_dir, tier_name)
@@ -663,12 +736,11 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
     os.makedirs(reports_dir, exist_ok=True)
     rejected_path = os.path.join(reports_dir, "rejected-entries.txt")
 
-    if rejected_entries:
-        with open(rejected_path, "w", encoding="utf-8") as rej:
-            rej.write(f"# Rejected entries - generated: {now_str}\n")
-            rej.write("# Format: source_file line_number : original_line\n\n")
-            for fname, lineno, orig in rejected_entries:
-                rej.write(f"{fname} {lineno}: {orig}\n")
+    with open(rejected_path, "w", encoding="utf-8") as rej:
+        rej.write(f"# Rejected entries - generated: {now_str}\n")
+        rej.write("# Format: source_file line_number : original_line\n\n")
+        for fname, lineno, orig in rejected_entries:
+            rej.write(f"{fname} {lineno}: {orig}\n")
 
     # ── source health ─────────────────────────────────────────────────────────
     health_issues: list[tuple[str, str, str]] = []
@@ -698,7 +770,7 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
             "duplicates_deduped": default_dupes_deduped,
             "reduction_pct_deduped": round(default_pct_deduped, 4),
             "unique_optimized": default_unique_optimized,
-            "wildcards": len(wildcard_domains),
+            "wildcards": tier_summaries.get(default_tier, {}).get("wildcards", 0),
             "duplicates_optimized": default_dupes_optimized,
             "reduction_pct_optimized": round(default_pct_optimized, 4),
             "delta_added": delta_added,
@@ -716,13 +788,17 @@ def merge(raw_dir: str, map_path: str, out_path: str, sort_output: bool = True,
         },
         "sources": source_stats,
     }
+    fetch_status_path = os.path.join(raw_dir, "fetch-status.json")
+    if os.path.isfile(fetch_status_path):
+        with open(fetch_status_path, encoding="utf-8") as sf:
+            report["fetch"] = json.load(sf)
     with open(os.path.join(reports_dir, "blocklist-report.json"), "w", encoding="utf-8") as rf:
         json.dump(report, rf, indent=2, ensure_ascii=False)
 
     print(f"Processed: scanned={total_candidates} "
           f"→ deduped={default_unique_deduped} (-{default_pct_deduped:.2f}%, hosts/domains) "
           f"→ dns-optimized={default_unique_optimized} (-{default_pct_optimized:.2f}%, adblock/rpz/dnsmasq/unbound) "
-          f"| wildcards={len(wildcard_domains)} "
+          f"| wildcards={tier_summaries.get(default_tier, {}).get('wildcards', 0)} "
           f"rejected={len(rejected_entries)} tld_rejected={tld_rejected} "
           f"matched_allowlisted={matched_allowlisted} "
           f"added_by_blocklist_override={added_by_blocklist_override} "

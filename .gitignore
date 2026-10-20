@@ -223,3 +223,6 @@ __marimo__/
 
 # VIM files
 *.swp
+
+# Local review notes
+/AUDIT.md

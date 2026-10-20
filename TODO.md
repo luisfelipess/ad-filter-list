@@ -41,7 +41,7 @@ Output writers live in `writers/`. Adding a new format = one new file + one line
 - [x] Allowlist (`allowlist.txt`) with `*.domain` wildcard support
 - [x] Blocklist override (`blocklist.txt`) with `*.domain` wildcard support
 - [x] Subdomain redundancy optimizer (`remove_subdomains`) — typically removes 20–30% of entries for DNS formats
-- [x] Abort on download failure — `processed/` left untouched
+- [x] Bounded recovery from source outages using validated cached data; abort without changing outputs when no usable cache exists or stale limits are exceeded
 - [x] Regression test suite (`tests/test_merge.py`)
 
 ## ✅ Phase 5: Wildcard Source Support & Format-Aware Deduplication
@@ -152,3 +152,16 @@ Output writers live in `writers/`. Adding a new format = one new file + one line
 - [ ] **AdGuard Host Lists Registry auto-discovery** — `https://adguardteam.github.io/HostlistsRegistry/assets/filters.json` is a curated JSON meta-index of 64 trusted filter lists; registry has been explored and all 31 current sources annotated with registry IDs in `sources.conf`, with 25 candidate lists documented in a commented section; auto-discovery feature (JSON resolver in `fetch.py` + selection mechanism) not yet implemented
 
 - [x] **Source version/last-modified propagation** — `! Version:` and `! Last modified:` headers parsed from each source file and stored in `reports/blocklist-report.json` under `sources[fname].version` and `.last_modified` (null if absent); `content_sha1` always computed from raw file bytes; `last_changed` carries forward across runs when SHA1 is unchanged, enabling staleness detection even for sources with no version headers; `[Adblock Plus]` preamble line fixed so it no longer breaks header parsing
+
+
+## October 2026 validation fixes
+
+- [x] Import-safe compatibility shim and working full test discovery
+- [x] Regression tests before publishing and on pull requests
+- [x] Explicit publishing leases to reject concurrent remote changes; depth-2 checkout preserves rolling-commit detection
+- [x] Unconditional Adblock rule subset, source exceptions, and badfilter handling
+- [x] Allowlist-safe parent coverage before subdomain optimization
+- [x] Independent exact/wildcard tier provenance and unique native output rules
+- [x] URL-bound cache integrity, validator replacement, bounded stale recovery, and download health reporting
+- [x] StevenBlack standard + AdAway baseline for light tier and regression guards for every tier
+- [x] Clear rejection logs after clean runs

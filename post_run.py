@@ -91,6 +91,10 @@ def _build_block(report: dict, raw_base: str) -> str:
         f"**Wildcards:** {wildcards:,}",
     ]
 
+    stale = report.get("fetch", {}).get("stale_sources", 0)
+    if stale:
+        lines += ["", f"**Degraded run:** reused validated cached data for {stale} unavailable source(s). See the JSON report for ages and errors."]
+
     if not raw_base:
         return "\n".join(lines)
 

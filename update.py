@@ -14,10 +14,13 @@
 
 import sys
 
-print(
-    "Warning: update.py is deprecated. Use: python3 run.py",
-    file=sys.stderr,
-)
-
 import run
-sys.exit(run.main(sys.argv[1:]))
+
+
+def main(argv=None):
+    print("Warning: update.py is deprecated. Use: python3 run.py", file=sys.stderr)
+    return run.main(argv)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))

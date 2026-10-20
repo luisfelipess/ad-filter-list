@@ -53,6 +53,17 @@ done
 # Paths this script is allowed to commit — the pipeline's generated outputs.
 GENERATED=(processed reports README.md)
 
+# Refuse to build from an uncommitted implementation or a stale checkout.
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "Commit or stash tracked changes before publishing." >&2
+  exit 1
+fi
+EXPECTED_REMOTE=$(git ls-remote --exit-code "$REMOTE" "refs/heads/$BRANCH" | awk '{print $1}')
+if ! git merge-base --is-ancestor "$EXPECTED_REMOTE" HEAD; then
+  echo "Remote branch is not an ancestor of this checkout; sync before publishing." >&2
+  exit 1
+fi
+
 # ── 1. regenerate ───────────────────────────────────────────────────────────
 echo "==> Running pipeline: python3 run.py ${PASSTHROUGH[*]:-}"
 python3 run.py "${PASSTHROUGH[@]+"${PASSTHROUGH[@]}"}"
@@ -102,10 +113,10 @@ fi
 # ── 5. publish ──────────────────────────────────────────────────────────────
 if [ "$DRY_RUN" = true ]; then
   echo "==> --dry-run: committed locally, not pushing."
-  echo "    Publish manually with:  git push --force $REMOTE $BRANCH"
+  echo "    Publish manually with: bash scripts/push-with-lease.sh $REMOTE $BRANCH $EXPECTED_REMOTE"
   exit 0
 fi
 
-echo "==> Force-pushing to $REMOTE/$BRANCH (rewrites only the rolling data commit)"
-git push --force "$REMOTE" "$BRANCH"
+echo "==> Publishing to $REMOTE/$BRANCH with an explicit lease"
+bash scripts/push-with-lease.sh "$REMOTE" "$BRANCH" "$EXPECTED_REMOTE"
 echo "==> Done."

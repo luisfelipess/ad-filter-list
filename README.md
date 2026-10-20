@@ -24,7 +24,7 @@ Some projects convert upstream lists individually to specific formats without me
 Want only certain sources? Different combinations? A more aggressive or more conservative set? `sources.conf`, `allowlist.txt`, and `blocklist.txt` are designed for exactly that. Clone the repo, edit the config, run `python3 run.py`. The pipeline is self-contained and requires no external dependencies beyond Python 3.8.
 
 **Multiple tiers, one pipeline.**
-Sources are tagged `light`, `good`, or `aggressive` in `sources.conf`. The pipeline produces a separate output set per tier — all six formats, in `processed/` (good, default) and `processed/aggressive/`. Tiers are cumulative: a `light` source appears in every tier; a `good` source appears in good and aggressive; `aggressive`-only sources are isolated. The hierarchy is defined in `tiers.conf` and is fully configurable.
+Sources are tagged `light`, `good`, or `aggressive` in `sources.conf`. The pipeline produces a separate output set per tier — all six formats, in `processed/` (good, default), `processed/light/`, and `processed/aggressive/`. StevenBlack’s standard adware/malware list plus AdAway provide the light-tier baseline; optional content-category extensions stay outside light. Tiers are cumulative: a `light` source appears in every tier; a `good` source appears in good and aggressive; `aggressive`-only sources are isolated. The hierarchy is defined in `tiers.conf` and is fully configurable.
 
 ---
 
@@ -86,6 +86,8 @@ Outputs land in `processed/`. Raw downloaded files go to `raw/` (gitignored).
 
 ### Local testing workflow
 
+Run the regression suite with `python3 -m unittest discover -s tests`.
+
 When tuning `allowlist.txt` or `blocklist.txt`, avoid re-downloading on every edit:
 
 1. **Full run once** — `python3 run.py` downloads all sources into `raw/` and writes `processed/` + `reports/`.
@@ -101,9 +103,11 @@ When tuning `allowlist.txt` or `blocklist.txt`, avoid re-downloading on every ed
 | `--unsorted` | Preserve first-seen domain order instead of sorting alphabetically |
 | `--no-optimize-subdomains` | Disable subdomain optimization — every unique domain is written to all output files |
 | `--no-iana-tld-check` | Skip IANA TLD validation (useful when offline) |
-| `--max-drop-pct N` | Abort if domain count drops more than N% vs previous run (default: 50) |
+| `--max-drop-pct N` | Abort before writing if any tier loses more than N% of its previous domains (default: 50) |
 | `--no-post-run` | Skip the README stats update step |
-| `--incremental` | Skip re-downloading sources unchanged since last run (ETag / If-Modified-Since) |
+| `--incremental` | Use primary ETag / If-Modified-Since validators to avoid downloading unchanged content |
+| `--max-stale-days N` | Reuse a validated cached source after an outage only if its last successful fetch is at most N days old (default: 7) |
+| `--max-stale-pct N` | Abort if more than N% of sources need stale cached data (default: 25; use 0 to require all sources fresh) |
 | `--tiers-config FILE` | Tier hierarchy config file (default: `tiers.conf`) |
 | `--workers N` | Parallel download threads (default 8) |
 | `--retries N` | Per-URL retry count (default 3) |
@@ -155,7 +159,11 @@ To specify a fallback URL for resilient fetching, separate primary and fallback 
 https://primary.example.com/list , https://fallback.example.com/list
 ```
 
-The fallback is tried only if the primary fails after all retries. The primary URL is always used for deduplication and reporting.
+The fallback is tried if the primary download or content validation fails after retries. If both URLs fail, the downloader can reuse the source's last validated content, within `--max-stale-days` and `--max-stale-pct`. A source with no usable cache still stops the build; it is never silently omitted. Fresh downloads from healthy sources continue updating during a permitted degraded run.
+
+Every successful fetch is cached by primary URL in `raw/.source-cache/`, with SHA256 integrity checks and timestamps in `raw/.fetch-cache.json`. This cache is maintained in both normal and incremental mode. Only incremental mode sends conditional HTTP headers. Fallback responses clear primary validators. Indexed raw files and `sources.map` are promoted after all sources are accounted for; rejected downloads do not replace the prior mapped files.
+
+`raw/fetch-status.json` records each source's freshness, last successful fetch time, and any error. Successful merges copy this into `reports/blocklist-report.json` under `fetch`; degraded runs are also identified in console output, README stats, and the Actions summary. GitHub Actions restores and saves the validated source cache between runs. The first run must successfully populate it before outage recovery is available.
 
 To assign a source to a tier, add a `tier=` tag:
 
@@ -166,7 +174,7 @@ https://example.com/safe-list.txt tier=light , https://fallback.example.com/safe
 
 Sources without a `tier=` tag default to the tier marked `*` in `tiers.conf` (currently `good`). Tier semantics are cumulative: a `light` source appears in every tier's output; a `good` source in `good` and `aggressive`; an `aggressive` source only in `aggressive`. The tier hierarchy is defined in `tiers.conf` — see the repository layout below.
 
-Supported source formats are auto-detected: hosts-style (`0.0.0.0 domain` / `127.0.0.1 domain`), domain-only (including `*.domain` wildcard entries), and adblock (`||domain^`). Gzip (`.gz`) and zip (`.zip`) sources are decompressed automatically.
+Supported source formats are auto-detected: hosts-style (`0.0.0.0 domain` / `127.0.0.1 domain`), domain-only (including `*.domain` wildcard entries), and unconditional Adblock domain rules (`||domain^` and `||*.domain^`). Rules with options such as `$third-party`, `$domain=...`, or `$important` are rejected with an explicit reason because DNS cannot preserve their conditions. Domain exception rules (`@@||domain^`) are applied within their own source; scoped domain exceptions are conservatively widened to protect the named domain. `$badfilter` disables the corresponding unconditional blocking rule in that source. Gzip (`.gz`) and zip (`.zip`) sources are decompressed automatically.
 
 ### Output formats (`writers.conf`)
 
@@ -204,6 +212,8 @@ One domain per line. Lines starting with `#`, `!`, or `;` are ignored. Inline co
 1. Domains are collected from everything in `raw/`.
 2. Any collected domain that matches the allowlist is dropped. Allowlist wins over source entries.
 3. Blocklist entries are merged in afterward: exact domains and wildcard bases (`*.foo` → base `foo`) are added if missing and not allowlisted. On overlap, allowlist still wins (a warning is printed if the same apex appears in both files).
+
+For DNS and Adblock outputs, inclusive parent rules that would shadow an allowed child are omitted before subdomain optimization. Safe, explicitly listed children remain blocked. For example, allowing `safe.example.com` removes a broad `example.com` rule from DNS outputs while retaining a separate `ads.example.com` entry. This conservative policy sacrifices some parent coverage to preserve allowlist precedence. Hosts and plain-domain outputs can retain the exact parent entry because their intended matching is exact.
 
 **Run metrics** — after merge, check the terminal `Processed:` line or `reports/blocklist-report.json` → `summary`:
 
@@ -310,7 +320,7 @@ Rejected entries are logged to [`reports/rejected-entries.txt`](reports/rejected
 
 ### Wildcard handling and deduplication
 
-Some sources publish wildcard entries (`*.domain`) meaning "block this domain and all subdomains". The pipeline handles these with format-aware logic across two stages.
+Some sources publish wildcard entries (`*.domain`) representing subdomains of a base domain. The pipeline handles these with format-aware logic across two stages.
 
 **Stage 1 — Detection and collection**
 
@@ -335,9 +345,9 @@ The pipeline produces two domain lists with different deduplication levels:
 | **Dedup-only** (`unique_deduped`) | `hosts`, `domains` | Exact duplicates only — every unique domain is kept |
 | **Optimized** (`unique_optimized`) | `adblock`, `rpz`, `dnsmasq`, `unbound` | Exact duplicates **+** redundant subdomains — `sub.example.com` dropped when `example.com` is already an explicit blocking entry |
 
-The subdomain optimizer makes DNS-format output **inclusive of subdomains**: `ads.example.com` is dropped when `example.com` is an explicit blocking entry, because a DNS resolver blocking `example.com` already covers all its subdomains. It does **not** remove entries solely because they are under a wildcard base (a wildcard base like `ads.example.com` from `*.ads.example.com` does not count as an explicit parent apex).
+The subdomain optimizer removes children covered by surviving parent rules, including wildcard ancestors. Conflicting parents are removed first so optimization cannot erase safe children needed after an allowlist exception. Exact and wildcard provenance is tracked separately by tier: an aggressive wildcard cannot appear in a lighter tier just because its apex has a lighter exact entry.
 
-To disable subdomain optimization for DNS formats (both lists become identical), pass `--no-optimize-subdomains`.
+To disable the redundancy optimizer, pass `--no-optimize-subdomains`. Allowlist safety filtering still applies to inclusive outputs.
 
 **Per-format wildcard output:**
 
@@ -345,12 +355,12 @@ To disable subdomain optimization for DNS formats (both lists become identical),
 |---|---|---|
 | `hosts` | Dedup-only | No wildcard syntax; `*.domain` sources contribute only the base exact match (`0.0.0.0 domain`) |
 | `domains` | Dedup-only | Same as hosts |
-| `adblock` | Optimized | Wildcard entries emit `\|\|*.domain^`; exact entries covered by a wildcard ancestor are dropped |
+| `adblock` | Optimized | Wildcard entries emit `\|\|*.domain^`; an explicit apex in that tier uses `\|\|domain^` instead, which also covers descendants |
 | `rpz` | Optimized | Wildcard entries emit both `domain IN CNAME .` and `*.domain IN CNAME .` |
 | `dnsmasq` | Optimized | `address=/domain/#` natively covers all subdomains; exact entries covered by a wildcard ancestor are dropped |
 | `unbound` | Optimized | `local-zone: "domain." always_nxdomain` natively covers all subdomains; covered exact entries are dropped |
 
-The direction is strictly one-way: wildcards degrade to exact for formats that don't support them, but exact entries from hosts sources are never promoted to wildcards.
+Hosts and plain-domain outputs degrade wildcard entries to their apex. RPZ, dnsmasq, and Unbound retain the existing inclusive apex-and-descendants policy, emitting each native directive only once. Adblock retains explicit apex provenance, so wildcard-only input does not create an additional apex rule.
 
 ---
 
@@ -358,12 +368,14 @@ The direction is strictly one-way: wildcards degrade to exact for formats that d
 
 The workflow at `.github/workflows/update.yml` runs daily at **03:00 UTC** and on manual trigger (`workflow_dispatch`). No secrets or tokens are required beyond the default `GITHUB_TOKEN` — the workflow uses `permissions: contents: write`.
 
+The regression suite runs before the update pipeline. A separate pull-request workflow tests Python 3.8 and 3.14 and checks shell syntax.
+
 Steps:
 1. Check out repository (`persist-credentials: false`)
 2. Set up Python
 3. Run `python3 run.py` (full pipeline: fetch → merge → post_run)
 4. Write a step summary table to the Actions UI with per-run stats
-5. Commit `processed/`, `reports/`, and `README.md` back to `main` with `[skip ci]`; commit message includes the domain count and delta (e.g. `Update blocklists: 905,946 domains (+1,204/-87) [skip ci]`)
+5. Commit `processed/`, `reports/`, and `README.md` back to `main` with `[skip ci]`; an explicit force-with-lease rejects the push if the remote changed during the build; commit message includes the domain count and delta (e.g. `Update blocklists: 905,946 domains (+1,204/-87) [skip ci]`)
 6. Upload `processed/` and `reports/` as workflow artifacts (only when files changed)
 
 To trigger the workflow from your machine:

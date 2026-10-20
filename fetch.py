@@ -17,6 +17,9 @@ from __future__ import annotations
 
 import argparse
 import gzip
+import hashlib
+import tempfile
+from pathlib import Path
 import io
 import json
 import os
@@ -48,11 +51,10 @@ def read_sources(path: str) -> list[tuple[str, str | None, str]]:
             line = line.strip()
             if not line or line[0] in ("#", ";", "!"):
                 continue
-            # Extract tier tag before stripping inline comment
+            line = line.split("#", 1)[0].strip()
             tier_m = _TIER_RE.search(line)
             tier = tier_m.group(1) if tier_m else ""
             line = _TIER_RE.sub("", line)
-            line = line.split("#", 1)[0].strip()
             parts = [p.strip() for p in line.split(",", 1)]
             primary = parts[0]
             fallback = parts[1] if len(parts) > 1 and parts[1] else None
@@ -112,63 +114,107 @@ def decompress(data: bytes, url: str) -> bytes:
     return data
 
 
-def download_one(
-    index: int,
-    url: str,
-    fallback: str | None,
-    raw_dir: str,
-    retries: int,
-    timeout: int,
-    cache: dict | None = None,
-) -> tuple[str, str, bool, str | None, bool, dict]:
-    """Return (fname, primary_url, fallback_used, error_or_None, not_modified, cache_patch).
+def validate_data(data: bytes) -> None:
+    """Reject empty/error pages before replacing any cached source."""
+    from readers import normalize_domain
+    from readers.adblock import AdblockReader
+    from readers.domain import DomainReader
+    from readers.hosts import HostsReader
 
-    cache_patch is a {url: {etag, last_modified}} dict for updating the fetch
-    cache after a successful 200 response.  Empty dict when nothing to update.
-    not_modified is True when the server returned 304.
+    if b"<html" in data[:1024].lower() or b"<!doctype html" in data[:1024].lower():
+        raise ValueError("download is an HTML page")
+    readers = (HostsReader(), AdblockReader(), DomainReader())
+    for line in data.decode("utf-8", errors="replace").splitlines()[:10000]:
+        line = line.strip()
+        if not line or line.startswith(("#", "!", ";", "[")):
+            continue
+        for reader in readers:
+            item = reader.extract(line)
+            if item and normalize_domain(item[0]):
+                return
+    raise ValueError("download contains no supported domain entries")
+
+
+def cache_file(raw_dir: str, url: str) -> Path:
+    return Path(raw_dir) / ".source-cache" / (hashlib.sha256(url.encode()).hexdigest() + ".txt")
+
+
+def atomic_write(path: Path, data: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(dir=path.parent, prefix=".download-")
+    try:
+        with os.fdopen(fd, "wb") as fh:
+            fh.write(data)
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+
+
+def download_one(
+    index: int, url: str, fallback: str | None, raw_dir: str,
+    retries: int, timeout: int, cache: dict | None = None,
+    max_stale_days: float = 7, incremental: bool = True,
+    cache_dir: str | None = None,
+) -> tuple[str, str, bool, str | None, bool, dict]:
+    """Return filename, URL, fallback flag, error, 304 flag, complete cache metadata.
+
+    Cache content is bound to the primary URL and verified by SHA256. Only a
+    successful primary response can supply primary conditional validators.
     """
     base = os.path.basename(url.split("?", 1)[0]) or "source"
     fname = f"{index:02d}_{base}"
-    dest = os.path.join(raw_dir, fname)
-
-    # Only send conditional headers when we have a cached entry AND the raw
-    # file still exists on disk (guards against manual deletions).
+    dest = Path(raw_dir) / fname
+    cached_path = cache_file(cache_dir or raw_dir, url)
     cached = (cache or {}).get(url, {})
-    etag = cached.get("etag") if cache and os.path.exists(dest) else None
-    last_modified = cached.get("last_modified") if cache and os.path.exists(dest) else None
+    old_data = None
+    if cached.get("content_sha256") and cached_path.is_file():
+        candidate = cached_path.read_bytes()
+        if hashlib.sha256(candidate).hexdigest() == cached["content_sha256"]:
+            old_data = candidate
+    etag = cached.get("etag") if incremental and old_data is not None else None
+    last_modified = cached.get("last_modified") if incremental and old_data is not None else None
 
-    primary_exc: Exception | None = None
+    def success(data, etag=None, modified=None, origin=None):
+        validate_data(data)
+        atomic_write(dest, data)
+        metadata = {"content_sha256": hashlib.sha256(data).hexdigest(),
+                    "last_success": time.time(), "origin": origin or url}
+        if etag:
+            metadata["etag"] = etag
+        if modified:
+            metadata["last_modified"] = modified
+        return metadata
+
     try:
         data, new_etag, new_lm = fetch(url, retries, timeout, etag, last_modified)
         if data is None:
-            # 304 Not Modified — existing raw file is still valid
-            return fname, url, False, None, True, {}
-        data = decompress(data, url)
-        with open(dest, "wb") as fh:
-            fh.write(data)
-        patch: dict = {}
-        if new_etag:
-            patch["etag"] = new_etag
-        if new_lm:
-            patch["last_modified"] = new_lm
-        return fname, url, False, None, False, patch
+            if old_data is None or not (etag or last_modified):
+                raise ValueError("primary returned 304 without a validated cached response")
+            metadata = success(old_data, etag, last_modified)
+            return fname, url, False, None, True, metadata
+        metadata = success(decompress(data, url), new_etag, new_lm)
+        return fname, url, False, None, False, metadata
     except Exception as exc:
-        primary_exc = exc
+        error = f"primary: {exc}"
 
-    # Try fallback — no conditional headers (different URL, no cached entry)
     if fallback:
-        print(f"  WARN   primary failed ({primary_exc}), trying fallback: {fallback}",
-              file=sys.stderr)
+        print(f"  WARN   {error}, trying fallback: {fallback}", file=sys.stderr)
         try:
             data, _, _ = fetch(fallback, retries, timeout)
-            data = decompress(data, fallback)
-            with open(dest, "wb") as fh:
-                fh.write(data)
-            return fname, url, True, None, False, {}
-        except Exception as fb_exc:
-            return fname, url, False, f"primary: {primary_exc}; fallback: {fb_exc}", False, {}
+            if data is None:
+                raise ValueError("fallback returned 304 Not Modified without a cached response")
+            metadata = success(decompress(data, fallback), origin=fallback)
+            return fname, url, True, None, False, metadata
+        except Exception as exc:
+            error += f"; fallback: {exc}"
 
-    return fname, url, False, str(primary_exc), False, {}
+    age = time.time() - cached.get("last_success", 0)
+    if old_data is not None and 0 <= age <= max_stale_days * 86400:
+        atomic_write(dest, old_data)
+        metadata = {**cached, "stale": True, "error": error}
+        return fname, url, False, None, False, metadata
+    return fname, url, False, error, False, {}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -178,99 +224,82 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--workers", type=int, default=8)
     p.add_argument("--retries", type=int, default=3)
     p.add_argument("--timeout", type=int, default=30)
-    p.add_argument("--incremental", action="store_true",
-                   help="skip sources unchanged since last run (ETag / If-Modified-Since)")
+    p.add_argument("--incremental", action="store_true")
+    p.add_argument("--max-stale-days", type=float, default=7,
+                   help="maximum cached-source age after a download failure (default: 7)")
+    p.add_argument("--max-stale-pct", type=float, default=25,
+                   help="maximum percentage of sources reused after failures (default: 25)")
     args = p.parse_args(argv)
-
-    os.makedirs(args.raw, exist_ok=True)
-    map_path = os.path.join(args.raw, "sources.map")
-    cache_path = os.path.join(args.raw, ".fetch-cache.json")
-
-    # Load ETag/Last-Modified cache from previous run
-    cache: dict[str, dict] = {}
-    if args.incremental and os.path.exists(cache_path):
-        with open(cache_path, encoding="utf-8") as cf:
-            cache = json.load(cf)
-
-    # In normal mode wipe raw/ so stale files never bleed into merge.
-    # In incremental mode we keep existing files for sources that return 304.
-    if not args.incremental:
-        for f in os.listdir(args.raw):
-            fp = os.path.join(args.raw, f)
-            if os.path.isfile(fp):
-                os.remove(fp)
+    if min(args.workers, args.retries, args.timeout) <= 0:
+        p.error("workers, retries, and timeout must be positive")
+    if not 0 <= args.max_stale_pct <= 100 or args.max_stale_days < 0:
+        p.error("max-stale-pct must be 0..100 and max-stale-days must be nonnegative")
 
     sources = read_sources(args.sources)
     if not sources:
         print("No sources found.", file=sys.stderr)
         return 1
+    os.makedirs(args.raw, exist_ok=True)
+    cache_path = Path(args.raw) / ".fetch-cache.json"
+    cache = {}
+    if cache_path.is_file():
+        try:
+            cache = json.loads(cache_path.read_text(encoding="utf-8"))
+            if not isinstance(cache, dict):
+                cache = {}
+        except (ValueError, OSError):
+            print("Warning: invalid fetch cache metadata; downloading without cache", file=sys.stderr)
+    cache = {url: entry for url, entry in cache.items() if isinstance(entry, dict)}
 
-    # Expected raw filenames for the current sources.conf — used for orphan cleanup.
-    expected_fnames = {
-        f"{i + 1:02d}_{os.path.basename(url.split('?', 1)[0]) or 'source'}"
-        for i, (url, _, _) in enumerate(sources)
-    }
-
-    results: list[tuple[int, str, str, str, bool, str | None, bool, dict]] = []
     print(f"Downloading {len(sources)} source(s) with {args.workers} workers…")
-    with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        futures = {
-            pool.submit(
-                download_one, i + 1, url, fallback, args.raw, args.retries, args.timeout,
-                cache if args.incremental else None,
-            ): (i + 1, url, tier)
-            for i, (url, fallback, tier) in enumerate(sources)
-        }
-        for future in as_completed(futures):
-            i, url, tier = futures[future]
-            fname, _, fb_used, err, not_modified, cache_patch = future.result()
-            results.append((i, fname, url, tier, fb_used, err, not_modified, cache_patch))
-
-    results.sort(key=lambda r: r[0])
-    failures = [(url, err) for _, _, url, _, _, err, _, _ in results if err]
-    if failures:
-        for url, err in failures:
-            print(f"  FAILED {url}: {err}", file=sys.stderr)
-        print(
-            f"\nAborting: {len(failures)} source(s) failed after {args.retries} retries. "
-            "processed/ is unchanged.",
-            file=sys.stderr,
-        )
-        return 1
-
-    not_modified_count = 0
-    for _, fname, url, tier, fb_used, _, not_modified, cache_patch in results:
-        if not_modified:
-            not_modified_count += 1
-            tag = "CACHED"
-        else:
-            tag = "FALLBACK" if fb_used else "OK"
-        tier_tag = f" [tier={tier}]" if tier else ""
-        print(f"  {tag:<8}{tier_tag} {url} -> {args.raw}/{fname}")
-        if args.incremental and cache_patch:
-            cache[url] = cache_patch
-
-    if args.incremental:
-        if not_modified_count:
-            print(
-                f"Incremental: {not_modified_count} source(s) unchanged (304), "
-                f"{len(sources) - not_modified_count} refreshed"
-            )
-        with open(cache_path, "w", encoding="utf-8") as cf:
-            json.dump(cache, cf, indent=2)
-
-        # Remove files that no longer correspond to any source in sources.conf.
-        _ignored = {"sources.map", ".fetch-cache.json"}
-        for f in os.listdir(args.raw):
-            fp = os.path.join(args.raw, f)
-            if os.path.isfile(fp) and f not in expected_fnames and f not in _ignored:
-                os.remove(fp)
-
-    with open(map_path, "w", encoding="utf-8") as mf:
-        for _, fname, url, tier, _, _, _, _ in results:
-            line = f"{fname} {url} {tier}" if tier else f"{fname} {url}"
-            mf.write(line + "\n")
-
+    # Indexed files and sources.map stay intact until every source is accounted for.
+    with tempfile.TemporaryDirectory(prefix=".fetch-", dir=args.raw) as staged:
+        results = []
+        with ThreadPoolExecutor(max_workers=args.workers) as pool:
+            futures = {
+                pool.submit(download_one, i + 1, url, fallback, staged,
+                            args.retries, args.timeout, cache, args.max_stale_days,
+                            args.incremental, args.raw): (i + 1, url, tier)
+                for i, (url, fallback, tier) in enumerate(sources)
+            }
+            for future in as_completed(futures):
+                i, url, tier = futures[future]
+                try:
+                    result = future.result()
+                except Exception as exc:
+                    result = ("", url, False, str(exc), False, {})
+                results.append((i, tier, result))
+        results.sort(key=lambda item: item[0])
+        statuses = []
+        for _, tier, (fname, url, fallback, error, unchanged, metadata) in results:
+            state = ("failed" if error else "stale" if metadata.get("stale") else
+                     "cached" if unchanged else "fallback" if fallback else "fresh")
+            statuses.append({"url": url, "tier": tier, "status": state,
+                             "last_success": metadata.get("last_success"),
+                             "origin": metadata.get("origin"),
+                             "error": error or metadata.get("error")})
+            print(f"  {state.upper():<9} {url}" + (f" — {error or metadata.get('error')}" if state in ("failed", "stale") else ""))
+            if not error:
+                # Store successful downloads even if another source blocks this run.
+                atomic_write(cache_file(args.raw, url), (Path(staged) / fname).read_bytes())
+                cache[url] = metadata
+        active = {url for url, _, _ in sources}
+        atomic_write(cache_path, json.dumps({u: v for u, v in cache.items() if u in active}, indent=2).encode())
+        stale_count = sum(item["status"] == "stale" for item in statuses)
+        failed_count = sum(item["status"] == "failed" for item in statuses)
+        blocked = bool(failed_count or stale_count / len(sources) * 100 > args.max_stale_pct)
+        status = {"generated": time.time(), "degraded": bool(stale_count),
+                  "stale_sources": stale_count, "failed_sources": failed_count,
+                  "blocked": blocked, "sources": statuses}
+        atomic_write(Path(args.raw) / "fetch-status.json", json.dumps(status, indent=2).encode())
+        if blocked:
+            print("Aborting: missing sources or stale-source limit exceeded; processed/ and mapped raw files unchanged.", file=sys.stderr)
+            return 1
+        rows = []
+        for _, tier, (fname, url, _, _, _, _) in results:
+            os.replace(Path(staged) / fname, Path(args.raw) / fname)
+            rows.append(f"{fname} {url}" + (f" {tier}" if tier else ""))
+        atomic_write(Path(args.raw) / "sources.map", ("\n".join(rows) + "\n").encode())
     return 0
 
 

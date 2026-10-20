@@ -1,0 +1,32 @@
+name: Regression tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    paths:
+      - '**.py'
+      - '**.sh'
+      - '*.conf'
+      - '.github/workflows/**'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.8', '3.14']
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python3 -m unittest discover -s tests
+      - name: Check shell syntax
+        run: |
+          for script in scripts/*.sh client-scripts/*.sh update.sh; do
+            bash -n "$script" || exit
+          done

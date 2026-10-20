@@ -22,19 +22,42 @@ jobs:
         uses: actions/checkout@v5
         with:
           persist-credentials: false
+          # Parent required for generated-path detection before amending the tip.
+          fetch-depth: 2
 
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
           python-version: '3.x'
 
+      - name: Run regression tests
+        run: python3 -m unittest discover -s tests
+
+      - name: Restore validated source cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            raw/.source-cache
+            raw/.fetch-cache.json
+          key: source-cache-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            source-cache-${{ runner.os }}-
+
       - name: Run pipeline
+        id: pipeline
         run: python3 run.py
 
       - name: Write step summary
         if: always()
         shell: bash
         run: |
+          if [[ -f raw/fetch-status.json ]]; then
+            jq -r '"Download health: stale=\(.stale_sources), failed=\(.failed_sources), blocked=\(.blocked)"' raw/fetch-status.json >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [[ "${{ steps.pipeline.outcome }}" != "success" ]]; then
+            echo "Pipeline failed; no new blocklists were published." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
           REPORT=reports/blocklist-report.json
           if [[ ! -f "$REPORT" ]]; then
             echo "No report found — pipeline may have failed." >> "$GITHUB_STEP_SUMMARY"
@@ -47,6 +70,7 @@ jobs:
           DELTA_A=$(jq  '.summary.delta_added'    "$REPORT")
           DELTA_R=$(jq  '.summary.delta_removed'  "$REPORT")
           REJECTED=$(jq '.summary.rejected_total' "$REPORT")
+          STALE=$(jq '.fetch.stale_sources // 0' "$REPORT")
           SOURCES=$(jq  '.sources | length'       "$REPORT")
           {
             echo "## Blocklist pipeline summary"
@@ -54,6 +78,7 @@ jobs:
             echo "| Metric | Value |"
             echo "|---|---|"
             echo "| Sources | $SOURCES |"
+            echo "| Stale sources reused | $STALE |"
             echo "| Scanned | $SCANNED |"
             echo "| Unique domains (hosts/domains) | $DEDUPED |"
             echo "| Unique domains (DNS-optimized) | $OPTIMIZED |"
@@ -68,6 +93,8 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_BRANCH: ${{ github.ref_name }}
+          EXPECTED_REMOTE_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
 
@@ -114,7 +141,7 @@ jobs:
           else
             git commit -m "$MSG"
           fi
-          git push --force origin HEAD:${{ github.ref_name }}
+          bash scripts/push-with-lease.sh origin "$TARGET_BRANCH" "$EXPECTED_REMOTE_SHA"
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Upload pipeline output

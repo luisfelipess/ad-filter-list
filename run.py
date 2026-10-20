@@ -44,6 +44,8 @@ def main(argv: list[str] | None = None) -> int:
                    help="abort if domain count drops by more than this %% vs previous run (default: 50)")
     p.add_argument("--incremental", action="store_true",
                    help="skip re-downloading sources unchanged since last run (ETag / If-Modified-Since)")
+    p.add_argument("--max-stale-days", type=float, default=7)
+    p.add_argument("--max-stale-pct", type=float, default=25)
     p.add_argument("--tiers-config", default="tiers.conf",
                    help="tier definitions file (default: tiers.conf)")
     p.add_argument("--no-post-run", action="store_true",
@@ -71,6 +73,8 @@ def main(argv: list[str] | None = None) -> int:
             "--workers", str(args.workers),
             "--retries", str(args.retries),
             "--timeout", str(args.timeout),
+            "--max-stale-days", str(args.max_stale_days),
+            "--max-stale-pct", str(args.max_stale_pct),
         ]
         if args.incremental:
             fetch_argv.append("--incremental")
@@ -106,7 +110,7 @@ def main(argv: list[str] | None = None) -> int:
         reports_dir = os.path.normpath(
             os.path.join(os.path.dirname(args.out) or ".", "..", "reports")
         )
-        post_run.main([
+        return post_run.main([
             "--report", os.path.join(reports_dir, "blocklist-report.json"),
         ])
 
